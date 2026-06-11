@@ -1,0 +1,361 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-highlight: var(--highlight);
+  --color-shared-bg: var(--shared-bg);
+  --color-card-surface: var(--card-surface);
+  --color-border-color: var(--border-color);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+
+  --font-sans: "Quicksand", "Nunito", system-ui, sans-serif;
+}
+
+:root {
+  /* Default: Sakura Pink (Wife Theme) */
+  --primary: #FF8FB1;
+  --secondary: #FFD6E7;
+  --accent: #CDB4FF;
+  --highlight: #FFF0F5;
+  --shared-bg: #FFFDF8;
+  --card-surface: #FFFFFF;
+  --border-color: #EAEAEA;
+  --text-primary: #1F2937;
+  --text-secondary: #6B7280;
+}
+
+[data-theme="Sakura"] {
+  --primary: #FF8FB1;
+  --secondary: #FFD6E7;
+  --accent: #CDB4FF;
+  --highlight: #FFF0F5;
+  --shared-bg: #FFFDF8;
+  --card-surface: #FFFFFF;
+  --border-color: #FBD5E0;
+  --text-primary: #2C1820;
+  --text-secondary: #8E6E7C;
+}
+
+[data-theme="Duo"] {
+  --primary: #58CC02;
+  --secondary: #1CB0F6;
+  --accent: #FFC715;
+  --highlight: #F7F7F7;
+  --shared-bg: #FCFDFB;
+  --card-surface: #FFFFFF;
+  --border-color: #E5E5E5;
+  --text-primary: #3C3C3C;
+  --text-secondary: #777777;
+}
+
+[data-theme="Light"] {
+  --primary: #2C3E50;
+  --secondary: #5C7AEA;
+  --accent: #A7C4A0;
+  --highlight: #F4F6F8;
+  --shared-bg: #FCFDFE;
+  --card-surface: #FFFFFF;
+  --border-color: #E2E8F0;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+}
+
+[data-theme="Dark"] {
+  --primary: #A7C4A0;
+  --secondary: #3B82F6;
+  --accent: #F59E0B;
+  --highlight: #1E293B;
+  --shared-bg: #0F172A;
+  --card-surface: #1E293B;
+  --border-color: #334155;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+}
+
+/* Custom styles and interactive modifiers */
+body {
+  background-color: var(--shared-bg);
+  color: var(--text-primary);
+  font-family: "Quicksand", "Nunito", sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Duolingo 3D Button Style */
+.btn-3d {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  background-color: var(--primary);
+  color: #ffffff;
+  padding: 10px 20px;
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 80%, #000);
+  transform: translateY(-2px);
+  transition: all 0.1s ease;
+  cursor: pointer;
+}
+
+.btn-3d:hover {
+  filter: brightness(1.05);
+}
+
+.btn-3d:active {
+  transform: translateY(2px);
+  box-shadow: 0 0px 0 transparent;
+}
+
+.btn-3d-secondary {
+  background-color: var(--secondary);
+  color: #ffffff;
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--secondary) 80%, #000);
+}
+
+/* Light background secondary buttons (like Sakura's soft pink) need dark text */
+[data-theme="Sakura"] .btn-3d-secondary {
+  color: var(--text-primary);
+}
+
+.btn-3d-accent {
+  background-color: var(--accent);
+  color: var(--text-primary);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--accent) 80%, #000);
+}
+
+.btn-3d-white {
+  background-color: #ffffff;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+  box-shadow: 0 4px 0 var(--border-color);
+}
+
+.btn-3d-white:active {
+  box-shadow: 0 0px 0 transparent;
+}
+
+/* Duolingo Card style with flat offsets */
+.card-duo {
+  background-color: var(--card-surface);
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: 0 4px 0 var(--border-color);
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+/* Sakura Soft Glass Cards */
+.card-sakura {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 143, 177, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(255, 143, 177, 0.1);
+  padding: 18px;
+  transition: all 0.3s ease;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+/* Animations */
+@keyframes heartPop {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.3);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-heart-pop {
+  animation: heartPop 0.3s ease-out;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Duolingo style Tab Selector Container */
+.tabs-duo-container {
+  width: 100%;
+  display: flex;
+  background-color: var(--highlight);
+  padding: 4px;
+  border-radius: 14px;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 3px 0 var(--border-color);
+  align-self: flex-start;
+  gap: 4px;
+
+  @media (max-width: 370px) {
+    flex-wrap: wrap;
+  }
+}
+
+/* Individual Tab Button */
+.tab-duo-btn {
+  width: 100%;
+  padding: 8px 16px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: capitalize;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  color: var(--text-secondary);
+  background-color: transparent;
+  transition: all 0.1s ease;
+  cursor: pointer;
+}
+
+.tab-duo-btn:hover {
+  color: var(--text-primary);
+}
+
+/* Active Tab Button */
+.tab-duo-btn.active {
+  background-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--primary) 80%, #000);
+  transform: translateY(-1px);
+}
+
+[data-theme="Sakura"] .tab-duo-btn.active {
+  color: var(--text-primary);
+}
+
+/* Center FAB Button */
+.fab-btn {
+  width: 54px;
+  height: 54px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+  background-color: var(--primary);
+}
+
+/* Active FAB */
+.fab-btn.active {
+  color: #ffffff;
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--primary) 80%, #000);
+}
+
+[data-theme="Sakura"] .fab-btn.active {
+  color: var(--text-primary);
+}
+
+/* Inactive FAB */
+.fab-btn.inactive {
+  background-color: var(--card-surface);
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+  box-shadow: 0 4px 0 var(--border-color);
+}
+
+.fab-btn.inactive:hover {
+  background-color: var(--highlight);
+  color: var(--text-primary);
+}
+
+.fab-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 transparent;
+}
+
+/* Active Nav Links */
+.nav-active-duo {
+  background-color: var(--primary) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--primary) 80%, #000) !important;
+}
+
+[data-theme="Sakura"] .nav-active-duo {
+  color: var(--text-primary) !important;
+}
+
+/* Duolingo style Checkbox Trigger Button */
+.checkbox-duo {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-shrink: 1;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  background-color: var(--card-surface);
+  color: var(--text-secondary);
+  box-shadow: 0 3px 0 var(--border-color);
+  transition: all 0.1s ease;
+  cursor: pointer;
+}
+
+.checkbox-duo:hover {
+  background-color: var(--highlight);
+  color: var(--text-primary);
+}
+
+.checkbox-duo:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 transparent;
+}
+
+.checkbox-duo.completed {
+  background-color: var(--primary);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--primary) 80%, #000);
+}
+
+[data-theme="Sakura"] .checkbox-duo.completed {
+  color: var(--text-primary);
+}
+
+.checkbox-duo.completed:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 transparent;
+}

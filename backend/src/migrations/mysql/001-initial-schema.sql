@@ -1,0 +1,73 @@
+-- 001-initial-schema.sql for MySQL
+
+CREATE TABLE IF NOT EXISTS USERS (
+    id VARCHAR(36) PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    avatar_emoji VARCHAR(50) NOT NULL,
+    avatar_image LONGTEXT NULL,
+    role ENUM('husband', 'wife') NOT NULL,
+    partner_id VARCHAR(36) NULL,
+    theme_preferences JSON NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (partner_id) REFERENCES USERS(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS HABITS (
+    id VARCHAR(36) PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    icon_emoji VARCHAR(50) NOT NULL,
+    frequency ENUM('daily', 'weekly', 'monthly') NOT NULL,
+    is_shared BOOLEAN DEFAULT FALSE,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS HABIT_LOGS (
+    id VARCHAR(36) PRIMARY KEY,
+    habit_id VARCHAR(36) NOT NULL,
+    user_id VARCHAR(36) NOT NULL,
+    completed_date DATE NOT NULL,
+    is_completed BOOLEAN DEFAULT TRUE,
+    notes TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_habit_date (habit_id, completed_date),
+    FOREIGN KEY (habit_id) REFERENCES HABITS(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS STREAKS (
+    id VARCHAR(36) PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
+    habit_id VARCHAR(36) NOT NULL,
+    current_streak INT DEFAULT 0,
+    longest_streak INT DEFAULT 0,
+    last_completed_date DATE NULL,
+    UNIQUE KEY uq_user_habit (user_id, habit_id),
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE,
+    FOREIGN KEY (habit_id) REFERENCES HABITS(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS BADGES (
+    id VARCHAR(36) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT NOT NULL,
+    icon VARCHAR(255) NOT NULL,
+    type ENUM('personal', 'couple') NOT NULL,
+    requirement_value INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS USER_BADGES (
+    id VARCHAR(36) PRIMARY KEY,
+    user_id VARCHAR(36) NOT NULL,
+    badge_id VARCHAR(36) NOT NULL,
+    earned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_user_badge (user_id, badge_id),
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE,
+    FOREIGN KEY (badge_id) REFERENCES BADGES(id) ON DELETE CASCADE
+);
