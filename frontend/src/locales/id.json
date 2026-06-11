@@ -29,7 +29,7 @@
     "habits": "Habit",
     "goals": "Goals",
     "leaderboard": "Papan Skor",
-    "analytics": "Analitik",
+    "list_habits": "Kelola Habit",
     "profile": "Profil"
   },
   "dashboard": {
@@ -89,7 +89,7 @@
   },
   "habits": {
     "manage_habits": "Kelola Habit",
-    "manage_habits_desc": "Buat, edit, atau hapus habit pribadi dan bersama.",
+    "manage_habits_desc": "Buat habit pribadi dan bersama.",
     "create_habit": "Buat Habit",
     "quick_templates": "Template Habit Instan",
     "templates_desc": "Klik salah satu kartu untuk mengisi formulir secara instan.",
@@ -105,7 +105,11 @@
     "shared_goal_partner": "Goal Bersama dengan Pasangan?",
     "both_users_log": "Kedua pengguna dapat mencatat habit ini.",
     "save_changes": "Simpan Perubahan",
-    "add_habit": "Tambah Habit"
+    "add_habit": "Tambah Habit",
+    "add_success": "Habit berhasil ditambahkan!",
+    "add_failed": "Gagal menambahkan habit. Silakan coba lagi.",
+    "edit_success": "Habit berhasil diperbarui!",
+    "edit_failed": "Gagal memperbarui habit. Silakan coba lagi."
   },
   "shared_goals": {
     "shared_goals": "Goal Bersama",
@@ -160,5 +164,22 @@
     "name_required": "Nama Tampilan wajib diisi",
     "username_min": "Username minimal 3 karakter",
     "password_min": "Password minimal 6 karakter"
+  },
+  "list_habits": {
+    "title": "Kelola Habit",
+    "desc": "Kelola dan jelajahi semua habit personal dan pasangan Anda.",
+    "tab_personal": "Personal",
+    "tab_couple": "Pasangan",
+    "search_placeholder": "Cari habit berdasarkan judul atau deskripsi...",
+    "delete_success": "Habit berhasil dihapus!",
+    "delete_failed": "Gagal menghapus habit. Silakan coba lagi.",
+    "no_personal_habits": "Belum ada habit personal yang dibuat",
+    "no_personal_habits_desc": "Buat habit personal di tab Habit untuk mulai memantaunya secara mandiri!",
+    "no_couple_habits": "Belum ada habit pasangan yang dibuat",
+    "no_couple_habits_desc": "Buka tab Habit dan centang \"Goal Bersama\" untuk mulai memantau habit bersama pasangan!",
+    "status_active": "Aktif",
+    "status_archived": "Diarsipkan",
+    "personal_badge": "Personal",
+    "couple_badge": "Pasangan"
   }
 }

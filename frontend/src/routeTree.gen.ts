@@ -13,6 +13,7 @@ import { Route as SharedGoalsRouteImport } from './routes/shared-goals'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ListHabitsRouteImport } from './routes/list-habits'
 import { Route as HabitsRouteImport } from './routes/habits'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
@@ -37,6 +38,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ListHabitsRoute = ListHabitsRouteImport.update({
+  id: '/list-habits',
+  path: '/list-habits',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HabitsRoute = HabitsRouteImport.update({
   id: '/habits',
   path: '/habits',
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/habits': typeof HabitsRoute
+  '/list-habits': typeof ListHabitsRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/habits': typeof HabitsRoute
+  '/list-habits': typeof ListHabitsRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/habits': typeof HabitsRoute
+  '/list-habits': typeof ListHabitsRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/habits'
+    | '/list-habits'
     | '/login'
     | '/profile'
     | '/register'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/habits'
+    | '/list-habits'
     | '/login'
     | '/profile'
     | '/register'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/habits'
+    | '/list-habits'
     | '/login'
     | '/profile'
     | '/register'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
   HabitsRoute: typeof HabitsRoute
+  ListHabitsRoute: typeof ListHabitsRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRoute
@@ -151,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/list-habits': {
+      id: '/list-habits'
+      path: '/list-habits'
+      fullPath: '/list-habits'
+      preLoaderRoute: typeof ListHabitsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/habits': {
       id: '/habits'
       path: '/habits'
@@ -179,6 +199,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
   HabitsRoute: HabitsRoute,
+  ListHabitsRoute: ListHabitsRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRoute,

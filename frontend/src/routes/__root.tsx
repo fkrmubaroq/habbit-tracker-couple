@@ -1,11 +1,12 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import clsx from "clsx";
-import { BarChart2, CheckSquare, Heart, Home, LogOut, Target, User } from "lucide-react";
+import { CheckSquare, ClipboardList, Heart, Home, LogOut, Target, User } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
+import { Toaster } from "../components/Toaster";
+import { Button } from "../components/ui/button";
 import { useAuthStore } from "../stores/auth.store";
-import { useThemeStore } from "../stores/theme.store";
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -17,7 +18,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent() {
   const { isAuthenticated, user, logout } = useAuthStore();
-  const { theme } = useThemeStore();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
@@ -59,9 +59,8 @@ function RootComponent() {
 
   const navItems = [
     { label: t("nav.home"), to: "/", icon: Home },
-    { label: t("nav.habits"), to: "/habits", icon: CheckSquare },
     { label: t("nav.goals"), to: "/shared-goals", icon: Target },
-    { label: t("nav.analytics"), to: "/analytics", icon: BarChart2 },
+    { label: t("nav.list_habits"), to: "/list-habits", icon: ClipboardList },
     { label: t("nav.profile"), to: "/profile", icon: User },
   ];
 
@@ -73,7 +72,7 @@ function RootComponent() {
           {/* Logo */}
           <div className="flex items-center gap-2 px-2 py-3 border-b-2 border-border-color">
             <Heart className="h-8 w-8 text-primary fill-current animate-pulse" />
-            <span className="text-xl font-bold tracking-tight text-text-primary">TwoHearts</span>
+            <span className="text-xl font-bold tracking-tight text-text-primary">Habit Pasutri</span>
           </div>
 
           {/* User Profile Summary */}
@@ -114,14 +113,17 @@ function RootComponent() {
           </nav>
         </div>
 
-        {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-red-500 hover:bg-red-50 hover:text-red-600 transition-all border-2 border-transparent cursor-pointer"
-        >
-          <LogOut className="h-5 w-5" />
-          <span>{t("common.logout")}</span>
-        </button>
+        <div>
+          <Button>Buat Habbit</Button>
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-red-500 hover:bg-red-50 hover:text-red-600 transition-all border-2 border-transparent cursor-pointer"
+          >
+            <LogOut className="h-5 w-5" />
+            <span>{t("common.logout")}</span>
+          </button>
+        </div>
       </aside>
 
       {/* Main Content Area */}
@@ -129,7 +131,7 @@ function RootComponent() {
         {/* Mobile Top Header */}
         <header className="flex md:hidden items-center justify-between px-4 py-3 bg-card-surface border-b-2 border-border-color sticky top-0 z-40 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
           <div className="flex items-center gap-2">
-            <span className="font-bold tracking-tight text-text-primary">TwoHearts</span>
+            <span className="font-bold tracking-tight text-text-primary">Habit Pasutri</span>
           </div>
           {user && (
             <div className="flex items-center gap-2">
@@ -216,7 +218,7 @@ function RootComponent() {
           {/* Right Navigation Group */}
           <div className="flex-1 h-16 bg-card-surface border-t-2 border-border-color flex justify-around items-center pr-2">
             {[
-              { label: t("nav.analytics"), to: "/analytics", icon: BarChart2 },
+              { label: t("nav.list_habits"), to: "/list-habits", icon: ClipboardList },
               { label: t("nav.profile"), to: "/profile", icon: User },
             ].map((item) => {
               const active = location.pathname === item.to;
@@ -242,6 +244,7 @@ function RootComponent() {
           </div>
         </nav>
       </div>
+      <Toaster />
     </div>
   );
 }

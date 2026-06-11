@@ -5,11 +5,8 @@ import { useTranslation } from "react-i18next";
 import { HabitDialog } from "../components/HabitDialog";
 import { Button } from "../components/ui/button";
 import {
-  useDeleteHabit,
-  useHabitTemplates,
-  useMyHabits,
+  useHabitTemplates
 } from "../hooks/use-habits";
-import { useAuthStore } from "../stores/auth.store";
 import type { Habit } from "../types/index";
 
 export const Route = createFileRoute("/habits")({
@@ -17,52 +14,29 @@ export const Route = createFileRoute("/habits")({
 });
 
 function HabitsComponent() {
-  const { user } = useAuthStore();
-  const { data: habits = [] } = useMyHabits();
   const { data: templates = [] } = useHabitTemplates();
   const { t } = useTranslation();
-
-  // Mutations
-  const deleteMutation = useDeleteHabit();
 
   // Tab and form states
   const [activeTab, setActiveTab] = React.useState<"templates" | "create">("templates");
   const [editingHabit, setEditingHabit] = React.useState<Habit | null>(null);
   const [selectedTemplate, setSelectedTemplate] = React.useState<any | null>(null);
 
-  const handleOpenCreate = () => {
-    setEditingHabit(null);
-    setSelectedTemplate(null);
-    setActiveTab("create");
-  };
-
-  const handleOpenEdit = (habit: Habit) => {
-    setEditingHabit(habit);
-    setSelectedTemplate(null);
-    setActiveTab("create");
-  };
-
   const handleOpenTemplate = (tpl: any) => {
     setEditingHabit(null);
     setSelectedTemplate(tpl);
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm(t("habits.delete_habit_confirm"))) {
-      deleteMutation.mutate(id);
-    }
-  };
-
   const handleFormSuccess = () => {
     setEditingHabit(null);
     setSelectedTemplate(null);
-    setActiveTab("templates");
+    setActiveTab("create");
   };
 
   return (
     <div className="flex flex-col gap-6 mb-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">{t("habits.manage_habits")}</h1>
           <p className="text-text-secondary font-semibold text-sm">{t("habits.manage_habits_desc")}</p>

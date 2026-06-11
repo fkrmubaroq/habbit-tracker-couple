@@ -29,7 +29,7 @@
     "habits": "Habits",
     "goals": "Shared Goals",
     "leaderboard": "Leaderboard",
-    "analytics": "Analytics",
+    "list_habits": "Personal Habits",
     "profile": "Profile"
   },
   "dashboard": {
@@ -89,7 +89,7 @@
   },
   "habits": {
     "manage_habits": "Manage Habits",
-    "manage_habits_desc": "Create, edit, or delete personal and shared habits.",
+    "manage_habits_desc": "Create personal and shared habits.",
     "create_habit": "Create Habit",
     "quick_templates": "Quick Habit Templates",
     "templates_desc": "Click any card to quickly populate the habit form.",
@@ -105,7 +105,11 @@
     "shared_goal_partner": "Shared Goal with Partner?",
     "both_users_log": "Both users can log this habit.",
     "save_changes": "Save Changes",
-    "add_habit": "Add Habit"
+    "add_habit": "Add Habit",
+    "add_success": "Habit successfully added!",
+    "add_failed": "Failed to add habit. Please try again.",
+    "edit_success": "Habit successfully updated!",
+    "edit_failed": "Failed to update habit. Please try again."
   },
   "shared_goals": {
     "shared_goals": "Shared Goals",
@@ -160,5 +164,22 @@
     "name_required": "Display name is required",
     "username_min": "Username must be at least 3 characters",
     "password_min": "Password must be at least 6 characters"
+  },
+  "list_habits": {
+    "title": "Habits Directory",
+    "desc": "Manage and explore all your personal and couple habits.",
+    "tab_personal": "Personal",
+    "tab_couple": "Couple Goals",
+    "search_placeholder": "Search habits by title or description...",
+    "delete_success": "Habit successfully deleted!",
+    "delete_failed": "Failed to delete habit. Please try again.",
+    "no_personal_habits": "No personal habits created yet",
+    "no_personal_habits_desc": "Create a personal habit from the Habits tab to start tracking it individually!",
+    "no_couple_habits": "No couple habits created yet",
+    "no_couple_habits_desc": "Go to the Habits tab and check \"Shared Goal\" to start tracking habits together!",
+    "status_active": "Active",
+    "status_archived": "Archived",
+    "personal_badge": "Personal",
+    "couple_badge": "Couple"
   }
 }

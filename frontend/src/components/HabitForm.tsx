@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { useCreateHabit, useUpdateHabit } from "../hooks/use-habits";
+import { useToastStore } from "../stores/toast.store";
 import type { Habit } from "../types/index";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -23,6 +24,7 @@ export function HabitForm({
   onCancel,
 }: HabitFormProps) {
   const { t } = useTranslation();
+  const { showToast } = useToastStore();
 
   // Mutations
   const createMutation = useCreateHabit();
@@ -34,6 +36,14 @@ export function HabitForm({
   const [iconEmoji, setIconEmoji] = React.useState("🏋️‍♂️");
   const [frequency, setFrequency] = React.useState<"daily" | "weekly" | "monthly">("daily");
   const [isShared, setIsShared] = React.useState(false);
+
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setIconEmoji("🏋️‍♂️");
+    setFrequency("daily");
+    setIsShared(false);
+  }
 
   React.useEffect(() => {
     if (editingHabit) {
@@ -49,11 +59,7 @@ export function HabitForm({
       setFrequency(template.frequency);
       setIsShared(false);
     } else {
-      setTitle("");
-      setDescription("");
-      setIconEmoji("🏋️‍♂️");
-      setFrequency("daily");
-      setIsShared(false);
+      resetForm()
     }
   }, [editingHabit, template]);
 
@@ -79,14 +85,24 @@ export function HabitForm({
         },
         {
           onSuccess: () => {
+            showToast(t("habits.edit_success", { defaultValue: "Habit successfully updated!" }), "success");
             onSuccess();
+            resetForm();
+          },
+          onError: () => {
+            showToast(t("habits.edit_failed", { defaultValue: "Failed to update habit. Please try again." }), "error");
           },
         }
       );
     } else {
       createMutation.mutate(habitData, {
         onSuccess: () => {
+          showToast(t("habits.add_success", { defaultValue: "Habit successfully added!" }), "success");
           onSuccess();
+          resetForm();
+        },
+        onError: () => {
+          showToast(t("habits.add_failed", { defaultValue: "Failed to add habit. Please try again." }), "error");
         },
       });
     }
