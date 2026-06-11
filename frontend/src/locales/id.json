@@ -29,8 +29,8 @@
     "habits": "Habit",
     "goals": "Goals",
     "leaderboard": "Papan Skor",
-    "list_habits": "Kelola Habit",
-    "profile": "Profil"
+    "list_habits": "Habit",
+    "settings": "Pengaturan"
   },
   "dashboard": {
     "title": "Dashboard",

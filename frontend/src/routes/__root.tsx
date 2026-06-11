@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import clsx from "clsx";
-import { CheckSquare, ClipboardList, Heart, Home, LogOut, Target, User } from "lucide-react";
+import { CheckSquare, ClipboardList, Heart, Home, LogOut, Plus, Settings, Target } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Toaster } from "../components/Toaster";
@@ -18,6 +18,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent() {
   const { isAuthenticated, user, logout } = useAuthStore();
+
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
@@ -61,7 +62,7 @@ function RootComponent() {
     { label: t("nav.home"), to: "/", icon: Home },
     { label: t("nav.goals"), to: "/shared-goals", icon: Target },
     { label: t("nav.list_habits"), to: "/list-habits", icon: ClipboardList },
-    { label: t("nav.profile"), to: "/profile", icon: User },
+    { label: t("nav.settings"), to: "/settings", icon: Settings },
   ];
 
   return (
@@ -70,8 +71,8 @@ function RootComponent() {
       <aside className="hidden md:flex flex-col w-64 bg-card-surface border-r-2 border-border-color h-screen fixed top-0 left-0 p-4 justify-between z-40 shadow-[1px_0_0_0_var(--border-color)]">
         <div className="flex flex-col gap-6">
           {/* Logo */}
-          <div className="flex items-center gap-2 px-2 py-3 border-b-2 border-border-color">
-            <Heart className="h-8 w-8 text-primary fill-current animate-pulse" />
+          <div className="flex items-center gap-2 px-2 py-3">
+            <img src="/favicon/favicon.svg" alt="Logo" className="h-8 w-8" />
             <span className="text-xl font-bold tracking-tight text-text-primary">Habit Pasutri</span>
           </div>
 
@@ -114,7 +115,14 @@ function RootComponent() {
         </div>
 
         <div>
-          <Button>Buat Habbit</Button>
+          <Button
+            onClick={() => navigate({ to: "/habits" })}
+            variant="3d"
+            className="w-full mb-4 font-extrabold flex items-center justify-center gap-2"
+          >
+            <Plus className="h-5 w-5 stroke-3" />
+            <span>{t("habits.create_habit")}</span>
+          </Button>
           {/* Logout Button */}
           <button
             onClick={handleLogout}
@@ -131,6 +139,7 @@ function RootComponent() {
         {/* Mobile Top Header */}
         <header className="flex md:hidden items-center justify-between px-4 py-3 bg-card-surface border-b-2 border-border-color sticky top-0 z-40 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
           <div className="flex items-center gap-2">
+            <img src="/favicon/favicon.svg" alt="Logo" className="h-8 w-8" />
             <span className="font-bold tracking-tight text-text-primary">Habit Pasutri</span>
           </div>
           {user && (
@@ -155,7 +164,7 @@ function RootComponent() {
         {/* Mobile Bottom Navigation */}
         <nav className="fixed bottom-0 left-0 right-0 h-16 flex items-end md:hidden z-40 filter drop-shadow-[0_-4px_5px_rgba(0,0,0,0.04)]">
           {/* Left Navigation Group */}
-          <div className="flex-1 h-16 bg-card-surface border-t-2 border-border-color flex justify-around items-center pl-2">
+          <div className="flex-1 h-16 bg-card-surface border-t-2 border-border-color flex justify-around items-center">
             {[
               { label: t("nav.home"), to: "/", icon: Home },
               { label: t("nav.goals"), to: "/shared-goals", icon: Target },
@@ -165,16 +174,16 @@ function RootComponent() {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex flex-col items-center shrink-0 justify-center md:w-full size-12.5 rounded-lg transition-all border-2 border-transparent ${active
-                    ? "nav-active-duo"
+                  className={`flex flex-col items-center shrink-0 justify-center  rounded-lg transition-all border-2 border-transparent ${active
+                    ? ""
                     : "text-text-secondary"
                     }`}
                 >
                   <item.icon
-                    color={active ? "white" : undefined}
-                    className="size-5" />
-                  <span className={clsx("text-[9px] font-extrabold mt-0.5 truncate max-w-[50px]", {
-                    "text-white": active,
+                    color={active ? "var(--primary)" : undefined}
+                    className="size-6" />
+                  <span className={clsx("text-[10px] font-extrabold mt-0.5 max-w-[50px]", {
+                    "text-primary ": active,
                     "text-text-secondary": !active
                   })}>{item.label}</span>
                 </Link>
@@ -216,26 +225,29 @@ function RootComponent() {
           </div>
 
           {/* Right Navigation Group */}
-          <div className="flex-1 h-16 bg-card-surface border-t-2 border-border-color flex justify-around items-center pr-2">
+          <div className="flex-1 h-16 bg-card-surface border-t-2 border-border-color flex justify-around items-center">
             {[
               { label: t("nav.list_habits"), to: "/list-habits", icon: ClipboardList },
-              { label: t("nav.profile"), to: "/profile", icon: User },
+              { label: t("nav.settings"), to: "/settings", icon: Settings },
             ].map((item) => {
               const active = location.pathname === item.to;
+              const isPengaturan = item.to === "/settings";
               return (
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex flex-col items-center shrink-0 justify-center md:w-full size-12.5 px-1.5 py-1 rounded-lg transition-all border-2 border-transparent ${active
-                    ? "nav-active-duo"
+                  className={`flex flex-col items-center shrink-0 justify-center  rounded-lg transition-all border-2 border-transparent ${active
+                    ? ""
                     : "text-text-secondary"
                     }`}
                 >
                   <item.icon
-                    color={active ? "white" : undefined}
-                    className="size-5" />
-                  <span className={clsx("text-[9px] font-extrabold mt-0.5 truncate max-w-[50px]", {
-                    "text-white": active,
+                    color={active ? "var(--primary)" : undefined}
+                    className={clsx("size-6", {
+                      "ml-1.5": isPengaturan
+                    })} />
+                  <span className={clsx("text-[10px] font-extrabold mt-0.5 max-w-[50px]", {
+                    "text-primary ": active,
                     "text-text-secondary": !active
                   })}>{item.label}</span>
                 </Link>

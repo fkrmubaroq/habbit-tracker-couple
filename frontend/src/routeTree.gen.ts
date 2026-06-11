@@ -10,8 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SharedGoalsRouteImport } from './routes/shared-goals'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RegisterRouteImport } from './routes/register'
-import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ListHabitsRouteImport } from './routes/list-habits'
 import { Route as HabitsRouteImport } from './routes/habits'
@@ -23,14 +23,14 @@ const SharedGoalsRoute = SharedGoalsRouteImport.update({
   path: '/shared-goals',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -65,8 +65,8 @@ export interface FileRoutesByFullPath {
   '/habits': typeof HabitsRoute
   '/list-habits': typeof ListHabitsRoute
   '/login': typeof LoginRoute
-  '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/settings': typeof SettingsRoute
   '/shared-goals': typeof SharedGoalsRoute
 }
 export interface FileRoutesByTo {
@@ -75,8 +75,8 @@ export interface FileRoutesByTo {
   '/habits': typeof HabitsRoute
   '/list-habits': typeof ListHabitsRoute
   '/login': typeof LoginRoute
-  '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/settings': typeof SettingsRoute
   '/shared-goals': typeof SharedGoalsRoute
 }
 export interface FileRoutesById {
@@ -86,8 +86,8 @@ export interface FileRoutesById {
   '/habits': typeof HabitsRoute
   '/list-habits': typeof ListHabitsRoute
   '/login': typeof LoginRoute
-  '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/settings': typeof SettingsRoute
   '/shared-goals': typeof SharedGoalsRoute
 }
 export interface FileRouteTypes {
@@ -98,8 +98,8 @@ export interface FileRouteTypes {
     | '/habits'
     | '/list-habits'
     | '/login'
-    | '/profile'
     | '/register'
+    | '/settings'
     | '/shared-goals'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -108,8 +108,8 @@ export interface FileRouteTypes {
     | '/habits'
     | '/list-habits'
     | '/login'
-    | '/profile'
     | '/register'
+    | '/settings'
     | '/shared-goals'
   id:
     | '__root__'
@@ -118,8 +118,8 @@ export interface FileRouteTypes {
     | '/habits'
     | '/list-habits'
     | '/login'
-    | '/profile'
     | '/register'
+    | '/settings'
     | '/shared-goals'
   fileRoutesById: FileRoutesById
 }
@@ -129,8 +129,8 @@ export interface RootRouteChildren {
   HabitsRoute: typeof HabitsRoute
   ListHabitsRoute: typeof ListHabitsRoute
   LoginRoute: typeof LoginRoute
-  ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRoute
+  SettingsRoute: typeof SettingsRoute
   SharedGoalsRoute: typeof SharedGoalsRoute
 }
 
@@ -143,18 +143,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SharedGoalsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register': {
       id: '/register'
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -201,8 +201,8 @@ const rootRouteChildren: RootRouteChildren = {
   HabitsRoute: HabitsRoute,
   ListHabitsRoute: ListHabitsRoute,
   LoginRoute: LoginRoute,
-  ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRoute,
+  SettingsRoute: SettingsRoute,
   SharedGoalsRoute: SharedGoalsRoute,
 }
 export const routeTree = rootRouteImport

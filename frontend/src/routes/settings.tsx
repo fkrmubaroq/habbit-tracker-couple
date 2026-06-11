@@ -1,19 +1,19 @@
-import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { useAuthStore } from "../stores/auth.store";
-import { useThemeStore } from "../stores/theme.store";
-import api from "../lib/api-client";
+import { SectionLanguageSwitcher } from "../components/profile/section-language-switcher";
 import { SectionProfileCard } from "../components/profile/section-profile-card";
 import { SectionProfileForm } from "../components/profile/section-profile-form";
-import { SectionLanguageSwitcher } from "../components/profile/section-language-switcher";
 import { SectionThemeSwitcher } from "../components/profile/section-theme-switcher";
+import api from "../lib/api-client";
+import { useAuthStore } from "../stores/auth.store";
+import { useThemeStore } from "../stores/theme.store";
 
-export const Route = createFileRoute("/profile")({
-  component: ProfileComponent,
+export const Route = createFileRoute("/settings")({
+  component: SettingsComponent,
 });
 
-function ProfileComponent() {
+function SettingsComponent() {
   const { user, setUser } = useAuthStore();
   const { theme, setTheme } = useThemeStore();
   const { t } = useTranslation();
@@ -41,7 +41,7 @@ function ProfileComponent() {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.error || t("profile.error_update", { defaultValue: "Failed to update profile." }));
+      setError(err.response?.data?.error || t("profile.error_update", { defaultValue: "Failed to update settings." }));
     } finally {
       setLoading(false);
     }
@@ -56,7 +56,7 @@ function ProfileComponent() {
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">{t("nav.profile")}</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">{t("nav.settings")}</h1>
         <p className="text-text-secondary font-semibold text-sm">{t("profile.profile_desc")}</p>
       </div>
 
@@ -85,4 +85,3 @@ function ProfileComponent() {
     </div>
   );
 }
-
