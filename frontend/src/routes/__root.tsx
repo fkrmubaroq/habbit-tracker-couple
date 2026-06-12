@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import clsx from "clsx";
-import { CheckSquare, ClipboardList, Heart, Home, LogOut, Plus, Settings, Target } from "lucide-react";
+import { CheckSquare, ClipboardList, Heart, HeartIcon, Home, LogOut, Plus, Settings } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Toaster } from "../components/Toaster";
@@ -60,7 +60,7 @@ function RootComponent() {
 
   const navItems = [
     { label: t("nav.home"), to: "/", icon: Home },
-    { label: t("nav.goals"), to: "/shared-goals", icon: Target },
+    { label: t("nav.goals"), to: "/shared-goals", icon: HeartIcon },
     { label: t("nav.list_habits"), to: "/list-habits", icon: ClipboardList },
     { label: t("nav.settings"), to: "/settings", icon: Settings },
   ];
@@ -167,7 +167,7 @@ function RootComponent() {
           <div className="flex-1 h-16 bg-card-surface border-t-2 border-border-color flex justify-around items-center">
             {[
               { label: t("nav.home"), to: "/", icon: Home },
-              { label: t("nav.goals"), to: "/shared-goals", icon: Target },
+              { label: t("nav.goals"), to: "/shared-goals", icon: HeartIcon },
             ].map((item) => {
               const active = location.pathname === item.to;
               return (

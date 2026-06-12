@@ -27,9 +27,9 @@
   "nav": {
     "home": "Dashboard",
     "habits": "Habits",
-    "goals": "Shared Goals",
+    "goals": "Couple",
     "leaderboard": "Leaderboard",
-    "list_habits": "Personal Habits",
+    "list_habits": "Habits",
     "settings": "Settings"
   },
   "dashboard": {

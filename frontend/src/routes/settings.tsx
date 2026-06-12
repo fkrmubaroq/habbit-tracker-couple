@@ -56,7 +56,7 @@ function SettingsComponent() {
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">{t("nav.settings")}</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight text-text-primary">{t("nav.settings")}</h1>
         <p className="text-text-secondary font-semibold text-sm">{t("profile.profile_desc")}</p>
       </div>
 

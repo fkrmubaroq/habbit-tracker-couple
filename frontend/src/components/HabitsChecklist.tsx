@@ -1,7 +1,7 @@
-import { Check } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import type { Habit } from "../types/index";
+import { Checkbox } from "./ui/checkbox";
 
 interface HabitsChecklistProps {
   habits: Habit[];
@@ -90,12 +90,12 @@ export function HabitsChecklist({
                   </div>
 
                   {/* Checkbox trigger button */}
-                  <button
+                  <Checkbox
+                    checked={isCompleted}
                     onClick={() => onToggle(habit.id, isCompleted, habit.icon_emoji)}
-                    className={`max-[400px]:hidden! checkbox-duo ${isCompleted ? "completed animate-heart-pop" : ""}`}
-                  >
-                    {isCompleted ? <Check className="h-5 w-5 stroke-[3.5]" /> : null}
-                  </button>
+                    size="sm"
+                    className="max-[400px]:hidden!"
+                  />
                 </div>
 
                 {habit.description && (
@@ -137,12 +137,12 @@ export function HabitsChecklist({
                   </div>
                 ) : null}
 
-                <button
+                <Checkbox
+                  checked={isCompleted}
                   onClick={() => onToggle(habit.id, isCompleted, habit.icon_emoji)}
-                  className={`min-[401px]:hidden! ml-auto checkbox-duo ${isCompleted ? "completed animate-heart-pop" : ""}`}
-                >
-                  {isCompleted && <Check className="h-5 w-5 stroke-[3.5]" />}
-                </button>
+                  size="sm"
+                  className="min-[401px]:hidden! ml-auto"
+                />
               </div>
             );
           })}

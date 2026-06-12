@@ -1,6 +1,7 @@
 import { Check, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Habit } from "../../types/index";
+import { Checkbox } from "../ui/checkbox";
 
 export interface SectionGoalsListProps {
   sharedHabits: Habit[];
@@ -64,25 +65,23 @@ export function SectionGoalsList({
                 <div className="flex items-center gap-6 self-center">
                   {/* User toggle */}
                   <div className="flex flex-col items-center gap-1">
-                    <button
-                      onClick={() => onToggle(habit.id, isCompleted)}
-                      className={`h-12 w-12 flex items-center justify-center rounded-2xl border-2 border-text-primary cursor-pointer transition-all shadow-[0_3px_0_0_#1f2937] active:translate-y-[2px] active:shadow-[0_0px_0_0_#1f2937] ${isCompleted ? "bg-primary text-text-primary" : "bg-card-surface hover:bg-highlight"
-                        }`}
-                    >
-                      {isCompleted ? <Check className="h-6 w-6 stroke-[3.5]" /> : null}
-                    </button>
+                    <Checkbox
+                      checked={isCompleted}
+                      onClick={() => onToggle(habit.id, isCompleted)} size="sm"
+                    />
+
                     <span className="text-[10px] font-extrabold text-text-secondary uppercase">{t("dashboard.you")}</span>
                   </div>
 
                   {/* Connection indicator */}
                   <div className="flex flex-col items-center h-12 justify-center">
-                    <div className={`h-1.5 w-10 border-2 border-text-primary ${isCompleted && partnerCompleted ? "bg-primary" : "bg-highlight"}`} />
+                    <div className={`h-1.5 w-10 border-2 border-border-color ${isCompleted && partnerCompleted ? "bg-primary" : "bg-highlight"}`} />
                   </div>
 
                   {/* Partner toggle visibility */}
                   <div className="flex flex-col items-center gap-1">
                     <div
-                      className={`h-12 w-12 flex items-center justify-center rounded-2xl border-2 border-text-primary ${partnerCompleted ? "bg-secondary text-text-primary" : "bg-highlight text-text-secondary"
+                      className={`h-12 w-12 flex items-center justify-center rounded-2xl border-2 border-border-color ${partnerCompleted ? "bg-secondary text-text-primary" : "bg-highlight text-text-secondary"
                         }`}
                     >
                       {partnerCompleted ? <Check className="h-6 w-6 stroke-[3.5]" /> : null}

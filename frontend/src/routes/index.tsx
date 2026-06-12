@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import confetti from "canvas-confetti";
 import { Heart, Trophy } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
@@ -8,7 +9,6 @@ import { useMyLogs, usePartnerLogs, useToggleCompletion } from "../hooks/use-hab
 import { useMyHabits } from "../hooks/use-habits";
 import { usePartnerProfile } from "../hooks/use-partner";
 import { useAuthStore } from "../stores/auth.store";
-import confetti from "canvas-confetti";
 
 export const Route = createFileRoute("/")({
   component: DashboardComponent,
@@ -106,7 +106,7 @@ function DashboardComponent() {
 
       {/* Title */}
       <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">{t("dashboard.title")}</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight text-text-primary">{t("dashboard.title")}</h1>
         <p className="text-text-secondary font-semibold text-sm">{t("dashboard.welcome", { name: user?.name })}</p>
       </div>
 

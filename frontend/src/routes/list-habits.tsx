@@ -1,15 +1,15 @@
-import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { Edit, Heart, Search, Trash2 } from "lucide-react";
+import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { useMyHabits, useDeleteHabit } from "../hooks/use-habits";
+import { HabitForm } from "../components/HabitForm";
+import { Button } from "../components/ui/button";
+import { Dialog, DialogContent } from "../components/ui/dialog";
+import { Input } from "../components/ui/input";
+import { useDeleteHabit, useMyHabits } from "../hooks/use-habits";
 import { usePartnerProfile } from "../hooks/use-partner";
 import { useAuthStore } from "../stores/auth.store";
 import { useToastStore } from "../stores/toast.store";
-import { Dialog, DialogContent } from "../components/ui/dialog";
-import { HabitForm } from "../components/HabitForm";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Heart, Search, Edit, Trash2 } from "lucide-react";
 import type { Habit } from "../types/index";
 
 export const Route = createFileRoute("/list-habits")({
@@ -76,7 +76,7 @@ function ListHabitsComponent() {
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="flex flex-col gap-1">
-        <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">
+        <h1 className="text-2xl font-extrabold tracking-tight text-text-primary">
           {t("list_habits.title")}
         </h1>
         <p className="text-text-secondary font-semibold text-sm">
@@ -170,11 +170,10 @@ function ListHabitsComponent() {
                         : t("list_habits.personal_badge")}
                     </span>
                     <span
-                      className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full border-2 ${
-                        habit.is_active
+                      className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full border-2 ${habit.is_active
                           ? "bg-primary/10 border-primary text-primary"
                           : "bg-highlight border-border-color text-text-secondary"
-                      }`}
+                        }`}
                     >
                       {habit.is_active
                         ? t("list_habits.status_active")
