@@ -2,7 +2,6 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import helmet from "helmet";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 // Routes imports
 import analyticsRoutes from "./modules/analytics/analytics.routes.js";
@@ -16,10 +15,9 @@ dotenv.config();
 const app = express();
 
 // Security Middlewares
-app.use(helmet());
 app.use(
   cors({
-    origin: [process.env.ALLOW_ORIGIN_CORS!],
+    origin: ["*"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],

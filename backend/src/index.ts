@@ -3,7 +3,7 @@ import { env } from "./config/env.js";
 import { testConnection } from "./config/database.js";
 
 async function startServer() {
-  console.log("Starting TwoHearts Habit Tracker backend server...");
+  console.log("Starting Habit Pasutri Habit Tracker backend server...");
   
   // Test database connection before listening
   const isDbConnected = await testConnection();
@@ -13,7 +13,7 @@ async function startServer() {
 
   const port = env.PORT;
   app.listen(port, () => {
-    console.log(`[Server]: TwoHearts Backend is running on port ${port} in ${env.NODE_ENV} mode.`);
+    console.log(`[Server]: Habit Pasutri Backend is running on port ${port} in ${env.NODE_ENV} mode.`);
   });
 }
 

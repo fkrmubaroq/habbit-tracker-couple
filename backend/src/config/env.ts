@@ -9,7 +9,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(5000),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   DB_PROVIDER: z.enum(["mysql", "supabase"]),
-  JWT_SECRET: z.string().default("twohearts-default-secret-key-12345"),
+  JWT_SECRET: z.string().default("habitpasutri-default-secret-key-12345"),
   
   // MySQL
   MYSQL_HOST: z.string().optional(),

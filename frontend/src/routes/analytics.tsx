@@ -53,7 +53,7 @@ function AnalyticsComponent() {
         heightLeft -= pageHeight;
       }
 
-      pdf.save(`TwoHearts_Analytics_${period}_${new Date().toISOString().slice(0, 10)}.pdf`);
+      pdf.save(`HabitPasutri_Analytics_${period}_${new Date().toISOString().slice(0, 10)}.pdf`);
     } catch (error) {
       console.error("Error generating PDF:", error);
     }
