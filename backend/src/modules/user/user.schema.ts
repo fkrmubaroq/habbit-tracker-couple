@@ -8,5 +8,6 @@ export const updateProfileSchema = z.object({
     theme_preferences: z.object({
       theme: z.string(),
     }).nullable().optional(),
+    password: z.string().min(6, "Password must be at least 6 characters").or(z.literal("")).optional(),
   }),
 });

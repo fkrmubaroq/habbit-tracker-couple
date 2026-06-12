@@ -82,6 +82,7 @@ export class UserSupabaseRepository implements IUserRepository {
         name: user.name,
         avatar_emoji: user.avatar_emoji,
         avatar_image: user.avatar_image,
+        password_hash: user.password_hash,
         partner_id: user.partner_id,
         theme_preferences: user.theme_preferences,
       })

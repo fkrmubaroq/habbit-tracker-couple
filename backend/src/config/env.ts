@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import path from "path";
 import { z } from "zod";
 
 // Load environment variables from .env file
@@ -10,7 +9,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   DB_PROVIDER: z.enum(["mysql", "supabase"]),
   JWT_SECRET: z.string().default("habitpasutri-default-secret-key-12345"),
-  
+
   // MySQL
   MYSQL_HOST: z.string().optional(),
   MYSQL_USER: z.string().optional(),
@@ -24,6 +23,11 @@ const envSchema = z.object({
 
   // Postgres URL (For raw migrations and seeders when DB_PROVIDER is supabase)
   DATABASE_URL: z.string().optional(),
+
+  // CORS
+  ALLOW_ORIGIN_CORS: z.string().optional(),
+
+
 }).superRefine((data, ctx) => {
   if (data.DB_PROVIDER === "mysql") {
     if (!data.MYSQL_HOST) {

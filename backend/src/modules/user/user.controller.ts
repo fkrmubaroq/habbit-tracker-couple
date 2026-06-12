@@ -3,6 +3,7 @@ import { AuthenticatedRequest } from "../../middleware/auth.middleware.js";
 import { userRepo } from "../../repositories/repository.factory.js";
 import { mysqlPool, supabaseClient } from "../../config/database.js";
 import { env } from "../../config/env.js";
+import bcrypt from "bcryptjs";
 
 export async function updateProfile(
   req: AuthenticatedRequest,
@@ -11,7 +12,7 @@ export async function updateProfile(
 ) {
   try {
     const userId = req.userId!;
-    const { name, avatar_emoji, avatar_image, theme_preferences } = req.body;
+    const { name, avatar_emoji, avatar_image, theme_preferences, password } = req.body;
 
     const user = await userRepo.findById(userId);
     if (!user) {
@@ -28,6 +29,11 @@ export async function updateProfile(
     
     if (theme_preferences !== undefined) {
       user.theme_preferences = theme_preferences;
+    }
+
+    // Optional password update
+    if (password && password.trim() !== "") {
+      user.password_hash = await bcrypt.hash(password, 10);
     }
 
     const updatedUser = await userRepo.update(user);

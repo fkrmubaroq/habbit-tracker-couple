@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 // Routes imports
+import { env } from "./config/env.js";
 import analyticsRoutes from "./modules/analytics/analytics.routes.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import gamificationRoutes from "./modules/gamification/gamification.routes.js";
@@ -17,7 +18,7 @@ const app = express();
 // Security Middlewares
 app.use(
   cors({
-    origin: ["*"],
+    origin: [env.ALLOW_ORIGIN_CORS!],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],

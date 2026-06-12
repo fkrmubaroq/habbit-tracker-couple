@@ -69,11 +69,12 @@ export class UserMySQLRepository implements IUserRepository {
   async update(user: User): Promise<User> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     await mysqlPool.execute(
-      "UPDATE USERS SET name = ?, avatar_emoji = ?, avatar_image = ?, partner_id = ?, theme_preferences = ? WHERE id = ?",
+      "UPDATE USERS SET name = ?, avatar_emoji = ?, avatar_image = ?, password_hash = ?, partner_id = ?, theme_preferences = ? WHERE id = ?",
       [
         user.name,
         user.avatar_emoji,
         user.avatar_image,
+        user.password_hash,
         user.partner_id,
         user.theme_preferences ? JSON.stringify(user.theme_preferences) : null,
         user.id,
