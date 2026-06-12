@@ -36,7 +36,7 @@ export async function testConnection(): Promise<boolean> {
     }
   } else if (env.DB_PROVIDER === "supabase" && supabaseClient) {
     try {
-      const { data, error } = await supabaseClient.from("USERS").select("count", { count: "exact", head: true });
+      const { data, error } = await supabaseClient.from("users").select("count", { count: "exact", head: true });
       if (error) throw error;
       console.log("Supabase connection test: SUCCESS");
       return true;

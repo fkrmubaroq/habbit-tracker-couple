@@ -6,7 +6,7 @@ export class HabitLogSupabaseRepository implements IHabitLogRepository {
   async findByHabitAndDate(habitId: string, completedDate: string): Promise<HabitLog | null> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("HABIT_LOGS")
+      .from("habit_logs")
       .select("*")
       .eq("habit_id", habitId)
       .eq("completed_date", completedDate)
@@ -22,7 +22,7 @@ export class HabitLogSupabaseRepository implements IHabitLogRepository {
   async create(log: HabitLog): Promise<HabitLog> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("HABIT_LOGS")
+      .from("habit_logs")
       .upsert({
         id: log.id,
         habit_id: log.habit_id,
@@ -44,7 +44,7 @@ export class HabitLogSupabaseRepository implements IHabitLogRepository {
   async delete(habitId: string, completedDate: string): Promise<boolean> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { error } = await supabaseClient
-      .from("HABIT_LOGS")
+      .from("habit_logs")
       .delete()
       .eq("habit_id", habitId)
       .eq("completed_date", completedDate);
@@ -59,7 +59,7 @@ export class HabitLogSupabaseRepository implements IHabitLogRepository {
   async findLogsForUser(userId: string, startDate: string, endDate: string): Promise<HabitLog[]> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("HABIT_LOGS")
+      .from("habit_logs")
       .select("*")
       .eq("user_id", userId)
       .gte("completed_date", startDate)
@@ -76,7 +76,7 @@ export class HabitLogSupabaseRepository implements IHabitLogRepository {
   async findLogsForHabit(habitId: string, startDate: string, endDate: string): Promise<HabitLog[]> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("HABIT_LOGS")
+      .from("habit_logs")
       .select("*")
       .eq("habit_id", habitId)
       .gte("completed_date", startDate)
@@ -95,7 +95,7 @@ export class HabitLogSupabaseRepository implements IHabitLogRepository {
 
     // Get count of completed logs
     const { count: completedCount, error: logError } = await supabaseClient
-      .from("HABIT_LOGS")
+      .from("habit_logs")
       .select("id", { count: "exact", head: true })
       .eq("user_id", userId)
       .gte("completed_date", startDate)
@@ -108,7 +108,7 @@ export class HabitLogSupabaseRepository implements IHabitLogRepository {
 
     // Get all habits that the user tracks (owned + shared)
     const { data: habits, error: habitsError } = await supabaseClient
-      .from("HABITS")
+      .from("habits")
       .select("*")
       .or(`user_id.eq.${userId},is_shared.eq.true`)
       .eq("is_active", true);

@@ -13,10 +13,10 @@ async function runMySQLMigration() {
 
   try {
     console.log("Checking if 'category' column exists in MySQL...");
-    const [columns]: any[] = await connection.query("SHOW COLUMNS FROM HABITS LIKE 'category'");
+    const [columns]: any[] = await connection.query("SHOW COLUMNS FROM habits LIKE 'category'");
     if (columns.length > 0) {
-      console.log("Removing 'category' column from MySQL HABITS table...");
-      await connection.query("ALTER TABLE HABITS DROP COLUMN category");
+      console.log("Removing 'category' column from MySQL habits table...");
+      await connection.query("ALTER TABLE habits DROP COLUMN category");
       console.log("MySQL migration completed successfully.");
     } else {
       console.log("'category' column already removed from MySQL.");
@@ -47,8 +47,8 @@ async function runSupabaseMigration() {
       "SELECT column_name FROM information_schema.columns WHERE table_name='habits' AND column_name='category'"
     );
     if (res.rows.length > 0) {
-      console.log("Removing 'category' column from PG/Supabase HABITS table...");
-      await client.query("ALTER TABLE HABITS DROP COLUMN category");
+      console.log("Removing 'category' column from PG/Supabase habits table...");
+      await client.query("ALTER TABLE habits DROP COLUMN category");
       console.log("PG/Supabase migration completed successfully.");
     } else {
       console.log("'category' column already removed from PG/Supabase.");

@@ -107,17 +107,17 @@ export async function resetData(
 
     if (env.DB_PROVIDER === "mysql" && mysqlPool) {
       for (const uid of userIds) {
-        await mysqlPool.query("DELETE FROM USER_BADGES WHERE user_id = ?", [uid]);
-        await mysqlPool.query("DELETE FROM STREAKS WHERE user_id = ?", [uid]);
-        await mysqlPool.query("DELETE FROM HABIT_LOGS WHERE user_id = ?", [uid]);
-        await mysqlPool.query("DELETE FROM HABITS WHERE user_id = ?", [uid]);
+        await mysqlPool.query("DELETE FROM user_badges WHERE user_id = ?", [uid]);
+        await mysqlPool.query("DELETE FROM streaks WHERE user_id = ?", [uid]);
+        await mysqlPool.query("DELETE FROM habit_logs WHERE user_id = ?", [uid]);
+        await mysqlPool.query("DELETE FROM habits WHERE user_id = ?", [uid]);
       }
     } else if (env.DB_PROVIDER === "supabase" && supabaseClient) {
       for (const uid of userIds) {
-        await supabaseClient.from("USER_BADGES").delete().eq("user_id", uid);
-        await supabaseClient.from("STREAKS").delete().eq("user_id", uid);
-        await supabaseClient.from("HABIT_LOGS").delete().eq("user_id", uid);
-        await supabaseClient.from("HABITS").delete().eq("user_id", uid);
+        await supabaseClient.from("user_badges").delete().eq("user_id", uid);
+        await supabaseClient.from("streaks").delete().eq("user_id", uid);
+        await supabaseClient.from("habit_logs").delete().eq("user_id", uid);
+        await supabaseClient.from("habits").delete().eq("user_id", uid);
       }
     }
 

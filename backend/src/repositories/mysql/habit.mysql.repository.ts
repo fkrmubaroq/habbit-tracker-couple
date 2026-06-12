@@ -7,7 +7,7 @@ export class HabitMySQLRepository implements IHabitRepository {
   async findById(id: string): Promise<Habit | null> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT * FROM HABITS WHERE id = ?",
+      "SELECT * FROM habits WHERE id = ?",
       [id]
     );
     if (rows.length === 0) return null;
@@ -21,7 +21,7 @@ export class HabitMySQLRepository implements IHabitRepository {
   async create(habit: Habit): Promise<Habit> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     await mysqlPool.execute(
-      "INSERT INTO HABITS (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO habits (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [
         habit.id,
         habit.user_id,
@@ -39,7 +39,7 @@ export class HabitMySQLRepository implements IHabitRepository {
   async update(habit: Habit): Promise<Habit> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     await mysqlPool.execute(
-      "UPDATE HABITS SET title = ?, description = ?, icon_emoji = ?, frequency = ?, is_shared = ?, is_active = ? WHERE id = ?",
+      "UPDATE habits SET title = ?, description = ?, icon_emoji = ?, frequency = ?, is_shared = ?, is_active = ? WHERE id = ?",
       [
         habit.title,
         habit.description,
@@ -56,7 +56,7 @@ export class HabitMySQLRepository implements IHabitRepository {
   async delete(id: string): Promise<boolean> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [result] = await mysqlPool.execute<ResultSetHeader>(
-      "DELETE FROM HABITS WHERE id = ?",
+      "DELETE FROM habits WHERE id = ?",
       [id]
     );
     return result.affectedRows > 0;
@@ -65,7 +65,7 @@ export class HabitMySQLRepository implements IHabitRepository {
   async findByUserId(userId: string): Promise<Habit[]> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT * FROM HABITS WHERE user_id = ? ORDER BY created_at DESC",
+      "SELECT * FROM habits WHERE user_id = ? ORDER BY created_at DESC",
       [userId]
     );
     return rows.map((row) => {
@@ -82,7 +82,7 @@ export class HabitMySQLRepository implements IHabitRepository {
     const ids = partnerId ? [userId, partnerId] : [userId];
     const placeholders = ids.map(() => "?").join(",");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      `SELECT * FROM HABITS WHERE is_shared = 1 AND user_id IN (${placeholders}) ORDER BY created_at DESC`,
+      `SELECT * FROM habits WHERE is_shared = 1 AND user_id IN (${placeholders}) ORDER BY created_at DESC`,
       ids
     );
     return rows.map((row) => {

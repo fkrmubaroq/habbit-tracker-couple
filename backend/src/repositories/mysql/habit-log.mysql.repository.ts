@@ -7,7 +7,7 @@ export class HabitLogMySQLRepository implements IHabitLogRepository {
   async findByHabitAndDate(habitId: string, completedDate: string): Promise<HabitLog | null> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT * FROM HABIT_LOGS WHERE habit_id = ? AND completed_date = ?",
+      "SELECT * FROM habit_logs WHERE habit_id = ? AND completed_date = ?",
       [habitId, completedDate]
     );
     if (rows.length === 0) return null;
@@ -19,7 +19,7 @@ export class HabitLogMySQLRepository implements IHabitLogRepository {
   async create(log: HabitLog): Promise<HabitLog> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     await mysqlPool.execute(
-      "INSERT INTO HABIT_LOGS (id, habit_id, user_id, completed_date, is_completed, notes) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE is_completed = VALUES(is_completed), notes = VALUES(notes)",
+      "INSERT INTO habit_logs (id, habit_id, user_id, completed_date, is_completed, notes) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE is_completed = VALUES(is_completed), notes = VALUES(notes)",
       [
         log.id,
         log.habit_id,
@@ -35,7 +35,7 @@ export class HabitLogMySQLRepository implements IHabitLogRepository {
   async delete(habitId: string, completedDate: string): Promise<boolean> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [result] = await mysqlPool.execute<any>(
-      "DELETE FROM HABIT_LOGS WHERE habit_id = ? AND completed_date = ?",
+      "DELETE FROM habit_logs WHERE habit_id = ? AND completed_date = ?",
       [habitId, completedDate]
     );
     return result.affectedRows > 0;
@@ -44,7 +44,7 @@ export class HabitLogMySQLRepository implements IHabitLogRepository {
   async findLogsForUser(userId: string, startDate: string, endDate: string): Promise<HabitLog[]> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT * FROM HABIT_LOGS WHERE user_id = ? AND completed_date BETWEEN ? AND ? ORDER BY completed_date ASC",
+      "SELECT * FROM habit_logs WHERE user_id = ? AND completed_date BETWEEN ? AND ? ORDER BY completed_date ASC",
       [userId, startDate, endDate]
     );
     return rows.map((row) => {
@@ -57,7 +57,7 @@ export class HabitLogMySQLRepository implements IHabitLogRepository {
   async findLogsForHabit(habitId: string, startDate: string, endDate: string): Promise<HabitLog[]> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT * FROM HABIT_LOGS WHERE habit_id = ? AND completed_date BETWEEN ? AND ? ORDER BY completed_date ASC",
+      "SELECT * FROM habit_logs WHERE habit_id = ? AND completed_date BETWEEN ? AND ? ORDER BY completed_date ASC",
       [habitId, startDate, endDate]
     );
     return rows.map((row) => {
@@ -72,14 +72,14 @@ export class HabitLogMySQLRepository implements IHabitLogRepository {
 
     // Get count of completed logs
     const [logRows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT COUNT(*) as count FROM HABIT_LOGS WHERE user_id = ? AND completed_date BETWEEN ? AND ?",
+      "SELECT COUNT(*) as count FROM habit_logs WHERE user_id = ? AND completed_date BETWEEN ? AND ?",
       [userId, startDate, endDate]
     );
     const completedCount = logRows[0].count;
 
     // Get all habits that the user tracks (owned + shared)
     const [habitRows] = await mysqlPool.execute<RowDataPacket[]>(
-      `SELECT DISTINCT h.* FROM HABITS h 
+      `SELECT DISTINCT h.* FROM habits h 
        WHERE (h.user_id = ? OR h.is_shared = 1) 
        AND h.is_active = 1`,
       [userId]

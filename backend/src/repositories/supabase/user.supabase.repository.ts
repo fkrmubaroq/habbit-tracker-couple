@@ -6,7 +6,7 @@ export class UserSupabaseRepository implements IUserRepository {
   async findById(id: string): Promise<User | null> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("USERS")
+      .from("users")
       .select("*")
       .eq("id", id)
       .maybeSingle();
@@ -21,7 +21,7 @@ export class UserSupabaseRepository implements IUserRepository {
   async findByUsername(username: string): Promise<User | null> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("USERS")
+      .from("users")
       .select("*")
       .eq("username", username)
       .maybeSingle();
@@ -36,7 +36,7 @@ export class UserSupabaseRepository implements IUserRepository {
   async findByRole(role: "husband" | "wife"): Promise<User | null> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("USERS")
+      .from("users")
       .select("*")
       .eq("role", role)
       .limit(1)
@@ -52,7 +52,7 @@ export class UserSupabaseRepository implements IUserRepository {
   async create(user: User): Promise<User> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("USERS")
+      .from("users")
       .insert({
         id: user.id,
         username: user.username,
@@ -77,7 +77,7 @@ export class UserSupabaseRepository implements IUserRepository {
   async update(user: User): Promise<User> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("USERS")
+      .from("users")
       .update({
         name: user.name,
         avatar_emoji: user.avatar_emoji,
@@ -100,7 +100,7 @@ export class UserSupabaseRepository implements IUserRepository {
   async count(): Promise<number> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { count, error } = await supabaseClient
-      .from("USERS")
+      .from("users")
       .select("id", { count: "exact", head: true });
 
     if (error) {

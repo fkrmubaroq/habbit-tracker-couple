@@ -8,7 +8,7 @@ export class GamificationMySQLRepository implements IGamificationRepository {
   async findStreak(userId: string, habitId: string): Promise<Streak | null> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT * FROM STREAKS WHERE user_id = ? AND habit_id = ?",
+      "SELECT * FROM streaks WHERE user_id = ? AND habit_id = ?",
       [userId, habitId]
     );
     if (rows.length === 0) return null;
@@ -19,7 +19,7 @@ export class GamificationMySQLRepository implements IGamificationRepository {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const id = streak.id || uuidv4();
     await mysqlPool.execute(
-      `INSERT INTO STREAKS (id, user_id, habit_id, current_streak, longest_streak, last_completed_date) 
+      `INSERT INTO streaks (id, user_id, habit_id, current_streak, longest_streak, last_completed_date) 
        VALUES (?, ?, ?, ?, ?, ?) 
        ON DUPLICATE KEY UPDATE 
          current_streak = VALUES(current_streak), 
@@ -41,7 +41,7 @@ export class GamificationMySQLRepository implements IGamificationRepository {
   async findUserStreaks(userId: string): Promise<Streak[]> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT * FROM STREAKS WHERE user_id = ?",
+      "SELECT * FROM streaks WHERE user_id = ?",
       [userId]
     );
     return rows as Streak[];
@@ -50,7 +50,7 @@ export class GamificationMySQLRepository implements IGamificationRepository {
   async findAllBadges(): Promise<Badge[]> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT * FROM BADGES"
+      "SELECT * FROM badges"
     );
     return rows as Badge[];
   }
@@ -58,7 +58,7 @@ export class GamificationMySQLRepository implements IGamificationRepository {
   async findBadgeById(badgeId: string): Promise<Badge | null> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT * FROM BADGES WHERE id = ?",
+      "SELECT * FROM badges WHERE id = ?",
       [badgeId]
     );
     if (rows.length === 0) return null;
@@ -68,8 +68,8 @@ export class GamificationMySQLRepository implements IGamificationRepository {
   async findEarnedBadges(userId: string): Promise<Badge[]> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      `SELECT b.* FROM BADGES b 
-       INNER JOIN USER_BADGES ub ON b.id = ub.badge_id 
+      `SELECT b.* FROM badges b 
+       INNER JOIN user_badges ub ON b.id = ub.badge_id 
        WHERE ub.user_id = ? 
        ORDER BY ub.earned_at DESC`,
       [userId]
@@ -82,7 +82,7 @@ export class GamificationMySQLRepository implements IGamificationRepository {
     const id = uuidv4();
     try {
       await mysqlPool.execute(
-        "INSERT INTO USER_BADGES (id, user_id, badge_id) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE earned_at = earned_at",
+        "INSERT INTO user_badges (id, user_id, badge_id) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE earned_at = earned_at",
         [id, userId, badgeId]
       );
       return true;
@@ -111,16 +111,16 @@ export class GamificationMySQLRepository implements IGamificationRepository {
         u.role,
         COALESCE(l.completed_count, 0) as completed_count,
         COALESCE(s.streak_count, 0) as streak_count
-      FROM USERS u
+      FROM users u
       LEFT JOIN (
         SELECT user_id, COUNT(*) as completed_count 
-        FROM HABIT_LOGS 
+        FROM habit_logs 
         WHERE completed_date BETWEEN ? AND ?
         GROUP BY user_id
       ) l ON u.id = l.user_id
       LEFT JOIN (
         SELECT user_id, COALESCE(SUM(current_streak), 0) as streak_count 
-        FROM STREAKS 
+        FROM streaks 
         GROUP BY user_id
       ) s ON u.id = s.user_id
       WHERE u.id IN (${placeholders})

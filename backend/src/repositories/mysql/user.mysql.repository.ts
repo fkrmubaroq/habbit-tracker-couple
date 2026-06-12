@@ -7,7 +7,7 @@ export class UserMySQLRepository implements IUserRepository {
   async findById(id: string): Promise<User | null> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT * FROM USERS WHERE id = ?",
+      "SELECT * FROM users WHERE id = ?",
       [id]
     );
     if (rows.length === 0) return null;
@@ -22,7 +22,7 @@ export class UserMySQLRepository implements IUserRepository {
   async findByUsername(username: string): Promise<User | null> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT * FROM USERS WHERE username = ?",
+      "SELECT * FROM users WHERE username = ?",
       [username]
     );
     if (rows.length === 0) return null;
@@ -36,7 +36,7 @@ export class UserMySQLRepository implements IUserRepository {
   async findByRole(role: "husband" | "wife"): Promise<User | null> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT * FROM USERS WHERE role = ? LIMIT 1",
+      "SELECT * FROM users WHERE role = ? LIMIT 1",
       [role]
     );
     if (rows.length === 0) return null;
@@ -50,7 +50,7 @@ export class UserMySQLRepository implements IUserRepository {
   async create(user: User): Promise<User> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     await mysqlPool.execute(
-      "INSERT INTO USERS (id, username, password_hash, name, avatar_emoji, avatar_image, role, partner_id, theme_preferences) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO users (id, username, password_hash, name, avatar_emoji, avatar_image, role, partner_id, theme_preferences) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         user.id,
         user.username,
@@ -69,7 +69,7 @@ export class UserMySQLRepository implements IUserRepository {
   async update(user: User): Promise<User> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     await mysqlPool.execute(
-      "UPDATE USERS SET name = ?, avatar_emoji = ?, avatar_image = ?, password_hash = ?, partner_id = ?, theme_preferences = ? WHERE id = ?",
+      "UPDATE users SET name = ?, avatar_emoji = ?, avatar_image = ?, password_hash = ?, partner_id = ?, theme_preferences = ? WHERE id = ?",
       [
         user.name,
         user.avatar_emoji,
@@ -86,7 +86,7 @@ export class UserMySQLRepository implements IUserRepository {
   async count(): Promise<number> {
     if (!mysqlPool) throw new Error("MySQL pool not initialized");
     const [rows] = await mysqlPool.execute<RowDataPacket[]>(
-      "SELECT COUNT(*) as count FROM USERS"
+      "SELECT COUNT(*) as count FROM users"
     );
     return rows[0].count;
   }

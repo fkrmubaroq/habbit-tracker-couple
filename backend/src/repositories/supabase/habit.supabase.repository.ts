@@ -6,7 +6,7 @@ export class HabitSupabaseRepository implements IHabitRepository {
   async findById(id: string): Promise<Habit | null> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("HABITS")
+      .from("habits")
       .select("*")
       .eq("id", id)
       .maybeSingle();
@@ -21,7 +21,7 @@ export class HabitSupabaseRepository implements IHabitRepository {
   async create(habit: Habit): Promise<Habit> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("HABITS")
+      .from("habits")
       .insert({
         id: habit.id,
         user_id: habit.user_id,
@@ -45,7 +45,7 @@ export class HabitSupabaseRepository implements IHabitRepository {
   async update(habit: Habit): Promise<Habit> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("HABITS")
+      .from("habits")
       .update({
         title: habit.title,
         description: habit.description,
@@ -68,7 +68,7 @@ export class HabitSupabaseRepository implements IHabitRepository {
   async delete(id: string): Promise<boolean> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { error } = await supabaseClient
-      .from("HABITS")
+      .from("habits")
       .delete()
       .eq("id", id);
 
@@ -82,7 +82,7 @@ export class HabitSupabaseRepository implements IHabitRepository {
   async findByUserId(userId: string): Promise<Habit[]> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("HABITS")
+      .from("habits")
       .select("*")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
@@ -98,7 +98,7 @@ export class HabitSupabaseRepository implements IHabitRepository {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const ids = partnerId ? [userId, partnerId] : [userId];
     const { data, error } = await supabaseClient
-      .from("HABITS")
+      .from("habits")
       .select("*")
       .eq("is_shared", true)
       .in("user_id", ids)

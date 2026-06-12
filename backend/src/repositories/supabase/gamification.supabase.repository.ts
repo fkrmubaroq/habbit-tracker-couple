@@ -7,7 +7,7 @@ export class GamificationSupabaseRepository implements IGamificationRepository {
   async findStreak(userId: string, habitId: string): Promise<Streak | null> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("STREAKS")
+      .from("streaks")
       .select("*")
       .eq("user_id", userId)
       .eq("habit_id", habitId)
@@ -24,7 +24,7 @@ export class GamificationSupabaseRepository implements IGamificationRepository {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const id = streak.id || uuidv4();
     const { data, error } = await supabaseClient
-      .from("STREAKS")
+      .from("streaks")
       .upsert({
         id,
         user_id: streak.user_id,
@@ -46,7 +46,7 @@ export class GamificationSupabaseRepository implements IGamificationRepository {
   async findUserStreaks(userId: string): Promise<Streak[]> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("STREAKS")
+      .from("streaks")
       .select("*")
       .eq("user_id", userId);
 
@@ -60,7 +60,7 @@ export class GamificationSupabaseRepository implements IGamificationRepository {
   async findAllBadges(): Promise<Badge[]> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("BADGES")
+      .from("badges")
       .select("*");
 
     if (error) {
@@ -73,7 +73,7 @@ export class GamificationSupabaseRepository implements IGamificationRepository {
   async findBadgeById(badgeId: string): Promise<Badge | null> {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const { data, error } = await supabaseClient
-      .from("BADGES")
+      .from("badges")
       .select("*")
       .eq("id", badgeId)
       .maybeSingle();
@@ -90,8 +90,8 @@ export class GamificationSupabaseRepository implements IGamificationRepository {
     
     // Perform inner join-like logic or fetch relation
     const { data, error } = await supabaseClient
-      .from("USER_BADGES")
-      .select("earned_at, BADGES (*)")
+      .from("user_badges")
+      .select("earned_at, badges (*)")
       .eq("user_id", userId)
       .order("earned_at", { ascending: false });
 
@@ -101,7 +101,7 @@ export class GamificationSupabaseRepository implements IGamificationRepository {
     }
 
     return (data || [])
-      .map((item: any) => item.BADGES)
+      .map((item: any) => item.badges)
       .filter((b): b is Badge => b !== null);
   }
 
@@ -109,7 +109,7 @@ export class GamificationSupabaseRepository implements IGamificationRepository {
     if (!supabaseClient) throw new Error("Supabase client not initialized");
     const id = uuidv4();
     const { error } = await supabaseClient
-      .from("USER_BADGES")
+      .from("user_badges")
       .upsert({
         id,
         user_id: userId,
@@ -135,7 +135,7 @@ export class GamificationSupabaseRepository implements IGamificationRepository {
 
     // Fetch user details
     const { data: users, error: userError } = await supabaseClient
-      .from("USERS")
+      .from("users")
       .select("id, name, avatar_emoji, role")
       .in("id", ids);
 
@@ -149,7 +149,7 @@ export class GamificationSupabaseRepository implements IGamificationRepository {
     for (const user of users) {
       // Get completion count
       const { count: completedCount, error: logError } = await supabaseClient
-        .from("HABIT_LOGS")
+        .from("habit_logs")
         .select("id", { count: "exact", head: true })
         .eq("user_id", user.id)
         .gte("completed_date", startDate)
@@ -157,7 +157,7 @@ export class GamificationSupabaseRepository implements IGamificationRepository {
 
       // Get streaks count
       const { data: streaks, error: streakError } = await supabaseClient
-        .from("STREAKS")
+        .from("streaks")
         .select("current_streak")
         .eq("user_id", user.id);
 

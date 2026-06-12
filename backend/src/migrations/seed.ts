@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs";
 import mysql from "mysql2/promise";
 import pg from "pg";
+import { v4 as uuidv4 } from "uuid";
 import { env } from "../config/env.js";
 
 interface Executor {
@@ -65,7 +65,7 @@ class PGExecutor implements Executor {
 
 async function main() {
   console.log(`Starting database seeding using DB_PROVIDER: ${env.DB_PROVIDER}...`);
-  
+
   let db: Executor;
   if (env.DB_PROVIDER === "mysql") {
     const mysqlExec = new MySQLExecutor();
@@ -83,13 +83,13 @@ async function main() {
   try {
     // 1. Clean data (idempotent seeder)
     console.log("Cleaning existing database tables...");
-    await db.query("DELETE FROM USER_BADGES");
-    await db.query("DELETE FROM BADGES");
-    await db.query("DELETE FROM STREAKS");
-    await db.query("DELETE FROM HABIT_LOGS");
-    await db.query("DELETE FROM HABITS");
-    await db.query("UPDATE USERS SET partner_id = NULL");
-    await db.query("DELETE FROM USERS");
+    await db.query("DELETE FROM user_badges");
+    await db.query("DELETE FROM badges");
+    await db.query("DELETE FROM streaks");
+    await db.query("DELETE FROM habit_logs");
+    await db.query("DELETE FROM habits");
+    await db.query("UPDATE users SET partner_id = NULL");
+    await db.query("DELETE FROM users");
 
     console.log("Seeding initial data...");
 
@@ -102,7 +102,7 @@ async function main() {
     // 2. Insert Users
     console.log("Inserting couple profiles (Romeo & Juliet)...");
     await db.query(
-      "INSERT INTO USERS (id, username, password_hash, name, avatar_emoji, avatar_image, role, partner_id, theme_preferences) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO users (id, username, password_hash, name, avatar_emoji, avatar_image, role, partner_id, theme_preferences) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         romeoId,
         "romeo",
@@ -117,7 +117,7 @@ async function main() {
     );
 
     await db.query(
-      "INSERT INTO USERS (id, username, password_hash, name, avatar_emoji, avatar_image, role, partner_id, theme_preferences) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO users (id, username, password_hash, name, avatar_emoji, avatar_image, role, partner_id, theme_preferences) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         julietId,
         "juliet",
@@ -132,8 +132,8 @@ async function main() {
     );
 
     // Link partners
-    await db.query("UPDATE USERS SET partner_id = ? WHERE id = ?", [julietId, romeoId]);
-    await db.query("UPDATE USERS SET partner_id = ? WHERE id = ?", [romeoId, julietId]);
+    await db.query("UPDATE users SET partner_id = ? WHERE id = ?", [julietId, romeoId]);
+    await db.query("UPDATE users SET partner_id = ? WHERE id = ?", [romeoId, julietId]);
 
     // 3. Insert Badges
     console.log("Inserting gamification badges...");
@@ -143,19 +143,19 @@ async function main() {
     const badgeFirstMonthId = uuidv4();
 
     await db.query(
-      "INSERT INTO BADGES (id, name, description, icon, type, requirement_value) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO badges (id, name, description, icon, type, requirement_value) VALUES (?, ?, ?, ?, ?, ?)",
       [badge7DayId, "7 Day Streak", "Maintain a habit streak for 7 days in a row!", "flame", "personal", 7]
     );
     await db.query(
-      "INSERT INTO BADGES (id, name, description, icon, type, requirement_value) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO badges (id, name, description, icon, type, requirement_value) VALUES (?, ?, ?, ?, ?, ?)",
       [badge30DayId, "30 Day Consistency", "Maintain a habit streak for 30 days in a row!", "trophy", "personal", 30]
     );
     await db.query(
-      "INSERT INTO BADGES (id, name, description, icon, type, requirement_value) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO badges (id, name, description, icon, type, requirement_value) VALUES (?, ?, ?, ?, ?, ?)",
       [badge100TogetherId, "100 Together", "Complete 100 habits together!", "heart-handshake", "couple", 100]
     );
     await db.query(
-      "INSERT INTO BADGES (id, name, description, icon, type, requirement_value) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO badges (id, name, description, icon, type, requirement_value) VALUES (?, ?, ?, ?, ?, ?)",
       [badgeFirstMonthId, "First Month", "Complete habits together for 30 days!", "calendar-heart", "couple", 30]
     );
 
@@ -164,7 +164,7 @@ async function main() {
     const gymHabitId = uuidv4();
     const bookHabitId = uuidv4();
     const financeHabitId = uuidv4();
-    
+
     const yogaHabitId = uuidv4();
     const waterHabitId = uuidv4();
     const mealPrepHabitId = uuidv4();
@@ -174,46 +174,46 @@ async function main() {
 
     // Romeo habits
     await db.query(
-      "INSERT INTO HABITS (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO habits (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [gymHabitId, romeoId, "Gym Workout", "Push/Pull/Legs training at the gym", "🏋️‍♂️", "daily", false, true]
     );
     await db.query(
-      "INSERT INTO HABITS (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO habits (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [bookHabitId, romeoId, "Read 10 Pages", "Read self-improvement or novel", "📖", "daily", false, true]
     );
     await db.query(
-      "INSERT INTO HABITS (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO habits (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [financeHabitId, romeoId, "Financial Review", "Review weekly budget and expenses", "📊", "weekly", false, true]
     );
 
     // Juliet habits
     await db.query(
-      "INSERT INTO HABITS (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO habits (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [yogaHabitId, julietId, "Yoga & Stretching", "Morning flexibility routines", "🧘‍♀️", "daily", false, true]
     );
     await db.query(
-      "INSERT INTO HABITS (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO habits (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [waterHabitId, julietId, "Drink 2L Water", "Keep hydrated throughout the day", "💧", "daily", false, true]
     );
     await db.query(
-      "INSERT INTO HABITS (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO habits (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [mealPrepHabitId, julietId, "Weekly Meal Prep", "Plan healthy lunches for the week", "🍱", "weekly", false, true]
     );
 
     // Shared habits
     await db.query(
-      "INSERT INTO HABITS (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO habits (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [walkHabitId, romeoId, "Evening Walk Together", "Walk around the park to chat and unwind", "🚶‍♂️🚶‍♀️", "daily", true, true]
     );
     await db.query(
-      "INSERT INTO HABITS (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO habits (id, user_id, title, description, icon_emoji, frequency, is_shared, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [dateNightHabitId, julietId, "Weekly Date Night", "Dinner or movies together, no phones allowed", "🌹", "weekly", true, true]
     );
 
     // 5. Seeding Habit Logs for the last 365 days
     console.log("Generating completion logs for the last 365 days...");
     const dates: string[] = [];
-    for (let i = 365; i >= 0; i--) {
+    for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const yyyy = d.getFullYear();
@@ -238,7 +238,7 @@ async function main() {
       for (let index = 0; index < dates.length; index++) {
         const dateStr = dates[index];
         const key = `${habitId}_${dateStr}`;
-        
+
         let completed = false;
         if (isWeekly) {
           // Weekly habits are completed once a week, let's say every 7 days
@@ -251,7 +251,7 @@ async function main() {
         if (completed || loggedDates.has(key)) {
           if (!loggedDates.has(key)) {
             await db.query(
-              "INSERT INTO HABIT_LOGS (id, habit_id, user_id, completed_date, is_completed, notes, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              "INSERT INTO habit_logs (id, habit_id, user_id, completed_date, is_completed, notes, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
               [
                 uuidv4(),
                 habitId,
@@ -303,7 +303,7 @@ async function main() {
     console.log("Populating streaks table...");
     const insertStreak = async (userId: string, habitId: string, streakInfo: any) => {
       await db.query(
-        "INSERT INTO STREAKS (id, user_id, habit_id, current_streak, longest_streak, last_completed_date) VALUES (?, ?, ?, ?, ?, ?)",
+        "INSERT INTO streaks (id, user_id, habit_id, current_streak, longest_streak, last_completed_date) VALUES (?, ?, ?, ?, ?, ?)",
         [
           uuidv4(),
           userId,
@@ -333,12 +333,12 @@ async function main() {
     console.log("Awarding initial user badges...");
     // Award Romeo 7 Day Streak badge
     await db.query(
-      "INSERT INTO USER_BADGES (id, user_id, badge_id, earned_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
+      "INSERT INTO user_badges (id, user_id, badge_id, earned_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
       [uuidv4(), romeoId, badge7DayId]
     );
     // Award Juliet 7 Day Streak badge
     await db.query(
-      "INSERT INTO USER_BADGES (id, user_id, badge_id, earned_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
+      "INSERT INTO user_badges (id, user_id, badge_id, earned_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
       [uuidv4(), julietId, badge7DayId]
     );
 
