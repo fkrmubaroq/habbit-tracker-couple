@@ -1,18 +1,18 @@
 import { env } from "../config/env.js";
-import { IUserRepository } from "./interfaces/user.repository.interface.js";
-import { IHabitRepository } from "./interfaces/habit.repository.interface.js";
-import { IHabitLogRepository } from "./interfaces/habit-log.repository.interface.js";
 import { IGamificationRepository } from "./interfaces/gamification.repository.interface.js";
+import { IHabitLogRepository } from "./interfaces/habit-log.repository.interface.js";
+import { IHabitRepository } from "./interfaces/habit.repository.interface.js";
+import { IUserRepository } from "./interfaces/user.repository.interface.js";
 
-import { UserMySQLRepository } from "./mysql/user.mysql.repository.js";
-import { HabitMySQLRepository } from "./mysql/habit.mysql.repository.js";
-import { HabitLogMySQLRepository } from "./mysql/habit-log.mysql.repository.js";
 import { GamificationMySQLRepository } from "./mysql/gamification.mysql.repository.js";
+import { HabitLogMySQLRepository } from "./mysql/habit-log.mysql.repository.js";
+import { HabitMySQLRepository } from "./mysql/habit.mysql.repository.js";
+import { UserMySQLRepository } from "./mysql/user.mysql.repository.js";
 
-import { UserSupabaseRepository } from "./supabase/user.supabase.repository.js";
-import { HabitSupabaseRepository } from "./supabase/habit.supabase.repository.js";
-import { HabitLogSupabaseRepository } from "./supabase/habit-log.supabase.repository.js";
 import { GamificationSupabaseRepository } from "./supabase/gamification.supabase.repository.js";
+import { HabitLogSupabaseRepository } from "./supabase/habit-log.supabase.repository.js";
+import { HabitSupabaseRepository } from "./supabase/habit.supabase.repository.js";
+import { UserSupabaseRepository } from "./supabase/user.supabase.repository.js";
 
 class RepositoryFactory {
   private userRepo!: IUserRepository;
@@ -25,6 +25,7 @@ class RepositoryFactory {
   }
 
   private init() {
+    console.log("env", env)
     if (env.DB_PROVIDER === "mysql") {
       this.userRepo = new UserMySQLRepository();
       this.habitRepo = new HabitMySQLRepository();
