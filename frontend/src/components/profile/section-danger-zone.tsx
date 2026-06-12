@@ -31,6 +31,8 @@ export function SectionDangerZone() {
     }
   };
 
+  if (user.role !== "husband") return null;
+
   return (
     <div className="card-duo border-red-200 dark:border-red-950/40 bg-red-50/5 p-5 md:p-6 flex flex-col gap-4 mt-2">
       <div className="border-b-2 border-highlight pb-3">

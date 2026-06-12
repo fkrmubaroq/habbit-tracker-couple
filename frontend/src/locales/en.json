@@ -226,6 +226,11 @@
     "days_value": "{{count}} days",
     "heatmap_info": "Hover over cells to view daily completion details.",
     "less": "Less",
-    "more": "More"
+    "more": "More",
+    "summary_title": "Activity Summary",
+    "total_year_activity": "Habit Completed This Year",
+    "perfect_streak": "Perfect Streak",
+    "perfect_streak_desc": "Consecutive days",
+    "completed_in_year": "Completions in {{year}}"
   }
 }

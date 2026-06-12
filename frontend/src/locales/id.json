@@ -226,6 +226,11 @@
     "days_value": "{{count}} hari",
     "heatmap_info": "Arahkan kursor ke kotak untuk melihat detail penyelesaian harian.",
     "less": "Kurang",
-    "more": "Banyak"
+    "more": "Banyak",
+    "summary_title": "Ringkasan Aktivitas",
+    "total_year_activity": "Habit Selesai Tahun ini",
+    "perfect_streak": "Streak Tanpa Bolong",
+    "perfect_streak_desc": "Hari berturut-turut",
+    "completed_in_year": "Penyelesaian di tahun {{year}}"
   }
 }
