@@ -30,7 +30,8 @@
     "goals": "Goals",
     "leaderboard": "Papan Skor",
     "list_habits": "Habit",
-    "settings": "Pengaturan"
+    "settings": "Pengaturan",
+    "activity": "Aktivitas"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -158,6 +159,21 @@
     "language": "Bahasa",
     "choose_language": "Pilih Bahasa"
   },
+  "settings_page": {
+    "danger_zone": "Zona Bahaya",
+    "danger_zone_desc": "Tindakan yang tidak dapat dibatalkan untuk mereset akun Anda.",
+    "reset_data_title": "Hapus Semua Data Aktivitas",
+    "reset_data_desc": "Tindakan ini akan menghapus secara permanen semua habit, log harian, streak, dan badge yang telah didapatkan oleh Anda dan pasangan Anda. Tindakan ini tidak dapat dibatalkan.",
+    "reset_data_btn": "Hapus & Reset Semua Data",
+    "confirm_title": "Apakah Anda Yakin?",
+    "confirm_desc": "Untuk mengonfirmasi tindakan ini, silakan ketik kata \"RESET\" di bawah ini:",
+    "confirm_placeholder": "Ketik RESET untuk mengonfirmasi",
+    "reset_success": "Semua data aktivitas Anda berhasil dihapus! Halaman akan dimuat ulang...",
+    "reset_failed": "Gagal mereset data. Silakan coba lagi.",
+    "confirm_btn": "Ya, Hapus Semua Data",
+    "cancel_btn": "Batal",
+    "only_husband_allowed": "Hanya suami yang dapat menghapus dan mereset data aktivitas."
+  },
   "validation": {
     "username_required": "Username wajib diisi",
     "password_required": "Password wajib diisi",
@@ -181,5 +197,28 @@
     "status_archived": "Diarsipkan",
     "personal_badge": "Personal",
     "couple_badge": "Pasangan"
+  },
+  "activity": {
+    "title": "Aktivitas Habit",
+    "desc": "Pantau aktivitas harian dalam visualisasi tabel bulanan dan heatmap tahunan.",
+    "monthly_title": "Tabel Habit Bulanan",
+    "monthly_desc": "Klik kotak untuk mencatat atau membatalkan penyelesaian habit.",
+    "yearly_title": "Heatmap Aktivitas Tahunan",
+    "yearly_desc": "Visualisasi konsistensi penyelesaian habit selama satu tahun penuh.",
+    "select_month": "Pilih Bulan",
+    "select_year": "Pilih Tahun",
+    "select_user": "Pilih Pengguna",
+    "select_habit": "Pilih Habit",
+    "user_me": "Saya",
+    "user_partner": "Pasangan",
+    "user_couple": "Bersama",
+    "all_habits": "Semua Habit",
+    "completions_count": "{{count}} penyelesaian",
+    "no_habits": "Tidak ada habit aktif untuk ditampilkan.",
+    "completions_stat": "Penyelesaian",
+    "days_stat": "Hari Konsisten",
+    "percentage_stat": "Tingkat Keberhasilan",
+    "filter_all": "Semua Frekuensi",
+    "future_date_error": "Tidak bisa mencatat habit untuk tanggal di masa mendatang!"
   }
 }

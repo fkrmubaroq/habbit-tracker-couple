@@ -30,7 +30,8 @@
     "goals": "Couple",
     "leaderboard": "Leaderboard",
     "list_habits": "Habits",
-    "settings": "Settings"
+    "settings": "Settings",
+    "activity": "Activity"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -158,6 +159,21 @@
     "language": "Language",
     "choose_language": "Choose Language"
   },
+  "settings_page": {
+    "danger_zone": "Danger Zone",
+    "danger_zone_desc": "Irreversible actions to reset your account data.",
+    "reset_data_title": "Reset All Activity Data",
+    "reset_data_desc": "This action will permanently delete all habits, completed logs, streaks, and badge records earned by you and your partner. This action is irreversible.",
+    "reset_data_btn": "Delete & Reset All Data",
+    "confirm_title": "Are You Sure?",
+    "confirm_desc": "To confirm this action, please type the word \"RESET\" below:",
+    "confirm_placeholder": "Type RESET to confirm",
+    "reset_success": "All activity data has been successfully reset! Reloading page...",
+    "reset_failed": "Failed to reset data. Please try again.",
+    "confirm_btn": "Yes, Delete All Data",
+    "cancel_btn": "Cancel",
+    "only_husband_allowed": "Only the husband is allowed to delete and reset activity data."
+  },
   "validation": {
     "username_required": "Username is required",
     "password_required": "Password is required",
@@ -181,5 +197,28 @@
     "status_archived": "Archived",
     "personal_badge": "Personal",
     "couple_badge": "Couple"
+  },
+  "activity": {
+    "title": "Habit Activity",
+    "desc": "Track your daily activity in a monthly table and a yearly heatmap.",
+    "monthly_title": "Monthly Habit Table",
+    "monthly_desc": "Click cells to log or undo habit completions.",
+    "yearly_title": "Yearly Activity Heatmap",
+    "yearly_desc": "Visualization of habit consistency over an entire year.",
+    "select_month": "Select Month",
+    "select_year": "Select Year",
+    "select_user": "Select User",
+    "select_habit": "Select Habit",
+    "user_me": "Me",
+    "user_partner": "Partner",
+    "user_couple": "Couple",
+    "all_habits": "All Habits",
+    "completions_count": "{{count}} completions",
+    "no_habits": "No active habits to display.",
+    "completions_stat": "Completions",
+    "days_stat": "Consistent Days",
+    "percentage_stat": "Success Rate",
+    "filter_all": "All Frequencies",
+    "future_date_error": "Cannot track habits for future dates!"
   }
 }

@@ -1,6 +1,8 @@
 import { Response, NextFunction } from "express";
 import { AuthenticatedRequest } from "../../middleware/auth.middleware.js";
 import { userRepo } from "../../repositories/repository.factory.js";
+import { mysqlPool, supabaseClient } from "../../config/database.js";
+import { env } from "../../config/env.js";
 
 export async function updateProfile(
   req: AuthenticatedRequest,
@@ -78,3 +80,44 @@ export async function getPartnerProfile(
     next(err);
   }
 }
+
+export async function resetData(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const userId = req.userId!;
+    const user = req.user!;
+
+    if (user.role !== "husband") {
+      return res.status(403).json({ error: "Only the husband is authorized to reset couple activity data." });
+    }
+
+    const userIds = [userId];
+    if (user.partner_id) {
+      userIds.push(user.partner_id);
+    }
+
+    if (env.DB_PROVIDER === "mysql" && mysqlPool) {
+      for (const uid of userIds) {
+        await mysqlPool.query("DELETE FROM USER_BADGES WHERE user_id = ?", [uid]);
+        await mysqlPool.query("DELETE FROM STREAKS WHERE user_id = ?", [uid]);
+        await mysqlPool.query("DELETE FROM HABIT_LOGS WHERE user_id = ?", [uid]);
+        await mysqlPool.query("DELETE FROM HABITS WHERE user_id = ?", [uid]);
+      }
+    } else if (env.DB_PROVIDER === "supabase" && supabaseClient) {
+      for (const uid of userIds) {
+        await supabaseClient.from("USER_BADGES").delete().eq("user_id", uid);
+        await supabaseClient.from("STREAKS").delete().eq("user_id", uid);
+        await supabaseClient.from("HABIT_LOGS").delete().eq("user_id", uid);
+        await supabaseClient.from("HABITS").delete().eq("user_id", uid);
+      }
+    }
+
+    return res.json({ message: "All habit data, logs, streaks, and badges have been reset successfully!" });
+  } catch (err) {
+    next(err);
+  }
+}
+

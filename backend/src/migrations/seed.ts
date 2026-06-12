@@ -210,10 +210,10 @@ async function main() {
       [dateNightHabitId, julietId, "Weekly Date Night", "Dinner or movies together, no phones allowed", "🌹", "weekly", true, true]
     );
 
-    // 5. Seeding Habit Logs for the last 7 days
-    console.log("Generating completion logs for the last 7 days...");
+    // 5. Seeding Habit Logs for the last 365 days
+    console.log("Generating completion logs for the last 365 days...");
     const dates: string[] = [];
-    for (let i = 6; i >= 0; i--) {
+    for (let i = 365; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const yyyy = d.getFullYear();
@@ -241,8 +241,8 @@ async function main() {
         
         let completed = false;
         if (isWeekly) {
-          // Weekly habits are completed once a week, let's say on day 4 (3 days ago)
-          completed = index === 3;
+          // Weekly habits are completed once a week, let's say every 7 days
+          completed = index % 7 === 3;
         } else {
           // Daily habits completed with some probability
           completed = Math.random() < prob;

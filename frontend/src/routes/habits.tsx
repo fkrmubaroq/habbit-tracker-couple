@@ -38,7 +38,7 @@ function HabitsComponent() {
       {/* Header */}
       <div className="flex sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">{t("habits.manage_habits")}</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight text-text-primary">{t("habits.manage_habits")}</h1>
           <p className="text-text-secondary font-semibold text-sm">{t("habits.manage_habits_desc")}</p>
         </div>
 

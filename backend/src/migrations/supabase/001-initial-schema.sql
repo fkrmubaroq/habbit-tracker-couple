@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS HABIT_LOGS (
     is_completed BOOLEAN DEFAULT TRUE,
     notes TEXT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT uq_habit_date UNIQUE (habit_id, completed_date),
+    CONSTRAINT uq_habit_user_date UNIQUE (habit_id, user_id, completed_date),
     CONSTRAINT fk_habit FOREIGN KEY (habit_id) REFERENCES HABITS(id) ON DELETE CASCADE,
     CONSTRAINT fk_log_user FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE
 );

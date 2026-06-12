@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS HABIT_LOGS (
     is_completed BOOLEAN DEFAULT TRUE,
     notes TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_habit_date (habit_id, completed_date),
+    UNIQUE KEY uq_habit_user_date (habit_id, user_id, completed_date),
     FOREIGN KEY (habit_id) REFERENCES HABITS(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE
 );
