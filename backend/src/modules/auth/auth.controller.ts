@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { userRepo } from "../../repositories/repository.factory.js";
-import { hashPassword, comparePassword } from "../../utils/password.util.js";
-import { generateToken } from "../../utils/jwt.util.js";
 import { User } from "../../types/index.js";
+import { generateToken } from "../../utils/jwt.util.js";
+import { comparePassword, hashPassword } from "../../utils/password.util.js";
 
 // Helper to query partner candidate by role (opposite role)
 async function findPartnerCandidate(role: "husband" | "wife"): Promise<User | null> {
@@ -35,7 +35,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
     // 3. Create user
     const password_hash = await hashPassword(password);
     const userId = uuidv4();
-    
+
     const newUser: User = {
       id: userId,
       username,
@@ -63,7 +63,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
     }
 
     const token = generateToken(newUser.id);
-    
+
     // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
@@ -95,12 +95,12 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 
     const user = await userRepo.findByUsername(username);
     if (!user) {
-      return res.status(400).json({ error: "Invalid username or password" });
+      return res.status(400).json({ error: "Invalid username or password (101)" });
     }
 
     const isMatch = await comparePassword(password, user.password_hash);
     if (!isMatch) {
-      return res.status(400).json({ error: "Invalid username or password" });
+      return res.status(400).json({ error: "Invalid username or password (102)" });
     }
 
     const token = generateToken(user.id);
