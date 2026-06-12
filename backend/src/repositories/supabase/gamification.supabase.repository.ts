@@ -1,125 +1,85 @@
-import { supabaseClient } from "../../config/database.js";
+import { pgPool } from "../../config/database.js";
 import { Streak, Badge, LeaderboardEntry } from "../../types/index.js";
 import { IGamificationRepository } from "../interfaces/gamification.repository.interface.js";
 import { v4 as uuidv4 } from "uuid";
 
 export class GamificationSupabaseRepository implements IGamificationRepository {
   async findStreak(userId: string, habitId: string): Promise<Streak | null> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { data, error } = await supabaseClient
-      .from("streaks")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("habit_id", habitId)
-      .maybeSingle();
-
-    if (error) {
-      console.error("Error finding streak in Supabase:", error.message);
-      return null;
-    }
-    return data as Streak | null;
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query(
+      "SELECT * FROM streaks WHERE user_id = $1 AND habit_id = $2",
+      [userId, habitId]
+    );
+    return (rows[0] as Streak) || null;
   }
 
   async upsertStreak(streak: Streak): Promise<Streak> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
+    if (!pgPool) throw new Error("pgPool not initialized");
     const id = streak.id || uuidv4();
-    const { data, error } = await supabaseClient
-      .from("streaks")
-      .upsert({
+    const { rows } = await pgPool.query(
+      `INSERT INTO streaks (id, user_id, habit_id, current_streak, longest_streak, last_completed_date) 
+       VALUES ($1, $2, $3, $4, $5, $6) 
+       ON CONFLICT (user_id, habit_id) 
+       DO UPDATE SET 
+         current_streak = EXCLUDED.current_streak, 
+         longest_streak = EXCLUDED.longest_streak, 
+         last_completed_date = EXCLUDED.last_completed_date 
+       RETURNING *`,
+      [
         id,
-        user_id: streak.user_id,
-        habit_id: streak.habit_id,
-        current_streak: streak.current_streak,
-        longest_streak: streak.longest_streak,
-        last_completed_date: streak.last_completed_date,
-      }, { onConflict: "user_id,habit_id" })
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error upserting streak in Supabase:", error.message);
-      throw error;
-    }
-    return data as Streak;
+        streak.user_id,
+        streak.habit_id,
+        streak.current_streak,
+        streak.longest_streak,
+        streak.last_completed_date,
+      ]
+    );
+    return rows[0] as Streak;
   }
 
   async findUserStreaks(userId: string): Promise<Streak[]> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { data, error } = await supabaseClient
-      .from("streaks")
-      .select("*")
-      .eq("user_id", userId);
-
-    if (error) {
-      console.error("Error finding user streaks in Supabase:", error.message);
-      return [];
-    }
-    return data as Streak[];
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query(
+      "SELECT * FROM streaks WHERE user_id = $1",
+      [userId]
+    );
+    return rows as Streak[];
   }
 
   async findAllBadges(): Promise<Badge[]> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { data, error } = await supabaseClient
-      .from("badges")
-      .select("*");
-
-    if (error) {
-      console.error("Error finding badges in Supabase:", error.message);
-      return [];
-    }
-    return data as Badge[];
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query("SELECT * FROM badges");
+    return rows as Badge[];
   }
 
   async findBadgeById(badgeId: string): Promise<Badge | null> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { data, error } = await supabaseClient
-      .from("badges")
-      .select("*")
-      .eq("id", badgeId)
-      .maybeSingle();
-
-    if (error) {
-      console.error("Error finding badge by ID in Supabase:", error.message);
-      return null;
-    }
-    return data as Badge | null;
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query("SELECT * FROM badges WHERE id = $1", [badgeId]);
+    return (rows[0] as Badge) || null;
   }
 
   async findEarnedBadges(userId: string): Promise<Badge[]> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    
-    // Perform inner join-like logic or fetch relation
-    const { data, error } = await supabaseClient
-      .from("user_badges")
-      .select("earned_at, badges (*)")
-      .eq("user_id", userId)
-      .order("earned_at", { ascending: false });
-
-    if (error) {
-      console.error("Error finding earned badges in Supabase:", error.message);
-      return [];
-    }
-
-    return (data || [])
-      .map((item: any) => item.badges)
-      .filter((b): b is Badge => b !== null);
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query(
+      `SELECT b.* 
+       FROM user_badges ub 
+       JOIN badges b ON ub.badge_id = b.id 
+       WHERE ub.user_id = $1 
+       ORDER BY ub.earned_at DESC`,
+      [userId]
+    );
+    return rows as Badge[];
   }
 
   async awardBadge(userId: string, badgeId: string): Promise<boolean> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
+    if (!pgPool) throw new Error("pgPool not initialized");
     const id = uuidv4();
-    const { error } = await supabaseClient
-      .from("user_badges")
-      .upsert({
-        id,
-        user_id: userId,
-        badge_id: badgeId,
-      }, { onConflict: "user_id,badge_id" });
-
-    if (error) {
-      console.error("Error awarding badge in Supabase:", error.message);
-      return false;
-    }
+    await pgPool.query(
+      `INSERT INTO user_badges (id, user_id, badge_id) 
+       VALUES ($1, $2, $3) 
+       ON CONFLICT (user_id, badge_id) DO NOTHING`,
+      [id, userId, badgeId]
+    );
     return true;
   }
 
@@ -129,55 +89,65 @@ export class GamificationSupabaseRepository implements IGamificationRepository {
     startDate: string,
     endDate: string
   ): Promise<LeaderboardEntry[]> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
+    if (!pgPool) throw new Error("pgPool not initialized");
 
-    const ids = partnerId ? [userId, partnerId] : [userId];
+    let sql: string;
+    let params: any[];
 
-    // Fetch user details
-    const { data: users, error: userError } = await supabaseClient
-      .from("users")
-      .select("id, name, avatar_emoji, role")
-      .in("id", ids);
-
-    if (userError || !users) {
-      console.error("Error getting users for leaderboard:", userError?.message);
-      return [];
+    if (partnerId) {
+      sql = `
+        SELECT 
+          u.id as user_id, 
+          u.name, 
+          u.avatar_emoji, 
+          u.role,
+          COALESCE(hl.completed_count, 0)::int as completed_count,
+          COALESCE(s.streak_count, 0)::int as streak_count
+        FROM users u
+        LEFT JOIN (
+          SELECT user_id, COUNT(*) as completed_count 
+          FROM habit_logs 
+          WHERE completed_date >= $2 AND completed_date <= $3 
+          GROUP BY user_id
+        ) hl ON u.id = hl.user_id
+        LEFT JOIN (
+          SELECT user_id, SUM(current_streak) as streak_count 
+          FROM streaks 
+          GROUP BY user_id
+        ) s ON u.id = s.user_id
+        WHERE u.id IN ($1, $4)
+      `;
+      params = [userId, startDate, endDate, partnerId];
+    } else {
+      sql = `
+        SELECT 
+          u.id as user_id, 
+          u.name, 
+          u.avatar_emoji, 
+          u.role,
+          COALESCE(hl.completed_count, 0)::int as completed_count,
+          COALESCE(s.streak_count, 0)::int as streak_count
+        FROM users u
+        LEFT JOIN (
+          SELECT user_id, COUNT(*) as completed_count 
+          FROM habit_logs 
+          WHERE completed_date >= $2 AND completed_date <= $3 
+          GROUP BY user_id
+        ) hl ON u.id = hl.user_id
+        LEFT JOIN (
+          SELECT user_id, SUM(current_streak) as streak_count 
+          FROM streaks 
+          GROUP BY user_id
+        ) s ON u.id = s.user_id
+        WHERE u.id = $1
+      `;
+      params = [userId, startDate, endDate];
     }
 
-    const entries: LeaderboardEntry[] = [];
-
-    for (const user of users) {
-      // Get completion count
-      const { count: completedCount, error: logError } = await supabaseClient
-        .from("habit_logs")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .gte("completed_date", startDate)
-        .lte("completed_date", endDate);
-
-      // Get streaks count
-      const { data: streaks, error: streakError } = await supabaseClient
-        .from("streaks")
-        .select("current_streak")
-        .eq("user_id", user.id);
-
-      const completed = logError ? 0 : (completedCount || 0);
-      const streakSum = streakError || !streaks 
-        ? 0 
-        : streaks.reduce((sum, item) => sum + (item.current_streak || 0), 0);
-
-      entries.push({
-        user_id: user.id,
-        name: user.name,
-        avatar_emoji: user.avatar_emoji,
-        role: user.role,
-        completed_count: completed,
-        streak_count: streakSum,
-      });
-    }
-
+    const { rows } = await pgPool.query(sql, params);
+    
     // Sort entries: completed_count DESC, streak_count DESC
-    return entries.sort((a, b) => {
+    return (rows as LeaderboardEntry[]).sort((a, b) => {
       if (b.completed_count !== a.completed_count) {
         return b.completed_count - a.completed_count;
       }

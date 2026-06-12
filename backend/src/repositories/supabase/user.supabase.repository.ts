@@ -1,112 +1,68 @@
-import { supabaseClient } from "../../config/database.js";
+import { pgPool } from "../../config/database.js";
 import { User } from "../../types/index.js";
 import { IUserRepository } from "../interfaces/user.repository.interface.js";
 
 export class UserSupabaseRepository implements IUserRepository {
   async findById(id: string): Promise<User | null> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { data, error } = await supabaseClient
-      .from("users")
-      .select("*")
-      .eq("id", id)
-      .maybeSingle();
-
-    if (error) {
-      console.error("Error finding user by ID in Supabase:", error.message);
-      return null;
-    }
-    return data as User | null;
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query("SELECT * FROM users WHERE id = $1", [id]);
+    return (rows[0] as User) || null;
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { data, error } = await supabaseClient
-      .from("users")
-      .select("*")
-      .eq("username", username)
-      .maybeSingle();
-
-    if (error) {
-      console.error("Error finding user by username in Supabase:", error.message);
-      return null;
-    }
-    return data as User | null;
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query("SELECT * FROM users WHERE username = $1", [username]);
+    return (rows[0] as User) || null;
   }
 
   async findByRole(role: "husband" | "wife"): Promise<User | null> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { data, error } = await supabaseClient
-      .from("users")
-      .select("*")
-      .eq("role", role)
-      .limit(1)
-      .maybeSingle();
-
-    if (error) {
-      console.error("Error finding user by role in Supabase:", error.message);
-      return null;
-    }
-    return data as User | null;
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query("SELECT * FROM users WHERE role = $1 LIMIT 1", [role]);
+    return (rows[0] as User) || null;
   }
 
   async create(user: User): Promise<User> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { data, error } = await supabaseClient
-      .from("users")
-      .insert({
-        id: user.id,
-        username: user.username,
-        password_hash: user.password_hash,
-        name: user.name,
-        avatar_emoji: user.avatar_emoji,
-        avatar_image: user.avatar_image,
-        role: user.role,
-        partner_id: user.partner_id,
-        theme_preferences: user.theme_preferences,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error creating user in Supabase:", error.message);
-      throw error;
-    }
-    return data as User;
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query(
+      `INSERT INTO users (id, username, password_hash, name, avatar_emoji, avatar_image, role, partner_id, theme_preferences) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+      [
+        user.id,
+        user.username,
+        user.password_hash,
+        user.name,
+        user.avatar_emoji,
+        user.avatar_image,
+        user.role,
+        user.partner_id,
+        user.theme_preferences ? JSON.stringify(user.theme_preferences) : null,
+      ]
+    );
+    return rows[0] as User;
   }
 
   async update(user: User): Promise<User> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { data, error } = await supabaseClient
-      .from("users")
-      .update({
-        name: user.name,
-        avatar_emoji: user.avatar_emoji,
-        avatar_image: user.avatar_image,
-        password_hash: user.password_hash,
-        partner_id: user.partner_id,
-        theme_preferences: user.theme_preferences,
-      })
-      .eq("id", user.id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error updating user in Supabase:", error.message);
-      throw error;
-    }
-    return data as User;
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query(
+      `UPDATE users 
+       SET name = $1, avatar_emoji = $2, avatar_image = $3, password_hash = $4, partner_id = $5, theme_preferences = $6 
+       WHERE id = $7 RETURNING *`,
+      [
+        user.name,
+        user.avatar_emoji,
+        user.avatar_image,
+        user.password_hash,
+        user.partner_id,
+        user.theme_preferences ? JSON.stringify(user.theme_preferences) : null,
+        user.id,
+      ]
+    );
+    return rows[0] as User;
   }
 
   async count(): Promise<number> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { count, error } = await supabaseClient
-      .from("users")
-      .select("id", { count: "exact", head: true });
-
-    if (error) {
-      console.error("Error counting users in Supabase:", error.message);
-      return 0;
-    }
-    return count || 0;
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query("SELECT COUNT(*) FROM users");
+    return parseInt(rows[0].count, 10) || 0;
   }
 }

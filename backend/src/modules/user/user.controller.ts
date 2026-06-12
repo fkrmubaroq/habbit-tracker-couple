@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 import { AuthenticatedRequest } from "../../middleware/auth.middleware.js";
 import { userRepo } from "../../repositories/repository.factory.js";
-import { mysqlPool, supabaseClient } from "../../config/database.js";
+import { mysqlPool, pgPool } from "../../config/database.js";
 import { env } from "../../config/env.js";
 import bcrypt from "bcryptjs";
 
@@ -112,12 +112,12 @@ export async function resetData(
         await mysqlPool.query("DELETE FROM habit_logs WHERE user_id = ?", [uid]);
         await mysqlPool.query("DELETE FROM habits WHERE user_id = ?", [uid]);
       }
-    } else if (env.DB_PROVIDER === "supabase" && supabaseClient) {
+    } else if (env.DB_PROVIDER === "supabase" && pgPool) {
       for (const uid of userIds) {
-        await supabaseClient.from("user_badges").delete().eq("user_id", uid);
-        await supabaseClient.from("streaks").delete().eq("user_id", uid);
-        await supabaseClient.from("habit_logs").delete().eq("user_id", uid);
-        await supabaseClient.from("habits").delete().eq("user_id", uid);
+        await pgPool.query("DELETE FROM user_badges WHERE user_id = $1", [uid]);
+        await pgPool.query("DELETE FROM streaks WHERE user_id = $1", [uid]);
+        await pgPool.query("DELETE FROM habit_logs WHERE user_id = $1", [uid]);
+        await pgPool.query("DELETE FROM habits WHERE user_id = $1", [uid]);
       }
     }
 

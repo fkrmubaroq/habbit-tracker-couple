@@ -1,9 +1,9 @@
 import mysql from "mysql2/promise";
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import pg from "pg";
 import { env } from "./env.js";
 
 let mysqlPool: mysql.Pool | null = null;
-let supabaseClient: SupabaseClient | null = null;
+let pgPool: pg.Pool | null = null;
 
 if (env.DB_PROVIDER === "mysql") {
   mysqlPool = mysql.createPool({
@@ -19,10 +19,13 @@ if (env.DB_PROVIDER === "mysql") {
     keepAliveInitialDelay: 0,
   });
 } else if (env.DB_PROVIDER === "supabase") {
-  supabaseClient = createClient(env.SUPABASE_URL!, env.SUPABASE_KEY!);
+  pgPool = new pg.Pool({
+    connectionString: env.DATABASE_URL,
+    ssl: env.DATABASE_URL && env.DATABASE_URL.includes("supabase.co") ? { rejectUnauthorized: false } : false,
+  });
 }
 
-export { mysqlPool, supabaseClient };
+export { mysqlPool, pgPool };
 export async function testConnection(): Promise<boolean> {
   if (env.DB_PROVIDER === "mysql" && mysqlPool) {
     try {
@@ -34,10 +37,11 @@ export async function testConnection(): Promise<boolean> {
       console.error("MySQL connection test: FAILED -", err.message);
       return false;
     }
-  } else if (env.DB_PROVIDER === "supabase" && supabaseClient) {
+  } else if (env.DB_PROVIDER === "supabase" && pgPool) {
     try {
-      const { data, error } = await supabaseClient.from("users").select("count", { count: "exact", head: true });
-      if (error) throw error;
+      const client = await pgPool.connect();
+      await client.query("SELECT 1");
+      client.release();
       console.log("Supabase connection test: SUCCESS");
       return true;
     } catch (err: any) {

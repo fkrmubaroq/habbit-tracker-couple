@@ -1,122 +1,80 @@
-import { supabaseClient } from "../../config/database.js";
+import { pgPool } from "../../config/database.js";
 import { HabitLog, Habit } from "../../types/index.js";
 import { IHabitLogRepository } from "../interfaces/habit-log.repository.interface.js";
 
 export class HabitLogSupabaseRepository implements IHabitLogRepository {
   async findByHabitAndDate(habitId: string, completedDate: string): Promise<HabitLog | null> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { data, error } = await supabaseClient
-      .from("habit_logs")
-      .select("*")
-      .eq("habit_id", habitId)
-      .eq("completed_date", completedDate)
-      .maybeSingle();
-
-    if (error) {
-      console.error("Error finding habit log in Supabase:", error.message);
-      return null;
-    }
-    return data as HabitLog | null;
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query(
+      "SELECT * FROM habit_logs WHERE habit_id = $1 AND completed_date = $2",
+      [habitId, completedDate]
+    );
+    return (rows[0] as HabitLog) || null;
   }
 
   async create(log: HabitLog): Promise<HabitLog> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { data, error } = await supabaseClient
-      .from("habit_logs")
-      .upsert({
-        id: log.id,
-        habit_id: log.habit_id,
-        user_id: log.user_id,
-        completed_date: log.completed_date,
-        is_completed: log.is_completed,
-        notes: log.notes,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Error creating habit log in Supabase:", error.message);
-      throw error;
-    }
-    return data as HabitLog;
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query(
+      `INSERT INTO habit_logs (id, habit_id, user_id, completed_date, is_completed, notes) 
+       VALUES ($1, $2, $3, $4, $5, $6) 
+       ON CONFLICT (habit_id, user_id, completed_date) 
+       DO UPDATE SET is_completed = EXCLUDED.is_completed, notes = EXCLUDED.notes 
+       RETURNING *`,
+      [
+        log.id,
+        log.habit_id,
+        log.user_id,
+        log.completed_date,
+        log.is_completed,
+        log.notes,
+      ]
+    );
+    return rows[0] as HabitLog;
   }
 
   async delete(habitId: string, completedDate: string): Promise<boolean> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { error } = await supabaseClient
-      .from("habit_logs")
-      .delete()
-      .eq("habit_id", habitId)
-      .eq("completed_date", completedDate);
-
-    if (error) {
-      console.error("Error deleting habit log in Supabase:", error.message);
-      return false;
-    }
+    if (!pgPool) throw new Error("pgPool not initialized");
+    await pgPool.query(
+      "DELETE FROM habit_logs WHERE habit_id = $1 AND completed_date = $2",
+      [habitId, completedDate]
+    );
     return true;
   }
 
   async findLogsForUser(userId: string, startDate: string, endDate: string): Promise<HabitLog[]> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { data, error } = await supabaseClient
-      .from("habit_logs")
-      .select("*")
-      .eq("user_id", userId)
-      .gte("completed_date", startDate)
-      .lte("completed_date", endDate)
-      .order("completed_date", { ascending: true });
-
-    if (error) {
-      console.error("Error finding logs for user in Supabase:", error.message);
-      return [];
-    }
-    return data as HabitLog[];
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query(
+      "SELECT * FROM habit_logs WHERE user_id = $1 AND completed_date >= $2 AND completed_date <= $3 ORDER BY completed_date ASC",
+      [userId, startDate, endDate]
+    );
+    return rows as HabitLog[];
   }
 
   async findLogsForHabit(habitId: string, startDate: string, endDate: string): Promise<HabitLog[]> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
-    const { data, error } = await supabaseClient
-      .from("habit_logs")
-      .select("*")
-      .eq("habit_id", habitId)
-      .gte("completed_date", startDate)
-      .lte("completed_date", endDate)
-      .order("completed_date", { ascending: true });
-
-    if (error) {
-      console.error("Error finding logs for habit in Supabase:", error.message);
-      return [];
-    }
-    return data as HabitLog[];
+    if (!pgPool) throw new Error("pgPool not initialized");
+    const { rows } = await pgPool.query(
+      "SELECT * FROM habit_logs WHERE habit_id = $1 AND completed_date >= $2 AND completed_date <= $3 ORDER BY completed_date ASC",
+      [habitId, startDate, endDate]
+    );
+    return rows as HabitLog[];
   }
 
   async getCompletionRate(userId: string, startDate: string, endDate: string): Promise<number> {
-    if (!supabaseClient) throw new Error("Supabase client not initialized");
+    if (!pgPool) throw new Error("pgPool not initialized");
 
     // Get count of completed logs
-    const { count: completedCount, error: logError } = await supabaseClient
-      .from("habit_logs")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .gte("completed_date", startDate)
-      .lte("completed_date", endDate);
-
-    if (logError) {
-      console.error("Error getting log count in Supabase:", logError.message);
-      return 0;
-    }
+    const logRes = await pgPool.query(
+      "SELECT COUNT(*) FROM habit_logs WHERE user_id = $1 AND completed_date >= $2 AND completed_date <= $3",
+      [userId, startDate, endDate]
+    );
+    const completedCount = parseInt(logRes.rows[0].count, 10) || 0;
 
     // Get all habits that the user tracks (owned + shared)
-    const { data: habits, error: habitsError } = await supabaseClient
-      .from("habits")
-      .select("*")
-      .or(`user_id.eq.${userId},is_shared.eq.true`)
-      .eq("is_active", true);
-
-    if (habitsError) {
-      console.error("Error getting habits in Supabase:", habitsError.message);
-      return 0;
-    }
+    const habitRes = await pgPool.query(
+      "SELECT * FROM habits WHERE (user_id = $1 OR is_shared = true) AND is_active = true",
+      [userId]
+    );
+    const habits = habitRes.rows as Habit[];
 
     if (!habits || habits.length === 0) return 0;
 
@@ -137,6 +95,6 @@ export class HabitLogSupabaseRepository implements IHabitLogRepository {
     }
 
     if (totalExpected === 0) return 0;
-    return (completedCount || 0) / totalExpected;
+    return completedCount / totalExpected;
   }
 }

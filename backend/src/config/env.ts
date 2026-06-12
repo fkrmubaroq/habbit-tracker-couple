@@ -17,11 +17,7 @@ const envSchema = z.object({
   MYSQL_DATABASE: z.string().optional(),
   MYSQL_PORT: z.coerce.number().default(3306),
 
-  // Supabase (SDK client)
-  SUPABASE_URL: z.string().optional(),
-  SUPABASE_KEY: z.string().optional(),
-
-  // Postgres URL (For raw migrations and seeders when DB_PROVIDER is supabase)
+  // Postgres URL (when DB_PROVIDER is supabase)
   DATABASE_URL: z.string().optional(),
 
   // CORS
@@ -52,25 +48,11 @@ const envSchema = z.object({
       });
     }
   } else if (data.DB_PROVIDER === "supabase") {
-    if (!data.SUPABASE_URL) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["SUPABASE_URL"],
-        message: "SUPABASE_URL is required when DB_PROVIDER is supabase",
-      });
-    }
-    if (!data.SUPABASE_KEY) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["SUPABASE_KEY"],
-        message: "SUPABASE_KEY is required when DB_PROVIDER is supabase",
-      });
-    }
     if (!data.DATABASE_URL) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["DATABASE_URL"],
-        message: "DATABASE_URL (Direct Postgres connection string) is required when DB_PROVIDER is supabase for schema migrations & seeders",
+        message: "DATABASE_URL is required when DB_PROVIDER is supabase",
       });
     }
   }
