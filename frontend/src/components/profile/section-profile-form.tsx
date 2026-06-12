@@ -8,6 +8,8 @@ interface SectionProfileFormProps {
   setName: (name: string) => void;
   avatarEmoji: string;
   setAvatarEmoji: (emoji: string) => void;
+  password: string;
+  setPassword: (password: string) => void;
   loading: boolean;
   success: boolean;
   error: string | null;
@@ -21,6 +23,8 @@ export function SectionProfileForm({
   setName,
   avatarEmoji,
   setAvatarEmoji,
+  password,
+  setPassword,
   loading,
   success,
   error,
@@ -56,6 +60,17 @@ export function SectionProfileForm({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Romeo"
+          />
+        </div>
+
+        {/* Password */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-extrabold text-text-primary">{t("profile.password_label")}</label>
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder={t("profile.password_placeholder")}
           />
         </div>
 

@@ -157,7 +157,9 @@
     "themes_title": "Interface Color Themes",
     "themes_desc": "Customize your personal visual experience. Opposites are designed to blend harmoniously.",
     "language": "Language",
-    "choose_language": "Choose Language"
+    "choose_language": "Choose Language",
+    "password_label": "New Password (Optional)",
+    "password_placeholder": "Leave blank to keep current password"
   },
   "settings_page": {
     "danger_zone": "Danger Zone",

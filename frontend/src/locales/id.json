@@ -157,7 +157,9 @@
     "themes_title": "Tema Warna Antarmuka",
     "themes_desc": "Sesuaikan pengalaman visual pribadi Anda. Perbedaan tema dirancang agar tetap serasi saat disandingkan.",
     "language": "Bahasa",
-    "choose_language": "Pilih Bahasa"
+    "choose_language": "Pilih Bahasa",
+    "password_label": "Password Baru (Opsional)",
+    "password_placeholder": "Biarkan kosong jika tidak ingin mengganti"
   },
   "settings_page": {
     "danger_zone": "Zona Bahaya",

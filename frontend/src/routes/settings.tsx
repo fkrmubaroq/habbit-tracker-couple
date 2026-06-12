@@ -22,6 +22,7 @@ function SettingsComponent() {
 
   const [name, setName] = React.useState(user?.name || "");
   const [avatarEmoji, setAvatarEmoji] = React.useState(user?.avatar_emoji || "🦖");
+  const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -37,15 +38,21 @@ function SettingsComponent() {
     setError(null);
     try {
       const activeTheme = selectedThemeName || theme;
-      const response = await api.put("/users/profile", {
+      const payload: any = {
         name,
         avatar_emoji: avatarEmoji,
         theme_preferences: { theme: activeTheme },
-      });
+      };
+      if (password && password.trim() !== "") {
+        payload.password = password;
+      }
+
+      const response = await api.put("/users/profile", payload);
 
       const updatedUser = response.data.user;
       setUser(updatedUser);
       setSuccess(true);
+      setPassword("");
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
       setError(err.response?.data?.error || t("profile.error_update", { defaultValue: "Failed to update settings." }));
@@ -96,6 +103,8 @@ function SettingsComponent() {
           setName={setName}
           avatarEmoji={avatarEmoji}
           setAvatarEmoji={setAvatarEmoji}
+          password={password}
+          setPassword={setPassword}
           loading={loading}
           success={success}
           error={error}

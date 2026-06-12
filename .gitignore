@@ -21,3 +21,4 @@ CVS
 *.sw?
 frontend/dist
 backend/dist
+./package.json

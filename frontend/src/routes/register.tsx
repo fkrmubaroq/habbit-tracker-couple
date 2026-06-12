@@ -10,7 +10,7 @@ import { useThemeStore } from "../stores/theme.store";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { cn } from "../lib/utils";
-import { Heart, Lock, User as UserIcon, AlertCircle, Smile } from "lucide-react";
+import { Heart, Lock, User as UserIcon, AlertCircle, Smile, Eye, EyeOff } from "lucide-react";
 
 export const Route = createFileRoute("/register")({
   component: RegisterComponent,
@@ -35,6 +35,7 @@ function RegisterComponent() {
   const navigate = useNavigate();
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
   const [selectedRole, setSelectedRole] = React.useState<"husband" | "wife">("husband");
   const [selectedEmoji, setSelectedEmoji] = React.useState("🦖");
   const { t } = useTranslation();
@@ -160,11 +161,22 @@ function RegisterComponent() {
           <div className="relative">
             <Lock className="absolute left-3 top-[50%] translate-y-[-50%] h-5 w-5 text-text-secondary z-10" />
             <Input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Min. 6 characters"
-              className={cn("pl-10 pr-4 py-2.5", errors.password ? "border-red-500" : "")}
+              className={cn("pl-10 pr-10 py-2.5", errors.password ? "border-red-500" : "")}
               {...register("password")}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-[50%] translate-y-[-50%] text-text-secondary hover:text-text-primary focus:outline-none z-10 cursor-pointer"
+            >
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
           </div>
           {errors.password && (
             <span className="text-xs font-bold text-red-500">{errors.password.message}</span>
