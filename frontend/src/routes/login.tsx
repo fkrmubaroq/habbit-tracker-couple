@@ -1,16 +1,16 @@
-import * as React from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { AlertCircle, Eye, EyeOff, Lock, User as UserIcon } from "lucide-react";
+import * as React from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import api from "../lib/api-client";
-import { useAuthStore } from "../stores/auth.store";
-import { useThemeStore } from "../stores/theme.store";
+import { z } from "zod";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import api from "../lib/api-client";
 import { cn } from "../lib/utils";
-import { Heart, Lock, User as UserIcon, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { useAuthStore } from "../stores/auth.store";
+import { useThemeStore } from "../stores/theme.store";
 
 export const Route = createFileRoute("/login")({
   component: LoginComponent,
@@ -61,14 +61,14 @@ function LoginComponent() {
     try {
       const response = await api.post("/auth/login", data);
       const { user, token } = response.data;
-      
+
       // Auto-set the correct user theme preference
       if (user.theme_preferences?.theme) {
         setTheme(user.theme_preferences.theme);
       } else {
         setTheme(user.role === "husband" ? "Duo" : "Sakura");
       }
-      
+
       login(user, token);
       navigate({ to: "/" });
     } catch (err: any) {
@@ -81,10 +81,10 @@ function LoginComponent() {
   };
 
   return (
-    <div className="w-full max-w-md bg-card-surface border-2 border-text-primary rounded-2xl p-6 sm:p-8 shadow-[0_6px_0_0_#1f2937] animate-float">
+    <div className="w-full max-w-md bg-card-surface border-2 border-border-color rounded-2xl p-6 sm:p-8 shadow-[0_4px_0_0_var(--border-color)] animate-float">
       <div className="flex flex-col items-center mb-6 text-center">
-        <div className="h-16 w-16 bg-primary/20 border-2 border-text-primary rounded-full flex items-center justify-center mb-3 text-primary relative">
-          <Heart className="h-8 w-8 text-primary fill-current" />
+        <div className="h-16 w-16 rounded-full flex items-center justify-center mb-3 text-primary relative">
+          <img src="/favicon/favicon.svg" alt="Logo" className="size-20" />
         </div>
         <h1 className="text-2xl font-extrabold text-text-primary tracking-tight">{t("login.welcome_title")}</h1>
         <p className="text-text-secondary text-sm font-semibold mt-1">{t("login.welcome_subtitle")}</p>

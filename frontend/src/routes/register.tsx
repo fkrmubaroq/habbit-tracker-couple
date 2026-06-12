@@ -1,16 +1,16 @@
-import * as React from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { AlertCircle, Eye, EyeOff, Lock, User as UserIcon } from "lucide-react";
+import * as React from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import api from "../lib/api-client";
-import { useAuthStore } from "../stores/auth.store";
-import { useThemeStore } from "../stores/theme.store";
+import { z } from "zod";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import api from "../lib/api-client";
 import { cn } from "../lib/utils";
-import { Heart, Lock, User as UserIcon, AlertCircle, Smile, Eye, EyeOff } from "lucide-react";
+import { useAuthStore } from "../stores/auth.store";
+import { useThemeStore } from "../stores/theme.store";
 
 export const Route = createFileRoute("/register")({
   component: RegisterComponent,
@@ -76,10 +76,10 @@ function RegisterComponent() {
     try {
       const response = await api.post("/auth/register", data);
       const { user, token } = response.data;
-      
+
       // Auto-set the correct user theme preference
       setTheme(user.role === "husband" ? "Duo" : "Sakura");
-      
+
       login(user, token);
       navigate({ to: "/" });
     } catch (err: any) {
@@ -94,7 +94,7 @@ function RegisterComponent() {
   const handleRoleSelect = (role: "husband" | "wife") => {
     setSelectedRole(role);
     setValue("role", role);
-    
+
     // Auto emoji recommendation
     const recommendedEmoji = role === "husband" ? "🦖" : "🦄";
     setSelectedEmoji(recommendedEmoji);
@@ -107,10 +107,11 @@ function RegisterComponent() {
   };
 
   return (
-    <div className="w-full max-w-lg bg-card-surface border-2 border-text-primary rounded-2xl p-6 sm:p-8 shadow-[0_6px_0_0_#1f2937]">
+    <div className="w-full max-w-lg bg-card-surface border-2 border-border-color rounded-2xl p-6 sm:p-8 shadow-[0_4px_0_0_var(--border-color)]">
       <div className="flex flex-col items-center mb-6 text-center">
-        <div className="h-14 w-14 bg-primary/20 border-2 border-text-primary rounded-full flex items-center justify-center mb-3 text-primary">
-          <Heart className="h-7 w-7 text-primary fill-current" />
+        <div className="h-14 w-14 rounded-full flex items-center justify-center mb-3 text-primary">
+          <img src="/favicon/favicon.svg" alt="Logo" className="size-20" />
+
         </div>
         <h1 className="text-2xl font-extrabold text-text-primary tracking-tight">{t("register.create_title")}</h1>
         <p className="text-text-secondary text-sm font-semibold mt-1">{t("register.create_subtitle")}</p>
@@ -189,11 +190,10 @@ function RegisterComponent() {
           <div className="grid grid-cols-2 gap-4">
             <div
               onClick={() => handleRoleSelect("husband")}
-              className={`border-2 rounded-xl p-3 flex flex-col items-center gap-1 cursor-pointer transition-all ${
-                selectedRole === "husband"
-                  ? "bg-primary/10 border-primary shadow-[0_3px_0_0_var(--primary)] scale-102"
-                  : "border-border-color bg-card-surface hover:bg-highlight"
-              }`}
+              className={`border-2 rounded-xl p-3 flex flex-col items-center gap-1 cursor-pointer transition-all ${selectedRole === "husband"
+                ? "bg-primary/10 border-primary shadow-[0_3px_0_0_var(--primary)] scale-102"
+                : "border-border-color bg-card-surface hover:bg-highlight"
+                }`}
             >
               <span className="text-3xl">🦖</span>
               <span className="font-bold text-sm text-text-primary">{t("common.husband")}</span>
@@ -202,11 +202,10 @@ function RegisterComponent() {
 
             <div
               onClick={() => handleRoleSelect("wife")}
-              className={`border-2 rounded-xl p-3 flex flex-col items-center gap-1 cursor-pointer transition-all ${
-                selectedRole === "wife"
-                  ? "bg-primary/10 border-primary shadow-[0_3px_0_0_var(--primary)] scale-102"
-                  : "border-border-color bg-card-surface hover:bg-highlight"
-              }`}
+              className={`border-2 rounded-xl p-3 flex flex-col items-center gap-1 cursor-pointer transition-all ${selectedRole === "wife"
+                ? "bg-primary/10 border-primary shadow-[0_3px_0_0_var(--primary)] scale-102"
+                : "border-border-color bg-card-surface hover:bg-highlight"
+                }`}
             >
               <span className="text-3xl">🦄</span>
               <span className="font-bold text-sm text-text-primary">{t("common.wife")}</span>
@@ -218,17 +217,16 @@ function RegisterComponent() {
         {/* Emoji Selector */}
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-extrabold text-text-primary">{t("register.emoji_label")}</label>
-          <div className="flex flex-wrap gap-2 justify-center bg-highlight p-3 rounded-xl border-2 border-text-primary">
+          <div className="flex flex-wrap gap-2 justify-center bg-highlight p-3 rounded-xl border-2 border-border-color">
             {EMOJI_OPTIONS.map((emoji) => (
               <button
                 key={emoji}
                 type="button"
                 onClick={() => handleEmojiSelect(emoji)}
-                className={`text-2xl h-10 w-10 flex items-center justify-center rounded-lg border-2 transition-all cursor-pointer ${
-                  selectedEmoji === emoji
-                    ? "bg-primary border-text-primary shadow-[0_2px_0_0_#1f2937]"
-                    : "border-transparent hover:bg-card-surface"
-                }`}
+                className={`text-2xl h-10 w-10 flex items-center justify-center rounded-lg border-2 transition-all cursor-pointer ${selectedEmoji === emoji
+                  ? "bg-primary border-border-color shadow-[0_4px_0_0_var(--border-color)]"
+                  : "border-transparent hover:bg-card-surface"
+                  }`}
               >
                 {emoji}
               </button>
