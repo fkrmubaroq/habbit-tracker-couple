@@ -92,7 +92,7 @@
     "manage_habits": "Kelola Habit",
     "manage_habits_desc": "Buat habit pribadi dan bersama.",
     "create_habit": "Buat Habit",
-    "quick_templates": "Template Habit Instan",
+    "quick_templates": "Template Habit",
     "templates_desc": "Klik salah satu kartu untuk mengisi formulir secara instan.",
     "your_tracked_habits": "Habit yang Dipantau",
     "no_habits_created": "Belum ada habit yang dibuat",
@@ -221,6 +221,11 @@
     "days_stat": "Hari Konsisten",
     "percentage_stat": "Tingkat Keberhasilan",
     "filter_all": "Semua Frekuensi",
-    "future_date_error": "Tidak bisa mencatat habit untuk tanggal di masa mendatang!"
+    "future_date_error": "Tidak bisa mencatat habit untuk tanggal di masa mendatang!",
+    "active_habits": "Habit Aktif",
+    "days_value": "{{count}} hari",
+    "heatmap_info": "Arahkan kursor ke kotak untuk melihat detail penyelesaian harian.",
+    "less": "Kurang",
+    "more": "Banyak"
   }
 }

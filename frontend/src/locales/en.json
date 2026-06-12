@@ -221,6 +221,11 @@
     "days_stat": "Consistent Days",
     "percentage_stat": "Success Rate",
     "filter_all": "All Frequencies",
-    "future_date_error": "Cannot track habits for future dates!"
+    "future_date_error": "Cannot track habits for future dates!",
+    "active_habits": "Active Habits",
+    "days_value": "{{count}} days",
+    "heatmap_info": "Hover over cells to view daily completion details.",
+    "less": "Less",
+    "more": "More"
   }
 }

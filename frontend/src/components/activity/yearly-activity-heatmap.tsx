@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import "dayjs/locale/id";
 import dayOfYear from "dayjs/plugin/dayOfYear";
 import { BarChart3, Heart, Info } from "lucide-react";
 import * as React from "react";
@@ -17,7 +18,7 @@ interface YearlyActivityHeatmapProps {
 
 const today = dayjs();
 export function YearlyActivityHeatmap({ currentUserId }: YearlyActivityHeatmapProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   // State
   const [selectedYear, setSelectedYear] = React.useState<number>(today.year());
@@ -50,7 +51,7 @@ export function YearlyActivityHeatmap({ currentUserId }: YearlyActivityHeatmapPr
     if (event.type === "click") {
       event.stopPropagation();
     }
-    
+
     const target = event.currentTarget;
     const rect = target.getBoundingClientRect();
     const scrollContainer = target.closest(".heatmap-scroll-container");
@@ -232,7 +233,9 @@ export function YearlyActivityHeatmap({ currentUserId }: YearlyActivityHeatmapPr
     return "bg-primary border-primary shadow-[0_1px_0_color-mix(in srgb, var(--primary) 80%, #000)]";
   };
 
-  const monthsShort = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+  const monthsShortID = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+  const monthsShortEN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthsShort = i18n.language.startsWith("id") ? monthsShortID : monthsShortEN;
   const daysShort = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
   const years = Array.from({ length: 5 }, (_, i) => today.year() - 2 + i);
 
@@ -326,7 +329,7 @@ export function YearlyActivityHeatmap({ currentUserId }: YearlyActivityHeatmapPr
             <span className="text-2xl bg-accent/20 text-accent p-2.5 rounded-xl border border-accent/25 shrink-0">🔥</span>
             <div className="flex flex-col">
               <span className="text-xs font-extrabold text-text-secondary leading-none uppercase">{t("activity.days_stat")}</span>
-              <span className="text-lg font-black text-text-primary mt-1">{stats.consistentDays} hari</span>
+              <span className="text-lg font-black text-text-primary mt-1">{t("activity.days_value", { count: stats.consistentDays })}</span>
             </div>
           </div>
 
@@ -343,7 +346,7 @@ export function YearlyActivityHeatmap({ currentUserId }: YearlyActivityHeatmapPr
           <div className="bg-highlight/50 border-2 border-border-color rounded-2xl p-3 flex items-center gap-3">
             <span className="text-2xl bg-highlight border border-border-color/80 p-2.5 rounded-xl shrink-0">📋</span>
             <div className="flex flex-col">
-              <span className="text-xs font-extrabold text-text-secondary leading-none uppercase">Habit Aktif</span>
+              <span className="text-xs font-extrabold text-text-secondary leading-none uppercase">{t("activity.active_habits")}</span>
               <span className="text-lg font-black text-text-primary mt-1">{stats.activeHabitsCount}</span>
             </div>
           </div>
@@ -379,10 +382,10 @@ export function YearlyActivityHeatmap({ currentUserId }: YearlyActivityHeatmapPr
               <div className="flex gap-1">
                 {/* Left Days indicator column */}
                 <div className="flex flex-col gap-1 justify-between text-[9px] font-extrabold text-text-secondary w-8 pr-1 mt-0.5">
-                  <span>Min</span>
-                  <span>Sel</span>
-                  <span>Kam</span>
-                  <span>Sab</span>
+                  <span>{i18n.language.startsWith("id") ? "Min" : "Sun"}</span>
+                  <span>{i18n.language.startsWith("id") ? "Sel" : "Tue"}</span>
+                  <span>{i18n.language.startsWith("id") ? "Kam" : "Thu"}</span>
+                  <span>{i18n.language.startsWith("id") ? "Sab" : "Sat"}</span>
                 </div>
 
                 {/* Grid columns of weeks */}
@@ -401,9 +404,8 @@ export function YearlyActivityHeatmap({ currentUserId }: YearlyActivityHeatmapPr
                         return (
                           <div
                             key={dIdx}
-                            className={`size-5 rounded-[3px] border transition-all ${cellColorClass} ${
-                              isCurrentYear ? "cursor-pointer hover:scale-110 hover:border-text-primary/40" : ""
-                            }`}
+                            className={`size-5 rounded-[3px] border transition-all ${cellColorClass} ${isCurrentYear ? "cursor-pointer hover:scale-110 hover:border-text-primary/40" : ""
+                              }`}
                             onMouseEnter={(e) => isCurrentYear && handleCellInteraction(e, dateStr, completionsCount)}
                             onMouseLeave={handleMouseLeave}
                             onClick={(e) => isCurrentYear && handleCellInteraction(e, dateStr, completionsCount)}
@@ -427,10 +429,12 @@ export function YearlyActivityHeatmap({ currentUserId }: YearlyActivityHeatmapPr
                 }}
               >
                 <div className="text-[8px] text-text-secondary font-black leading-none uppercase">
-                  {dayjs(hoveredCell.dateStr).format("D MMMM YYYY")}
+                  {dayjs(hoveredCell.dateStr)
+                    .locale(i18n.language.startsWith("id") ? "id" : "en")
+                    .format("D MMMM YYYY")}
                 </div>
                 <div className="text-[11px] font-black text-white mt-0.5 whitespace-nowrap">
-                  {hoveredCell.completionsCount} {t("activity.completions_stat")}
+                  {t("activity.completions_count", { count: hoveredCell.completionsCount })}
                 </div>
                 {/* Visual arrow at the bottom */}
                 <div
@@ -441,20 +445,20 @@ export function YearlyActivityHeatmap({ currentUserId }: YearlyActivityHeatmapPr
           </div>
 
           {/* Density legend */}
-          <div className="flex items-center justify-between text-xs font-bold text-text-secondary px-1 py-1">
-            <div className="flex items-center gap-1.5 bg-highlight/40 px-3 py-1.5 rounded-xl border border-border-color/60">
+          <div className="lg:flex-row flex-col flex items-center justify-between text-xs font-bold text-text-secondary px-1 py-1">
+            <div className="lg:order-1 order-2 lg:mt-0 mt-4 flex items-center gap-1.5 bg-highlight/40 px-3 py-1.5 rounded-xl border border-border-color/60">
               <Info className="h-3.5 w-3.5 text-text-secondary" />
-              <span>Arahkan kursor ke kotak untuk melihat detail penyelesaian harian.</span>
+              <span>{t("activity.heatmap_info")}</span>
             </div>
 
             <div className="flex items-center gap-1.5 self-center">
-              <span>Kurang</span>
+              <span>{t("activity.less")}</span>
               <div className="size-4.5 rounded-[3px] border bg-highlight/50 border-border-color/40"></div>
               <div className="size-4.5 rounded-[3px] border bg-primary/25 border-primary/15"></div>
               <div className="size-4.5 rounded-[3px] border bg-primary/50 border-primary/30"></div>
               <div className="size-4.5 rounded-[3px] border bg-primary/75 border-primary/50"></div>
               <div className="size-4.5 rounded-[3px] border bg-primary border-primary"></div>
-              <span>Banyak</span>
+              <span>{t("activity.more")}</span>
             </div>
           </div>
         </div>

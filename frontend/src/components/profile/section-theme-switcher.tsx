@@ -36,8 +36,8 @@ export function SectionThemeSwitcher({ onThemeChange }: SectionThemeSwitcherProp
               key={themeItem.name}
               onClick={() => onThemeChange(themeItem.name)}
               className={`border-2 rounded-2xl p-4 flex flex-col gap-3 cursor-pointer transition-all ${active
-                ? "border-text-primary bg-highlight/50 shadow-[0_4px_0_0_var(--text-primary)]"
-                : "border-border-color bg-card-surface hover:bg-highlight hover:border-text-primary"
+                ? "border-primary bg-highlight/50 shadow-[0_4px_0_0_var(--border-color)]"
+                : "border-border-color bg-card-surface hover:bg-highlight hover:border-border-color"
                 }`}
             >
               <div className="flex items-center justify-between">
