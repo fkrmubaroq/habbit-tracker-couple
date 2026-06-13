@@ -371,7 +371,7 @@ export function MonthlyHabitTable({ currentUserId }: MonthlyHabitTableProps) {
                                 <button
                                   type="button"
                                   onClick={() => canToggle && handleCellClick(habit, day)}
-                                  disabled={!canToggle || toggleMutation.isPending}
+                                  disabled={!canToggle}
                                   className={`relative w-8 h-8 rounded-lg border border-border-color bg-card-surface shadow-[0_2px_0_var(--border-color)] overflow-hidden transition-all flex justify-between p-0.5 ${canToggle ? "cursor-pointer active:translate-y-[1px] active:shadow-none" : "cursor-default"
                                     }`}
                                 >
@@ -401,7 +401,7 @@ export function MonthlyHabitTable({ currentUserId }: MonthlyHabitTableProps) {
                                 <button
                                   type="button"
                                   onClick={() => canToggle && handleCellClick(habit, day)}
-                                  disabled={!canToggle || toggleMutation.isPending}
+                                  disabled={!canToggle}
                                   className={`w-7.5 h-7.5 rounded-lg border-2 transition-all flex items-center justify-center select-none ${userFilter === "me"
                                     ? myCompleted
                                       ? "bg-primary border-primary text-text-primary shadow-[0_2px_0_color-mix(in srgb, var(--primary) 80%, #000)]"

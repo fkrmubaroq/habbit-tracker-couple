@@ -30,6 +30,8 @@ export function HabitForm({
   const createMutation = useCreateHabit();
   const updateMutation = useUpdateHabit();
 
+  const isPending = createMutation.isPending || updateMutation.isPending;
+
   // Form States
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
@@ -65,7 +67,7 @@ export function HabitForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim() || isPending) return;
 
     const habitData = {
       title,
@@ -130,6 +132,7 @@ export function HabitForm({
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g. Drink 2L Water"
           required
+          disabled={isPending}
         />
       </div>
 
@@ -140,6 +143,7 @@ export function HabitForm({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="e.g. Carry a 1L bottle and fill it twice a day"
+          disabled={isPending}
         />
       </div>
 
@@ -149,6 +153,7 @@ export function HabitForm({
         <Select
           value={frequency}
           onChange={(e) => setFrequency(e.target.value as any)}
+          disabled={isPending}
         >
           <option value="daily">{t("dashboard.daily")}</option>
           <option value="weekly">{t("dashboard.weekly")}</option>
@@ -165,7 +170,10 @@ export function HabitForm({
               key={emoji}
               type="button"
               onClick={() => setIconEmoji(emoji)}
-              className={`h-9 w-9 text-xl flex items-center justify-center rounded-lg border-2 transition-all cursor-pointer ${iconEmoji === emoji ? "bg-primary border-text-primary shadow-[0_2px_0_0_#1f2937]" : "border-transparent hover:bg-card-surface"
+              disabled={isPending}
+              className={`h-9 w-9 text-xl flex items-center justify-center rounded-lg border-2 transition-all ${
+                isPending ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+              } ${iconEmoji === emoji ? "bg-primary border-text-primary shadow-[0_2px_0_0_#1f2937]" : "border-transparent hover:bg-card-surface"
                 }`}
             >
               {emoji}
@@ -184,18 +192,29 @@ export function HabitForm({
           type="checkbox"
           checked={isShared}
           onChange={(e) => setIsShared(e.target.checked)}
-          className="h-5 w-5 rounded border-2 border-text-primary accent-primary cursor-pointer"
+          disabled={isPending}
+          className="h-5 w-5 rounded border-2 border-text-primary accent-primary cursor-pointer disabled:cursor-not-allowed"
         />
       </div>
 
       <div className="flex justify-end gap-2.5 mt-2 border-t-2 border-highlight pt-3">
         {onCancel && (
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
             {t("common.cancel")}
           </Button>
         )}
-        <Button type="submit" variant="3d">
-          {editingHabit ? t("habits.save_changes") : t("habits.add_habit")}
+        <Button type="submit" variant="3d" disabled={isPending}>
+          {isPending ? (
+            <span className="flex items-center gap-2">
+              <svg className="animate-spin h-4 w-4 text-current" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              {editingHabit ? t("common.saving", { defaultValue: "Menyimpan..." }) : t("common.adding", { defaultValue: "Menambah..." })}
+            </span>
+          ) : (
+            editingHabit ? t("habits.save_changes") : t("habits.add_habit")
+          )}
         </Button>
       </div>
     </form>
