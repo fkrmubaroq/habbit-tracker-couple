@@ -31,7 +31,7 @@ class RepositoryFactory {
       this.habitRepo = new HabitMySQLRepository();
       this.logRepo = new HabitLogMySQLRepository();
       this.gamificationRepo = new GamificationMySQLRepository();
-    } else {
+    } else if (env.DB_PROVIDER === "supabase" || env.DB_PROVIDER === "neondb") {
       this.userRepo = new UserSupabaseRepository();
       this.habitRepo = new HabitSupabaseRepository();
       this.logRepo = new HabitLogSupabaseRepository();

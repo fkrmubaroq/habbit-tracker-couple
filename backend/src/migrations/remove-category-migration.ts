@@ -65,7 +65,7 @@ async function main() {
   try {
     if (env.DB_PROVIDER === "mysql") {
       await runMySQLMigration();
-    } else if (env.DB_PROVIDER === "supabase") {
+    } else if (env.DB_PROVIDER === "supabase" || env.DB_PROVIDER === "neondb") {
       await runSupabaseMigration();
     } else {
       console.error("Unsupported DB_PROVIDER:", env.DB_PROVIDER);

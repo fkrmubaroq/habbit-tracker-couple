@@ -7,7 +7,7 @@ dotenv.config();
 const envSchema = z.object({
   PORT: z.coerce.number().default(5000),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
-  DB_PROVIDER: z.enum(["mysql", "supabase"]),
+  DB_PROVIDER: z.enum(["mysql", "supabase", "neondb"]),
   JWT_SECRET: z.string().default("habitpasutri-default-secret-key-12345"),
 
   // MySQL
@@ -47,12 +47,12 @@ const envSchema = z.object({
         message: "MYSQL_DATABASE is required when DB_PROVIDER is mysql",
       });
     }
-  } else if (data.DB_PROVIDER === "supabase") {
+  } else if (data.DB_PROVIDER === "supabase" || data.DB_PROVIDER === "neondb") {
     if (!data.DATABASE_URL) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["DATABASE_URL"],
-        message: "DATABASE_URL is required when DB_PROVIDER is supabase",
+        message: "DATABASE_URL is required when DB_PROVIDER is supabase or neondb",
       });
     }
   }

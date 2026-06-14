@@ -39,7 +39,7 @@ class PGExecutor implements Executor {
   private client: pg.Client | null = null;
 
   async init() {
-    if (!env.DATABASE_URL) throw new Error("DATABASE_URL is required for Supabase seeding");
+    if (!env.DATABASE_URL) throw new Error("DATABASE_URL is required for seeding");
     this.client = new pg.Client({
       connectionString: env.DATABASE_URL,
       ssl: env.DATABASE_URL.includes("supabase.co") ? { rejectUnauthorized: false } : false,
@@ -71,7 +71,7 @@ async function main() {
     const mysqlExec = new MySQLExecutor();
     await mysqlExec.init();
     db = mysqlExec;
-  } else if (env.DB_PROVIDER === "supabase") {
+  } else if (env.DB_PROVIDER === "supabase" || env.DB_PROVIDER === "neondb") {
     const pgExec = new PGExecutor();
     await pgExec.init();
     db = pgExec;

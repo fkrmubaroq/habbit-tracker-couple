@@ -1,9 +1,9 @@
-import { Response, NextFunction } from "express";
-import { AuthenticatedRequest } from "../../middleware/auth.middleware.js";
-import { userRepo } from "../../repositories/repository.factory.js";
+import bcrypt from "bcryptjs";
+import { NextFunction, Response } from "express";
 import { mysqlPool, pgPool } from "../../config/database.js";
 import { env } from "../../config/env.js";
-import bcrypt from "bcryptjs";
+import { AuthenticatedRequest } from "../../middleware/auth.middleware.js";
+import { userRepo } from "../../repositories/repository.factory.js";
 
 export async function updateProfile(
   req: AuthenticatedRequest,
@@ -21,12 +21,12 @@ export async function updateProfile(
 
     user.name = name;
     user.avatar_emoji = avatar_emoji;
-    
+
     // Only update avatar_image if provided (or null to clear it)
     if (avatar_image !== undefined) {
       user.avatar_image = avatar_image;
     }
-    
+
     if (theme_preferences !== undefined) {
       user.theme_preferences = theme_preferences;
     }
@@ -112,7 +112,7 @@ export async function resetData(
         await mysqlPool.query("DELETE FROM habit_logs WHERE user_id = ?", [uid]);
         await mysqlPool.query("DELETE FROM habits WHERE user_id = ?", [uid]);
       }
-    } else if (env.DB_PROVIDER === "supabase" && pgPool) {
+    } else if ((env.DB_PROVIDER === "supabase" || env.DB_PROVIDER === "neondb") && pgPool) {
       for (const uid of userIds) {
         await pgPool.query("DELETE FROM user_badges WHERE user_id = $1", [uid]);
         await pgPool.query("DELETE FROM streaks WHERE user_id = $1", [uid]);

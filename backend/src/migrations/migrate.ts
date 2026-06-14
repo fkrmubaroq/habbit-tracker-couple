@@ -1,8 +1,8 @@
 import fs from "fs";
-import path from "path";
-import fileURLToPath from "url";
 import mysql from "mysql2/promise";
+import path from "path";
 import pg from "pg";
+import fileURLToPath from "url";
 import { env } from "../config/env.js";
 
 // Utility to get __dirname equivalent in ESM
@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 
 async function runMySQLMigrations() {
   console.log("Starting MySQL schema migration...");
-  
+
   // Create temporary connection with multipleStatements enabled
   const connection = await mysql.createConnection({
     host: env.MYSQL_HOST,
@@ -25,7 +25,7 @@ async function runMySQLMigrations() {
   try {
     const migrationFile = path.join(__dirname, "mysql", "001-initial-schema.sql");
     const sql = fs.readFileSync(migrationFile, "utf8");
-    
+
     console.log("Executing migration SQL...");
     await connection.query(sql);
     console.log("MySQL migration completed successfully.");
@@ -40,7 +40,7 @@ async function runMySQLMigrations() {
 async function runSupabaseMigrations() {
   console.log("Starting Supabase/PostgreSQL schema migration...");
   if (!env.DATABASE_URL) {
-    throw new Error("DATABASE_URL env variable is required for Supabase migrations.");
+    throw new Error("DATABASE_URL env variable is required for migrations.");
   }
 
   const client = new pg.Client({
@@ -69,7 +69,7 @@ async function main() {
   try {
     if (env.DB_PROVIDER === "mysql") {
       await runMySQLMigrations();
-    } else if (env.DB_PROVIDER === "supabase") {
+    } else if (env.DB_PROVIDER === "supabase" || env.DB_PROVIDER === "neondb") {
       await runSupabaseMigrations();
     } else {
       console.error("Unsupported DB_PROVIDER:", env.DB_PROVIDER);

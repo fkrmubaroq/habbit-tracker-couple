@@ -1,5 +1,6 @@
 import mysql from "mysql2/promise";
 import pg from "pg";
+import { Pool as NeonPool } from "@neondatabase/serverless";
 import { env } from "./env.js";
 
 let mysqlPool: mysql.Pool | null = null;
@@ -23,6 +24,10 @@ if (env.DB_PROVIDER === "mysql") {
     connectionString: env.DATABASE_URL,
     ssl: env.DATABASE_URL && env.DATABASE_URL.includes("supabase.co") ? { rejectUnauthorized: false } : false,
   });
+} else if (env.DB_PROVIDER === "neondb") {
+  pgPool = new NeonPool({
+    connectionString: env.DATABASE_URL,
+  }) as any;
 }
 
 export { mysqlPool, pgPool };
@@ -37,15 +42,15 @@ export async function testConnection(): Promise<boolean> {
       console.error("MySQL connection test: FAILED -", err.message);
       return false;
     }
-  } else if (env.DB_PROVIDER === "supabase" && pgPool) {
+  } else if ((env.DB_PROVIDER === "supabase" || env.DB_PROVIDER === "neondb") && pgPool) {
     try {
       const client = await pgPool.connect();
       await client.query("SELECT 1");
       client.release();
-      console.log("Supabase connection test: SUCCESS");
+      console.log(`${env.DB_PROVIDER === "neondb" ? "NeonDB" : "Supabase"} connection test: SUCCESS`);
       return true;
     } catch (err: any) {
-      console.error("Supabase connection test: FAILED -", err.message);
+      console.error(`${env.DB_PROVIDER === "neondb" ? "NeonDB" : "Supabase"} connection test: FAILED -`, err.message);
       return false;
     }
   }

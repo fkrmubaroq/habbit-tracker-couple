@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import dayjs from "dayjs";
 import api from "../lib/api-client";
 import type { HabitLog, Streak, Badge } from "../types/index";
 
@@ -55,11 +56,14 @@ export function useToggleCompletion() {
       // Optimistically update to the new value
       queryClient.setQueriesData<HabitLog[]>({ queryKey: ["my-logs"] }, (old) => {
         if (!old) return [];
+        const formatStr = (d: string) => dayjs(d).format("YYYY-MM-DD");
+        const targetDate = formatStr(newLog.completed_date);
+
         if (newLog.is_completed) {
-          const exists = old.some((log) => log.habit_id === newLog.habit_id && log.completed_date === newLog.completed_date);
+          const exists = old.some((log) => log.habit_id === newLog.habit_id && formatStr(log.completed_date) === targetDate);
           if (exists) {
             return old.map((log) =>
-              log.habit_id === newLog.habit_id && log.completed_date === newLog.completed_date
+              log.habit_id === newLog.habit_id && formatStr(log.completed_date) === targetDate
                 ? { ...log, is_completed: true }
                 : log
             );
@@ -70,13 +74,13 @@ export function useToggleCompletion() {
               id: `temp-${Date.now()}`,
               habit_id: newLog.habit_id,
               user_id: "",
-              completed_date: newLog.completed_date,
+              completed_date: targetDate,
               is_completed: true,
               notes: newLog.notes || null,
             },
           ];
         } else {
-          return old.filter((log) => !(log.habit_id === newLog.habit_id && log.completed_date === newLog.completed_date));
+          return old.filter((log) => !(log.habit_id === newLog.habit_id && formatStr(log.completed_date) === targetDate));
         }
       });
 
