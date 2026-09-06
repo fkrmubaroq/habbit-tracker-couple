@@ -2,11 +2,12 @@
   "name": "habbit-tracker-couple",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
-    "build": "npm run build --prefix backend && npm run build --prefix frontend",
-    "db:migrate": "npm run db:migrate --prefix backend",
-    "db:seed": "npm run db:seed --prefix backend",
-    "install:all": "npm install --prefix backend && npm install --prefix frontend"
+    "dev": "concurrently \"pnpm --dir backend dev\" \"pnpm --dir frontend dev\"",
+    "build": "pnpm --dir backend build && pnpm --dir frontend build",
+    "db:migrate": "pnpm --dir backend db:migrate",
+    "db:seed": "pnpm --dir backend db:seed",
+    "install:all": "pnpm --dir backend install && pnpm --dir frontend install",
+    "deploy": "bash scripts/deploy.sh"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
