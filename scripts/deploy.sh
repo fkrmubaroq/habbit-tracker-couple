@@ -79,6 +79,15 @@ scp "${SCP_OPTS[@]}" -r "${ROOT_DIR}/backend/dist" "${VPS_USER}@${VPS_HOST}:${RE
 scp "${SCP_OPTS[@]}" "${ROOT_DIR}/backend/package.json" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/"
 [ -f "${ROOT_DIR}/backend/pnpm-lock.yaml" ] && scp "${SCP_OPTS[@]}" "${ROOT_DIR}/backend/pnpm-lock.yaml" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/"
 
+# Mengirim file .env backend
+if [ -f "${ROOT_DIR}/backend/.env.production" ]; then
+    echo "→ Mengirim backend/.env.production sebagai .env..."
+    scp "${SCP_OPTS[@]}" "${ROOT_DIR}/backend/.env.production" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/.env"
+elif [ -f "${ROOT_DIR}/backend/.env" ]; then
+    echo "→ Mengirim backend/.env..."
+    scp "${SCP_OPTS[@]}" "${ROOT_DIR}/backend/.env" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/.env"
+fi
+
 echo "→ Mengirim frontend..."
 scp "${SCP_OPTS[@]}" -r "${ROOT_DIR}/frontend/dist" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/frontend/"
 scp "${SCP_OPTS[@]}" "${ROOT_DIR}/frontend/package.json" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/frontend/"
@@ -86,7 +95,34 @@ scp "${SCP_OPTS[@]}" "${ROOT_DIR}/frontend/package.json" "${VPS_USER}@${VPS_HOST
 
 echo ""
 echo "=========================================="
-echo "🌐 5. Mengatur Konfigurasi Nginx di VPS..."
+echo "⚡ 5. Menginstall Dependencies & Menjalankan Backend (PM2)..."
+echo "=========================================="
+ssh "${SSH_OPTS[@]}" "${VPS_USER}@${VPS_HOST}" bash << EOF
+    cd "${REMOTE_PATH}/backend"
+
+    echo "→ Menginstall dependencies backend..."
+    if command -v pnpm >/dev/null 2>&1; then
+        pnpm install --prod
+    else
+        npm install --omit=dev
+    fi
+
+    echo "→ Menjalankan / merestart PM2..."
+    if command -v pm2 >/dev/null 2>&1; then
+        pm2 describe habbit-backend >/dev/null 2>&1 && pm2 restart habbit-backend || pm2 start dist/index.js --name habbit-backend
+        pm2 save 2>/dev/null || true
+        echo "✓ PM2 backend (habbit-backend) berhasil berjalan/direstart."
+    else
+        echo "⚠️ PM2 belum terpasang di VPS (dapat diinstall via: npm install -g pm2)."
+        echo "ℹ️ Menjalankan sementara di background dengan nohup..."
+        pkill -f "dist/index.js" 2>/dev/null || true
+        nohup node dist/index.js > backend.log 2>&1 &
+    fi
+EOF
+
+echo ""
+echo "=========================================="
+echo "🌐 6. Mengatur Konfigurasi Nginx di VPS..."
 echo "=========================================="
 
 NGINX_CONF="${SCRIPT_DIR}/nginx.conf"
@@ -135,3 +171,4 @@ echo "=========================================="
 echo "🎉 Berhasil Terkirim & Dikonfigurasi!"
 echo "Target: ${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}"
 echo "=========================================="
+

@@ -1,0 +1,57 @@
+---
+description: Turn a rough Product Backlog item into a Business Requirements Document (BRD) through one-question-at-a-time Q&A about process/UI/data-dictionary impact, then hand off to the prd-grill skill to turn the BRD into an implementable checklist. Trigger on "buatkan BRD", "grill jadi BRD", "bikin BRD dari backlog ini".
+globs:
+alwaysApply: false
+---
+
+# brd-grill (Cursor)
+
+Turn a rough Product Backlog item into a BRD by asking exactly **one
+adaptive question per turn**, then write the BRD, then offer to hand off to
+`prd-grill` for the implementation checklist. Don't produce the
+implementation checklist yourself — that belongs to `prd-grill`.
+
+## Before asking anything
+
+Check for an existing BRD convention in this repo (`doc/brd/`, `docs/BRD/`,
+or similar). Follow its structure if found; otherwise use the default
+template below.
+
+## Grill loop
+
+Ask one question per turn, covering: backlog understanding in the
+requester's own words, process/flow impact (yes/no + which flow), UI impact
+(yes/no + which screens/forms by name), data-dictionary impact (yes/no +
+what data), explicit out-of-scope. Never batch questions. Surface
+contradictions with earlier answers instead of silently overwriting.
+
+## Confirm before writing
+
+Summarize backlog interpretation, process/UI/data impact, and scope; get
+explicit confirmation before generating the file.
+
+## Write the BRD
+
+Default sections: Pemahaman Product Backlog, Dampak Proses/Alur (explicit
+"no change" note if none), Dampak UI (explicit "no change" note if none),
+Dampak Kamus Data (explicit "no change" note if none), Yang Tidak
+Termasuk, Approval checklist.
+
+If an effort-estimate table is wanted: use a 7-step rubric (Pemahaman →
+Cek Flowchart → Permintaan list proses → Workflow/Flowchart → UI (only if
+UI impact) → Kamus Data (only if data impact) → Pembuatan BRD). Pick ONE
+overall complexity level (Rendah/Sedang/Tinggi/Sangat Tinggi) for the whole
+item and apply it to every step — critical: a bundle of 2-3 small requests
+is Sedang, never Tinggi, no matter how many bullets the backlog has. Apply
+a 5% buffer only for Tinggi/Sangat Tinggi, showing the subtotal + buffer
+arithmetic explicitly. Recompute the total from the individual step numbers
+yourself rather than trusting prose arithmetic.
+
+Write the file directly, then tell the user the exact path.
+
+## Hand off
+
+Ask whether to continue into the `prd-grill` skill/rule to turn the
+confirmed BRD into an implementation checklist, passing along the BRD path
+and the process/UI/data answers already gathered so `prd-grill` doesn't
+re-ask what's already known.
