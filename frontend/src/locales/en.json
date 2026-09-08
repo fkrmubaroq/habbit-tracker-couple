@@ -232,5 +232,32 @@
     "perfect_streak": "Perfect Streak",
     "perfect_streak_desc": "Consecutive days",
     "completed_in_year": "Completions in {{year}}"
+  },
+  "grocery": {
+    "title": "Grocery List",
+    "subtitle": "Couple grocery & pantry checklist",
+    "nav_all": "Grocery List",
+    "nav_completed": "Purchased",
+    "nav_checklist": "Grocery List",
+    "nav_manage": "Manage",
+    "nav_settings": "Settings",
+    "add_item": "Add Grocery Item",
+    "placeholder_item": "Add grocery item... (e.g., Cooking Oil 2L)",
+    "filter_all": "All",
+    "filter_pending": "To Buy",
+    "filter_completed": "Purchased",
+    "urgent": "Urgent 🔥",
+    "clear_completed": "Clear Purchased",
+    "empty_title": "No grocery items yet!",
+    "empty_subtitle": "Write your kitchen and pantry needs here so you never forget.",
+    "all_completed_title": "All Groceries Done! 🎉",
+    "all_completed_subtitle": "Awesome! All grocery items have been successfully purchased.",
+    "stats_summary": "{{completed}} of {{total}} items purchased ({{percent}}%)",
+    "category": "Category",
+    "quantity": "Quantity",
+    "unit": "Unit",
+    "price": "Estimated Price",
+    "added_by": "Added by",
+    "completed_by": "Bought by"
   }
 }

@@ -8,6 +8,7 @@ import { env } from "./config/env.js";
 import analyticsRoutes from "./modules/analytics/analytics.routes.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import gamificationRoutes from "./modules/gamification/gamification.routes.js";
+import groceryRoutes from "./modules/grocery/grocery.routes.js";
 import habitLogRoutes from "./modules/habit-log/habit-log.routes.js";
 import habitRoutes from "./modules/habit/habit.routes.js";
 import userRoutes from "./modules/user/user.routes.js";
@@ -44,6 +45,7 @@ app.use("/api/habits", habitRoutes);
 app.use("/api/habit-logs", habitLogRoutes);
 app.use("/api/gamification", gamificationRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/grocery", groceryRoutes);
 
 // Global Error Handler
 app.use(errorMiddleware);

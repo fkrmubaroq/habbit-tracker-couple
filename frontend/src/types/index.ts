@@ -60,3 +60,23 @@ export interface LeaderboardEntry {
   completed_count: number;
   streak_count: number;
 }
+
+export interface GroceryItem {
+  id: string;
+  user_id: string;
+  partner_id?: string | null;
+  name: string;
+  category: string;
+  quantity: string;
+  unit?: string | null;
+  estimated_price?: number | null;
+  is_urgent: boolean;
+  is_completed: boolean;
+  completed_by?: string | null;
+  completed_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
+  creator_name?: string;
+  creator_role?: "husband" | "wife";
+  completer_name?: string;
+}

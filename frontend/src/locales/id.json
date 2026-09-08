@@ -232,5 +232,32 @@
     "perfect_streak": "Streak Tanpa Bolong",
     "perfect_streak_desc": "Hari berturut-turut",
     "completed_in_year": "Penyelesaian di tahun {{year}}"
+  },
+  "grocery": {
+    "title": "Grocery List",
+    "subtitle": "Daftar belanjaan & kebutuhan dapur pasutri",
+    "nav_all": "Daftar Belanja",
+    "nav_completed": "Sudah Dibeli",
+    "nav_checklist": "Daftar Belanja",
+    "nav_manage": "Belanja",
+    "nav_settings": "Pengaturan",
+    "add_item": "Tambah Belanjaan",
+    "placeholder_item": "Tambah belanjaan... (contoh: Minyak Goreng 2L)",
+    "filter_all": "Semua",
+    "filter_pending": "Perlu Dibeli",
+    "filter_completed": "Sudah Dibeli",
+    "urgent": "Penting 🔥",
+    "clear_completed": "Hapus yang Selesai",
+    "empty_title": "Belum ada belanjaan!",
+    "empty_subtitle": "Tulis kebutuhan dapur atau belanjaan mingguanmu di sini agar tidak lupa.",
+    "all_completed_title": "Semua Belanjaan Beres! 🎉",
+    "all_completed_subtitle": "Hebat! Semua kebutuhan belanjaan sudah terbeli dengan lengkap.",
+    "stats_summary": "{{completed}} dari {{total}} barang sudah dibeli ({{percent}}%)",
+    "category": "Kategori",
+    "quantity": "Jumlah",
+    "unit": "Satuan",
+    "price": "Estimasi Harga",
+    "added_by": "Ditambahkan oleh",
+    "completed_by": "Dibeli oleh"
   }
 }
