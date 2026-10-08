@@ -53,8 +53,7 @@ echo "=========================================="
 echo "🚀 1. Memulai Build Frontend & Backend..."
 echo "=========================================="
 cd "${ROOT_DIR}"
-pnpm --dir backend build
-pnpm --dir frontend build
+pnpm turbo run build
 
 echo ""
 echo "=========================================="
@@ -74,24 +73,24 @@ echo "=========================================="
 echo "📦 4. Mengirim File (/dist, package.json, pnpm-lock.yaml)..."
 echo "=========================================="
 
-echo "→ Mengirim backend..."
-scp "${SCP_OPTS[@]}" -r "${ROOT_DIR}/backend/dist" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/"
-scp "${SCP_OPTS[@]}" "${ROOT_DIR}/backend/package.json" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/"
-[ -f "${ROOT_DIR}/backend/pnpm-lock.yaml" ] && scp "${SCP_OPTS[@]}" "${ROOT_DIR}/backend/pnpm-lock.yaml" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/"
+echo "→ Mengirim backend (apps/habbit-tracker-api)..."
+scp "${SCP_OPTS[@]}" -r "${ROOT_DIR}/apps/habbit-tracker-api/dist" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/"
+scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/habbit-tracker-api/package.json" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/"
+[ -f "${ROOT_DIR}/pnpm-lock.yaml" ] && scp "${SCP_OPTS[@]}" "${ROOT_DIR}/pnpm-lock.yaml" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/"
 
 # Mengirim file .env backend
-if [ -f "${ROOT_DIR}/backend/.env.production" ]; then
-    echo "→ Mengirim backend/.env.production sebagai .env..."
-    scp "${SCP_OPTS[@]}" "${ROOT_DIR}/backend/.env.production" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/.env"
-elif [ -f "${ROOT_DIR}/backend/.env" ]; then
-    echo "→ Mengirim backend/.env..."
-    scp "${SCP_OPTS[@]}" "${ROOT_DIR}/backend/.env" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/.env"
+if [ -f "${ROOT_DIR}/apps/habbit-tracker-api/.env.production" ]; then
+    echo "→ Mengirim apps/habbit-tracker-api/.env.production sebagai .env..."
+    scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/habbit-tracker-api/.env.production" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/.env"
+elif [ -f "${ROOT_DIR}/apps/habbit-tracker-api/.env" ]; then
+    echo "→ Mengirim apps/habbit-tracker-api/.env..."
+    scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/habbit-tracker-api/.env" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/.env"
 fi
 
-echo "→ Mengirim frontend..."
-scp "${SCP_OPTS[@]}" -r "${ROOT_DIR}/frontend/dist" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/frontend/"
-scp "${SCP_OPTS[@]}" "${ROOT_DIR}/frontend/package.json" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/frontend/"
-[ -f "${ROOT_DIR}/frontend/pnpm-lock.yaml" ] && scp "${SCP_OPTS[@]}" "${ROOT_DIR}/frontend/pnpm-lock.yaml" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/frontend/"
+echo "→ Mengirim frontend (apps/habbit-tracker-web)..."
+scp "${SCP_OPTS[@]}" -r "${ROOT_DIR}/apps/habbit-tracker-web/dist" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/frontend/"
+scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/habbit-tracker-web/package.json" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/frontend/"
+[ -f "${ROOT_DIR}/pnpm-lock.yaml" ] && scp "${SCP_OPTS[@]}" "${ROOT_DIR}/pnpm-lock.yaml" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/frontend/"
 
 echo ""
 echo "=========================================="

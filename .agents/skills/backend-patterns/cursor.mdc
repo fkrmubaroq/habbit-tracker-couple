@@ -1,0 +1,67 @@
+---
+description: Backend architecture patterns, API design, database optimization, and server-side best practices for Node.js, Express, and Next.js API routes. Trigger when designing endpoints, implementing repository/service/controller layers, optimizing queries, adding caching, setting up background jobs, or building auth/rate-limiting middleware.
+globs:
+alwaysApply: false
+---
+
+# backend-patterns (Cursor)
+
+## Layering
+
+- **Repository pattern**: abstract data access behind an interface
+  (`findAll`, `findById`, `create`, `update`, `delete`) so the storage
+  engine can be swapped without touching business logic.
+- **Service layer**: business logic lives here, calling the repository —
+  keep it separate from HTTP concerns.
+- **Middleware**: request/response pipeline (auth, logging, rate limiting)
+  as composable wrappers around handlers.
+
+## Database
+
+- Select only needed columns, never `select('*')` in hot paths.
+- Avoid N+1: batch-fetch related rows once (collect ids, one query, map
+  back) instead of querying per item in a loop.
+- Wrap multi-step writes in a transaction (DB-native or an RPC/stored
+  procedure) so partial failure rolls back cleanly.
+
+## Caching
+
+Cache-aside pattern: check cache first, on miss fetch from DB and populate
+cache with a TTL, invalidate explicitly on writes. Keep cache logic in a
+dedicated layer (e.g. a `CachedRepository` wrapper) rather than scattering
+`redis.get`/`set` calls through business logic.
+
+## Error handling
+
+Centralize error handling: a typed `ApiError` class with a status code,
+caught once at the boundary and mapped to a consistent JSON error shape.
+Never leak stack traces to the client — log the full error server-side,
+return a generic message to the caller. Retry transient failures with
+exponential backoff, not a tight loop.
+
+## Auth
+
+Verify JWTs server-side on every protected route; never trust a
+client-supplied role/user id. Layer role/permission checks as a
+higher-order wrapper around the handler so authorization is explicit and
+reusable, not duplicated per route.
+
+## Rate limiting
+
+Must use a shared store (Redis, gateway, or the platform's native
+limiter) — never a per-process in-memory counter for production APIs, since
+those reset on deploy and don't work across replicas or serverless
+instances. See `api-design` for the HTTP contract and `security-review`
+for abuse-case review.
+
+## Background jobs
+
+Queue work instead of blocking the request — even a simple in-process
+queue beats doing slow work synchronously in a handler. For anything that
+must survive a process restart, use a real queue (not an in-memory array).
+
+## Logging
+
+Structured JSON logs (timestamp, level, message, context) over bare
+`console.log` strings — makes logs greppable and parseable by log
+aggregators. Include a request id in every log line tied to one request.

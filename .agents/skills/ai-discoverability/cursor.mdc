@@ -1,0 +1,36 @@
+---
+description: Makes a website discoverable and correctly parseable by AI crawlers/answer engines and traditional search engines — llms.txt, structured data, robots.txt for AI bots, canonical URLs, sitemap.xml, meta tags, and SSR/prerendering checks. Not visual/UI design and not browser-API implementation detail.
+globs:
+alwaysApply: false
+---
+
+# ai-discoverability (Cursor)
+
+Makes site content reachable/parseable/citable by AI crawlers and search
+engines, without touching visual design.
+
+## Steps
+
+0. Confirm content is reachable without JS execution (`curl`/view-source,
+   not devtools-rendered DOM) — most AI crawlers don't run JS reliably.
+1. `robots.txt` — explicitly decide AI bot policy (GPTBot, ClaudeBot,
+   PerplexityBot, Google-Extended, etc.), don't rely on wildcard
+   defaults. Keep a `Sitemap:` directive.
+2. `llms.txt` at site root — curated Markdown summary + key links, not an
+   auto-dump of the whole sitemap.
+3. Structured data (JSON-LD schema.org) matching real page content —
+   validate before shipping, keep in sync with visible content.
+4. Unique title/meta description per page, `rel="canonical"`, Open
+   Graph/Twitter card tags, maintained `sitemap.xml` with `lastmod`.
+5. Semantic HTML — one real `<h1>`, logical heading hierarchy, semantic
+   elements over generic `<div>`s, descriptive link/alt text.
+6. Verify with `curl -A "GPTBot"` and a structured-data validator before
+   calling it done.
+
+## Not this skill's job
+
+- Visual/UI design — that's the project's UI/UX team/template.
+- Browser-API-level implementation (Core Web Vitals, ARIA, WebMCP) — see
+  `modern-web-guidance` for that.
+- Guaranteeing ranking/citation — this makes a site eligible to be found,
+  not first in results.

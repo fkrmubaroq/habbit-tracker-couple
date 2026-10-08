@@ -1,0 +1,57 @@
+---
+description: Backend/API testing that hits HTTP endpoints directly (no browser) — REST or GraphQL via Supertest/Vitest or httpx/pytest. Decides per test whether to use a mock DB, real DB with transaction rollback, or real DB black-box over HTTP with explicit teardown, and never lets test data linger. Trigger when writing/running integration tests for endpoints, or setting up a test-DB strategy. Not for browser E2E (use webapp-testing/e2e-testing) or React component tests (use react-testing).
+globs:
+alwaysApply: false
+---
+
+# api-testing (Cursor)
+
+HTTP-level backend testing — request/response validation, auth, error
+handling, and the data-hygiene problem most guides skip: how the test's
+data touches the database, and making sure it never leaves residue.
+
+## Step 0 — Does this repo own every entity the test touches?
+
+Before writing a test that creates or depends on data, check whether the
+code that owns that entity's creation/validation lives in this repo.
+
+- If yes, proceed.
+- If no (e.g. this repo only consumes orders an order-service elsewhere
+  creates): **stop and ask** for that repo's path, its API contract
+  (OpenAPI/Postman), or a reachable staging endpoint + test credentials.
+  Never insert directly into a table owned by another service's schema —
+  you don't know its constraints/triggers/derived fields. Seed through
+  that service's real API instead.
+
+## Step 1 — Choose the database mode per test
+
+Not a repo-wide setting — pick per test based on how it reaches the code:
+
+| Mode | Use when | Cleanup |
+|---|---|---|
+| Mock/in-memory | DB behavior itself isn't under test | None |
+| Real DB, transaction rollback | Test runs in-process, same connection as app code | Rollback at end |
+| Real DB, black-box over HTTP | Test hits a running server | Rollback doesn't apply — tag + explicit teardown, mandatory |
+
+## Step 2 — Tag test data, always, when using a real DB
+
+Give every row a way to be identified as test data: a `run_id` per suite
+run, or a fixed prefix/domain (`test_`, `@e2e.test`). Untagged test data is
+what makes teardown scripts unreliable later.
+
+## Step 3 — Write the test
+
+TS/JS: Supertest + Vitest. Python: httpx + pytest (+ FastAPI `TestClient`).
+Cover both success and failure paths; assert status code first, then
+response shape.
+
+## Step 4 — Cleanup is not optional when a real DB was touched
+
+- Transaction-rollback mode: verify the rollback actually happens.
+- Black-box mode: run an explicit teardown deleting everything tagged with
+  this run's id, in two places — automatic (`afterAll`/suite teardown) and
+  a standalone, idempotent script for the case a run crashed before
+  cleanup fired.
+
+Never report a suite "done" when black-box mode was used and no teardown
+(automatic or standalone) exists.

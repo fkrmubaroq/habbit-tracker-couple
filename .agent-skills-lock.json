@@ -1,0 +1,759 @@
+{
+  "version": 1,
+  "generated_at": "2026-10-08T15:26:53.163Z",
+  "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+  "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+  "entries": {
+    "agent-doctor": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/agent-doctor/cursor.mdc",
+          "sha256": "7ff16c2ca154efb66898702752a58da90717cb8548abf3a5c24256a0fa37213f"
+        },
+        {
+          "path": ".agents/skills/agent-doctor/README.md",
+          "sha256": "c95e00a57aa48342f86fb3dc1db9f1ccebbe41247a9f178fe7d2efacdaa2b0ee"
+        },
+        {
+          "path": ".agents/skills/agent-doctor/references/platform-agent-specs.md",
+          "sha256": "76bcb40615851f68f080ee78dd898bc97db4412966d683c0de93f1f17d8f8d5c"
+        },
+        {
+          "path": ".agents/skills/agent-doctor/SKILL.md",
+          "sha256": "1bc3fa9378295169187ca623cb667211c21a26b09069720bf520815fe99470b3"
+        }
+      ]
+    },
+    "ai-discoverability": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/ai-discoverability/cursor.mdc",
+          "sha256": "caba00c07d2f5de80c8a77a86b767d34ece785ca4ce0102abc71d1d287a955d2"
+        },
+        {
+          "path": ".agents/skills/ai-discoverability/README.md",
+          "sha256": "2196fedc56ebcd8c6ccd5ed1c3db88adf74529eb70842765dc2ac24a45f060d4"
+        },
+        {
+          "path": ".agents/skills/ai-discoverability/SKILL.md",
+          "sha256": "8de280c914372da1c75fe98eb9fcb3cff654a39841b79bd14957912e48deeea9"
+        }
+      ]
+    },
+    "api-design": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/api-design/cursor.mdc",
+          "sha256": "62b87feb31add664d49fde2b2ba9b0c0d74e18cd8c561cd0dc33bd23354f3674"
+        },
+        {
+          "path": ".agents/skills/api-design/README.md",
+          "sha256": "48849eb9e08fc213ae092b440161a0545c0a809d0a6c9d5bf29158ec50a6c8ea"
+        },
+        {
+          "path": ".agents/skills/api-design/SKILL.md",
+          "sha256": "3c444309e04644664de292be6e79d3994f909acbef885c1e04ce74f296d563b3"
+        }
+      ]
+    },
+    "api-testing": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/api-testing/assets/cleanup_test_data.py",
+          "sha256": "9f5b35df598ff636f52121c172b405fd06eb9e09cddb13e8dd49de4fb472f203"
+        },
+        {
+          "path": ".agents/skills/api-testing/cursor.mdc",
+          "sha256": "18b4ef985b85f4265df3356c742a70c9f51374a630d77b803506c493e5e300ea"
+        },
+        {
+          "path": ".agents/skills/api-testing/README.md",
+          "sha256": "275ef5e98dbf3b4a5b12622930f327e4bfa8b17df9bc750e5d922c20c6762df9"
+        },
+        {
+          "path": ".agents/skills/api-testing/references/cross-service-test-data.md",
+          "sha256": "b7213a3d4acda8ea3f8f7ca536601a62846f850d63069b10991c0f3947d9898f"
+        },
+        {
+          "path": ".agents/skills/api-testing/references/db-strategy-and-cleanup.md",
+          "sha256": "a79c4b01efaf8af2c8bd1dcad8afa61b5711d0fa660eb8e9276cf0725b3baa29"
+        },
+        {
+          "path": ".agents/skills/api-testing/SKILL.md",
+          "sha256": "99b8ef583ed7eae28e5160967362eba0022b20753280fd5f6e6afc6e67a7e5c2"
+        }
+      ]
+    },
+    "backend-patterns": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/backend-patterns/cursor.mdc",
+          "sha256": "90e4250f63d87e29ab033d117923ed1c48ea904cd2f3ebf2b14be313eb9d94e7"
+        },
+        {
+          "path": ".agents/skills/backend-patterns/README.md",
+          "sha256": "bfb972dffae093f2ce563a66a1cfb39de7b06ffd49cfcb90a2d5db63621e86e2"
+        },
+        {
+          "path": ".agents/skills/backend-patterns/SKILL.md",
+          "sha256": "4fca55cb52db4dc2ee348fc43fd634315d2d7cb0094650d77459f4562dfbaebb"
+        }
+      ]
+    },
+    "branching": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/branching/cursor.mdc",
+          "sha256": "1f77c4d7795d4aa59c93f6044903b337025f4ec4e2b1f44ca7f3aea14c7622a8"
+        },
+        {
+          "path": ".agents/skills/branching/README.md",
+          "sha256": "f470b3d63bb107423f20b95dcc09c78ff2b8f9e72879f1b03e07781affe7659e"
+        },
+        {
+          "path": ".agents/skills/branching/references/knitto-api-example.md",
+          "sha256": "e5e3bebc7adb4e12e7a0ec41dc150e7c32bb61097c7a6013afd6a6b25800e309"
+        },
+        {
+          "path": ".agents/skills/branching/SKILL.md",
+          "sha256": "3540b113942e06ef17f388da5ca3f478ec53e866f32f2219aa6c319b675dc512"
+        }
+      ]
+    },
+    "brd-reader": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/brd-reader/cursor.mdc",
+          "sha256": "def900522c46f3d47a7079e4128382ee607e154797d55d752cd8cbc033514521"
+        },
+        {
+          "path": ".agents/skills/brd-reader/README.md",
+          "sha256": "33cbe285cef3a27a297a8b96c162d23afd60f2250212e099dfbfe14aa52cbb17"
+        },
+        {
+          "path": ".agents/skills/brd-reader/SKILL.md",
+          "sha256": "a834b0b539932d2de92475d40d50e0f15a4ee7f86d143d3d8052c36437b7a090"
+        }
+      ]
+    },
+    "code-review-and-quality": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/code-review-and-quality/cursor.mdc",
+          "sha256": "d4758fe053917abfb447615e3f9256fe006893ed81d781c1d274a9b4e6eb6c0f"
+        },
+        {
+          "path": ".agents/skills/code-review-and-quality/README.md",
+          "sha256": "b6e91939ee3cf68ac4ffcf4ad60b3251fcfb152ec1faff566033eeb54a709f03"
+        },
+        {
+          "path": ".agents/skills/code-review-and-quality/references/performance-checklist.md",
+          "sha256": "f587c54a85c8e8e56af05c62160e914ade8d551f24066a31eab96c61e2d21b67"
+        },
+        {
+          "path": ".agents/skills/code-review-and-quality/references/security-checklist.md",
+          "sha256": "658d227808e887d3f38e1239ce1eedb40f7ebf7921c281415c669b67c6535783"
+        },
+        {
+          "path": ".agents/skills/code-review-and-quality/SKILL.md",
+          "sha256": "c8da709d46dd802ed96de53b06971778d50f2cc9d784bb79cb5e32ec1925f5c5"
+        }
+      ]
+    },
+    "codebase-explain": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/codebase-explain/assets/explain-template.md",
+          "sha256": "e6e4e801323a28134c5e0132f87c2c6db48602a28fa4005826a34d3375c54b0b"
+        },
+        {
+          "path": ".agents/skills/codebase-explain/cursor.mdc",
+          "sha256": "abea4c6685ab1d9a96416fe366c476ec7c7a33e122590e78ef69eb2f15f7bc84"
+        },
+        {
+          "path": ".agents/skills/codebase-explain/README.md",
+          "sha256": "90d9e1a05c03b9fd16a9d445364e835f4abc11c003d20fc117737b5f9fe0b8d7"
+        },
+        {
+          "path": ".agents/skills/codebase-explain/SKILL.md",
+          "sha256": "e523616eaa89998fb38e5111ca0b587c222ef36a622e1850cdad0625d5968a2e"
+        }
+      ]
+    },
+    "database-migrations": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/database-migrations/cursor.mdc",
+          "sha256": "0571c718fa1e27c35c7c48b0b9553d3eb3ec4fbb626b2391c655ac2a0d1b4917"
+        },
+        {
+          "path": ".agents/skills/database-migrations/README.md",
+          "sha256": "e22b811c041d3f97e3e0750e8950538c843d9671a51eea9edc654bbd6884d47a"
+        },
+        {
+          "path": ".agents/skills/database-migrations/SKILL.md",
+          "sha256": "3706f82d846eb5824c77c65a261255a389b982cb4e0af647d5505261d84dce08"
+        }
+      ]
+    },
+    "debugging": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/debugging/cursor.mdc",
+          "sha256": "24097e029a3f46238bc38d0cd5d62bc74649bfda193528bfaec156a7f9ad3892"
+        },
+        {
+          "path": ".agents/skills/debugging/README.md",
+          "sha256": "15f0c6665015bb8d93c9aa2fb1f7522c0ac2542a9528b2d7d382304821e4a683"
+        },
+        {
+          "path": ".agents/skills/debugging/SKILL.md",
+          "sha256": "cad98f23dbacd8f266c25036458083bee92abd496db0241eb6f4c09a5937fffc"
+        }
+      ]
+    },
+    "dependency-update": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/dependency-update/cursor.mdc",
+          "sha256": "b0ff1be6ef40478c973069171ec1d974b3dd9abcf1043c2a7798c61501276705"
+        },
+        {
+          "path": ".agents/skills/dependency-update/README.md",
+          "sha256": "70a7117680226f54d26759d5932b1353aabe4062589d1741d8b1da94e4582a8c"
+        },
+        {
+          "path": ".agents/skills/dependency-update/SKILL.md",
+          "sha256": "75f8300298c199068cd768106461b277a5a6636653d9dc0aff659befd982aa10"
+        }
+      ]
+    },
+    "deployment": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/deployment/cursor.mdc",
+          "sha256": "8ebde1b1ec188d58103fa293f499f526517be8efa2e399241a2dd8846f9aa138"
+        },
+        {
+          "path": ".agents/skills/deployment/README.md",
+          "sha256": "4ec48a006721dbabb6cc839a38ebd1befdfe19eaec2d569f683ded7770505341"
+        },
+        {
+          "path": ".agents/skills/deployment/SKILL.md",
+          "sha256": "69f9da3201fc9bc594f3bb15bde5a34b44ef8253f3bed36cffd1550d42a2ba6b"
+        }
+      ]
+    },
+    "docker-patterns": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/docker-patterns/cursor.mdc",
+          "sha256": "c4cb39d347fd40cbc01758725e734df1fcf7df67fde586c5518e8c1954a37698"
+        },
+        {
+          "path": ".agents/skills/docker-patterns/README.md",
+          "sha256": "6544120e17a9e73d6f5b882b1cafcb449eb15648b8e691cd992268d5dc9c8d85"
+        },
+        {
+          "path": ".agents/skills/docker-patterns/SKILL.md",
+          "sha256": "e81569803dcb879082c68a64d75f01e64dcd488b6a32192924bedfbcf689835e"
+        }
+      ]
+    },
+    "e2e-testing": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/e2e-testing/cursor.mdc",
+          "sha256": "d0faaf03b9243392dc4e76403e45745f61d66c27e4cea5298e6d6cdf78a18383"
+        },
+        {
+          "path": ".agents/skills/e2e-testing/README.md",
+          "sha256": "8d1ff539b5b64e43d8d22e915ef200ac48150dc390ef7d8a0b929da5daad9bef"
+        },
+        {
+          "path": ".agents/skills/e2e-testing/SKILL.md",
+          "sha256": "8daf8c4cd77db930e5a8ffeebcf11a51c3519831af6d6c7a1a5cd8e1e35107c5"
+        }
+      ]
+    },
+    "exec-todo": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/exec-todo/cursor.mdc",
+          "sha256": "5d1f74dd5c9204d7cf2133a55c1263be3c2df3dce4ec164bc2c7c05c80708276"
+        },
+        {
+          "path": ".agents/skills/exec-todo/README.md",
+          "sha256": "3a9fb68a15ecf4c9c7976dcacc1bc2f470da8535b6026137a38e36d9858a42f4"
+        },
+        {
+          "path": ".agents/skills/exec-todo/references/project-example.md",
+          "sha256": "295ecacb2fac2ac99189844eb86aeb722b60b3226eb92c7b92b08d3d5bb76493"
+        },
+        {
+          "path": ".agents/skills/exec-todo/SKILL.md",
+          "sha256": "19efd1215bb0dd4f6979020fde41748dd5d46236b189f7f0cdb931f1a781f5d6"
+        }
+      ]
+    },
+    "github-projects": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/github-projects/cursor.mdc",
+          "sha256": "30e017ac754a860604b7c1fc6569b3d107df465ab42559541e8b9f36580dec63"
+        },
+        {
+          "path": ".agents/skills/github-projects/references/template-issue.md",
+          "sha256": "c8a6a670436d4aacfd73e679b60ae0edb67f59cd85f1360f387a2788d48fbb6e"
+        },
+        {
+          "path": ".agents/skills/github-projects/references/template-readme.md",
+          "sha256": "01f033d2904f51bc0849f686c732c7da4eb85453a876061ec9ce0785464d05fc"
+        },
+        {
+          "path": ".agents/skills/github-projects/references/views.md",
+          "sha256": "d3b688b7a9993790cb1e6af5f0252132feb6ea391c2891d0f1fd572b880038a5"
+        },
+        {
+          "path": ".agents/skills/github-projects/SKILL.md",
+          "sha256": "ff6c5c4ca885f5e5bff7af0a56752e56fe4192188f9c0bbfbcfe858cfef230d5"
+        }
+      ]
+    },
+    "incremental-implementation": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/incremental-implementation/cursor.mdc",
+          "sha256": "e1dc437fece3058a6ac3eb5b8db1065cefea8e2c3ca3f46fe61a423893afaec1"
+        },
+        {
+          "path": ".agents/skills/incremental-implementation/README.md",
+          "sha256": "399e73187280458ea14a04fc7c3975a72151418284113ff53b3200f781787add"
+        },
+        {
+          "path": ".agents/skills/incremental-implementation/SKILL.md",
+          "sha256": "a00251495e8c6157487878dfd62897c0788054392647f722679a1ec2a0252d19"
+        }
+      ]
+    },
+    "modern-web-guidance": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/modern-web-guidance/cursor.mdc",
+          "sha256": "256027c64acb7e9efffc93201fa724139ddb309b5a35a9249cf5088e5c5721a2"
+        },
+        {
+          "path": ".agents/skills/modern-web-guidance/README.md",
+          "sha256": "eb7f3c4626cd89e903023ccc09b4904a2967901b0cf83449d3c941a45fb60ffd"
+        },
+        {
+          "path": ".agents/skills/modern-web-guidance/SKILL.md",
+          "sha256": "8547d506284aaa5ee1f5cb22b89465ee0978e6cac7297aac58985c2a5e6d4b75"
+        }
+      ]
+    },
+    "mysql-patterns": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/mysql-patterns/cursor.mdc",
+          "sha256": "727073f21f5f3492e6560c26e473b8fa6ca7606021cb3ce682a9e5b7ae134044"
+        },
+        {
+          "path": ".agents/skills/mysql-patterns/README.md",
+          "sha256": "73ca7729bc5b6804667981bf2ccf985cca139b8c63a05abeee26ed357c2f343b"
+        },
+        {
+          "path": ".agents/skills/mysql-patterns/SKILL.md",
+          "sha256": "4f06207a709358ad0cc54b4e5915546fb98452f954765aee34c7c36e42c5d51c"
+        }
+      ]
+    },
+    "prd-grill": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/prd-grill/cursor.mdc",
+          "sha256": "c3dc910ac3f6f65c630993b2f9d8a73aaacff91e9010e1032e04a6d2a31057eb"
+        },
+        {
+          "path": ".agents/skills/prd-grill/README.md",
+          "sha256": "822ad27a248eb53a1c91dea2b9e8d7b657bd01b6ec6a5742afcabee5b0e39ff3"
+        },
+        {
+          "path": ".agents/skills/prd-grill/references/output-conventions.md",
+          "sha256": "e14b85bf71973929eb445993cf75740441c9a21eb087e1126b9faa0a11e62187"
+        },
+        {
+          "path": ".agents/skills/prd-grill/references/project-override-example.md",
+          "sha256": "ef9026bd8b4f48152eddbb0118021256fc60c87042b93a6f244ab8d4f67a7f60"
+        },
+        {
+          "path": ".agents/skills/prd-grill/references/task-breakdown-technique.md",
+          "sha256": "97959f9179289ca1620bbf1c56fb12776a6bbaf40f83aa7c6c1dd3101493d745"
+        },
+        {
+          "path": ".agents/skills/prd-grill/scripts/move-plan.mjs",
+          "sha256": "c2c4049f8719cdb0e21ecd1abafc8a6ab49743db6d0dadd66b792fc1d3fde43a"
+        },
+        {
+          "path": ".agents/skills/prd-grill/SKILL.md",
+          "sha256": "23df30cf7537249fb41d5ab9ff292a75d362b4f1fcde73ec0ac4697dea1f6628"
+        }
+      ]
+    },
+    "project-bootstrap": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/project-bootstrap/cursor.mdc",
+          "sha256": "f7eab5614d59db1f5a0e66f3f3376f68e2aa76a4c107c790c3c82d1ae2906905"
+        },
+        {
+          "path": ".agents/skills/project-bootstrap/README.md",
+          "sha256": "c7b2a0610570dce5034db36cc169d531a88f1c76531e7300196b5e2994d7575a"
+        },
+        {
+          "path": ".agents/skills/project-bootstrap/scripts/detect_stack.py",
+          "sha256": "c9e5ad4f6815bd507d56266164f7294daa529493634f76c9f9f2756e82b1e13f"
+        },
+        {
+          "path": ".agents/skills/project-bootstrap/SKILL.md",
+          "sha256": "b701df6474b1f6d31cbed94b68e4fddfca155f106624eee2b23df6ea7ca75a11"
+        }
+      ]
+    },
+    "react-patterns": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/react-patterns/cursor.mdc",
+          "sha256": "e7b0dd42f180abdbfa9ce73795e0bf8d7f74183dbe8409f4d8564d33a157257f"
+        },
+        {
+          "path": ".agents/skills/react-patterns/README.md",
+          "sha256": "fb05df5722ac8159804100807acb72f2039c9790fcdc9896a56db46ecb7d7529"
+        },
+        {
+          "path": ".agents/skills/react-patterns/SKILL.md",
+          "sha256": "7ce5955837120e596d674df88206900883a09767886d02daf4e7801d06555c50"
+        }
+      ]
+    },
+    "react-testing": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/react-testing/cursor.mdc",
+          "sha256": "de72e0705c3cdb5a8a5def4780ed5ab0344cc8d04cc95e986aed128cd735707a"
+        },
+        {
+          "path": ".agents/skills/react-testing/README.md",
+          "sha256": "528d32cbfb21e9b0b83fbdb734348ad82e3eac73342c04dee5ad39fce60dd92c"
+        },
+        {
+          "path": ".agents/skills/react-testing/SKILL.md",
+          "sha256": "24630746c7f8c345b9b838cde22c9e712bf0013e659827c6d54b21bbd337f678"
+        }
+      ]
+    },
+    "security-and-hardening": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/security-and-hardening/cursor.mdc",
+          "sha256": "7a0b8d31d0290d9d150218222781c337767c937ae59b0d22aaab2305fdbdb238"
+        },
+        {
+          "path": ".agents/skills/security-and-hardening/README.md",
+          "sha256": "21c3b9c4afcc6fb26337f68fc93e22a1c515ecb6c7a80ba55005f2d724acf304"
+        },
+        {
+          "path": ".agents/skills/security-and-hardening/SKILL.md",
+          "sha256": "66ee08de036af49cac405a4744588132a2c9691af254adf9b41d092510854384"
+        }
+      ]
+    },
+    "security-review": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/security-review/cloud-infrastructure-security.md",
+          "sha256": "34ae20e318141a1badab0ed5182f4de877431fa0abfd20ec16394141dfb730b2"
+        },
+        {
+          "path": ".agents/skills/security-review/cursor.mdc",
+          "sha256": "3fa574668e3933a74b209e3bf8c1a63863d5d8be4f13757b6c8d1f96a3b4695a"
+        },
+        {
+          "path": ".agents/skills/security-review/README.md",
+          "sha256": "d596da5ae3838e37feb185bec4071326468695c13ea57aefbbb46006d11701ee"
+        },
+        {
+          "path": ".agents/skills/security-review/SKILL.md",
+          "sha256": "6068592d5ebdcf7a6326dba2298e90cbe752eb42af558c3b180cb5fd9a8aa561"
+        }
+      ]
+    },
+    "skill-sync": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/skill-sync/cursor.mdc",
+          "sha256": "c95cf6a18328b872366dfeece7f1df6b00b61bbdaabb6e04f1fe8d39a5d25973"
+        },
+        {
+          "path": ".agents/skills/skill-sync/README.md",
+          "sha256": "e682bb059d3a17fc97ed54d848086830f066c71b602fcc71fc9ccd249e1dcbe0"
+        },
+        {
+          "path": ".agents/skills/skill-sync/SKILL.md",
+          "sha256": "69220630148ff0dbccf20528b557bb27d01ebfa11b09e1c49dbaf387c76f105e"
+        }
+      ]
+    },
+    "test-case-matrix": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/test-case-matrix/assets/test-matrix-template.md",
+          "sha256": "26269dae7a44af46bdd3666617630e4d6ca65808c6cf13e77b0537ceb847131c"
+        },
+        {
+          "path": ".agents/skills/test-case-matrix/cursor.mdc",
+          "sha256": "cbfc6ea5dbf5dd2aeb35187525157be5031db2fbed0c407ceefc9241337fe0d0"
+        },
+        {
+          "path": ".agents/skills/test-case-matrix/README.md",
+          "sha256": "9dd09b8faa75e5b07ded827bd7deae0f83f0d04551c3455be376b4f2a01198cd"
+        },
+        {
+          "path": ".agents/skills/test-case-matrix/scripts/lint-test-matrix.mjs",
+          "sha256": "c0fc5a5804f5e77c94b57dbaf6fdcd2af715071865fbfbb920b2e70e186ae7f4"
+        },
+        {
+          "path": ".agents/skills/test-case-matrix/scripts/new-test-matrix.mjs",
+          "sha256": "6f042d73f3e527d1e07967cdd3f4aa31acb285c47bf389bd3232f6ddf2b08514"
+        },
+        {
+          "path": ".agents/skills/test-case-matrix/SKILL.md",
+          "sha256": "114e2635fd9537714f755901fcb9e9d0a9ddd144c5150276c18afd43e291a78b"
+        }
+      ]
+    },
+    "test-driven-development": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/test-driven-development/cursor.mdc",
+          "sha256": "7d71d31ef6030999b20ea0c20407a57915332a8bc4269766fe092c310ee274c4"
+        },
+        {
+          "path": ".agents/skills/test-driven-development/README.md",
+          "sha256": "dcf1ebe819052237533b414293a259ffd1578d5bc2a5699e258705b36f8bd28b"
+        },
+        {
+          "path": ".agents/skills/test-driven-development/SKILL.md",
+          "sha256": "8f9207d7641c65fd6c0deb2760c03cf7fc561f6a1b5802f11023f7222fc646f6"
+        }
+      ]
+    },
+    "webapp-testing": {
+      "type": "skill",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/webapp-testing/assets/playwright.config.ts",
+          "sha256": "8183dd24686d0f65a525f231e0d53ca022944564af7226c2d48819ead464fb5f"
+        },
+        {
+          "path": ".agents/skills/webapp-testing/assets/pre-push-hook.sh",
+          "sha256": "95efd3134233900b7197f82adf77763aa516f0a98ec54ee7081b5e200bc1addf"
+        },
+        {
+          "path": ".agents/skills/webapp-testing/assets/step-shot-helper.ts",
+          "sha256": "6fc7e745ad023b706b0ba4157d13f9e32705e9709bec1f1454dba07db712e1e6"
+        },
+        {
+          "path": ".agents/skills/webapp-testing/cursor.mdc",
+          "sha256": "9e25e682ca21d32aca9109d80e0d7fd4738305e90c20c86e9443234f1cb50853"
+        },
+        {
+          "path": ".agents/skills/webapp-testing/README.md",
+          "sha256": "d35daab91885819edb033b03ff4eb801fa703117c0b11323e1ccd6fdcc942a52"
+        },
+        {
+          "path": ".agents/skills/webapp-testing/references/tdd-e2e-workflow.md",
+          "sha256": "fdab35fb574d24903a1c84447361cb90b0cb22ad78500bc88a3f833c3f325da5"
+        },
+        {
+          "path": ".agents/skills/webapp-testing/scripts/build_report.py",
+          "sha256": "04b2360f299f863e885f25c78b9521fa4dc725dca99e2c93bdf83588f65ad8b2"
+        },
+        {
+          "path": ".agents/skills/webapp-testing/scripts/run_e2e.py",
+          "sha256": "9d9cfe05d02ca534dda3154dbac409cc316860d2374d46aa2b1f1a119446484e"
+        },
+        {
+          "path": ".agents/skills/webapp-testing/SKILL.md",
+          "sha256": "9dea47c0f8ccced9851a4cf1a1cd8089bef515eccda81bf078516892575e5bbe"
+        }
+      ]
+    },
+    "grill": {
+      "type": "command",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/grill/SKILL.md",
+          "sha256": "17e5da1857b8c79c71306b9019d4454a09d00d0ddb8fbd1b137ac1b37ead0014"
+        }
+      ]
+    },
+    "dev": {
+      "type": "command",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/dev/SKILL.md",
+          "sha256": "756affabd2d8e8c982b5061fd2b540560532841d39690a238d168f6832c7db39"
+        }
+      ]
+    },
+    "qa": {
+      "type": "command",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/qa/SKILL.md",
+          "sha256": "84c3d322c72f95c9e3af607689f56446e47fb7b364861afd6ee68180b0c59f38"
+        }
+      ]
+    },
+    "gate": {
+      "type": "command",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/gate/SKILL.md",
+          "sha256": "833cefc4669d1e1a3f035dd796af8660cb0f8fb9ae3a31d579daf7b88f253e8d"
+        }
+      ]
+    },
+    "promote": {
+      "type": "command",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/skills/promote/SKILL.md",
+          "sha256": "801197a1e6a3fc99af775a104a93c6fd6ababffdca038bf063ce334f75b6241d"
+        }
+      ]
+    },
+    "qa-engineer": {
+      "type": "agent",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/agents/qa-engineer.md",
+          "sha256": "8eb830f1da7a0ba6ad722378b57069762129034ae034e9f9e51ef3defc5ec236"
+        }
+      ]
+    },
+    "reviewer": {
+      "type": "agent",
+      "source_url": "https://github.com/knittotextile/knitto-agent-skills.git",
+      "source_commit": "6a0be7b806503378275e6c9d7d5fc549a641caec",
+      "files": [
+        {
+          "path": ".agents/agents/reviewer.md",
+          "sha256": "0c53a21376c69e2cfa06253fb59b9c8447b96103a5330806fe61eb87fcfeb26b"
+        }
+      ]
+    }
+  }
+}

@@ -32,14 +32,18 @@ Rules:
   implemented yet.
 - A plan moves `todo/<slug>/` → `done/<slug>/` only once `ISSUES.md` is
   fully checked (or every remaining item is explicitly annotated N/A / out
-  of scope) — as part of implementation close-out (`exec-todo`'s job), not
-  something `prd-grill` does itself.
+  of scope) — as part of implementation close-out (`/gate`'s job via
+  `scripts/move-plan.mjs --to done`, not something `prd-grill` does itself).
 - Refining a plan still in `todo/`: edit `PRD.md`/`ISSUES.md` in place,
   noting what changed and why in a short changelog note at the top of
   `PRD.md`.
 - Refining a plan already in `done/`: move it back to `todo/<slug>/` first
-  (new work reopens it — its checklist is no longer fully representative of
-  "done"), then edit in place with the same changelog note. Never edit a
+  — run `node scripts/move-plan.mjs --slug <slug> --to todo` rather than
+  moving the files by hand (single atomic move that also rewrites any
+  relative link that pointed at the old `done/` path, e.g. from a
+  `docs/qa/<slug>/` test matrix) — new work reopens it, its checklist is no
+  longer fully representative of "done". Then edit in place with the same
+  changelog note. Never edit a
   `done/` file in place and leave it there.
 
 **`PRD.md` sections:**

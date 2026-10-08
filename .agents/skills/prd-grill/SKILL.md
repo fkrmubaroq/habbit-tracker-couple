@@ -7,14 +7,13 @@ metadata:
   category: planning
   author: lintang
   version: "1.0.0"
-allowed-tools: [Read, Write, Edit, Glob, Grep, AskUserQuestion]
+allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion]
 argument-hint: "[topic or feature] | refine <slug>"
 when_to_use: "Also trigger proactively when the user describes a feature at a level too vague to implement directly (e.g. 'add some kind of notification system') rather than waiting for the literal /prd-grill invocation."
 disable-model-invocation: false
 user-invocable: true
-model: inherit
 effort: medium
-compatible_with: [claude-code, opencode, antigravity, commandcode]
+compatible_with: [claude-code, opencode, antigravity]
 ---
 
 # /prd-grill
@@ -41,15 +40,15 @@ this generic skill infers on the fly.
 /prd-grill refine <slug>        # reopen an existing plan doc, grill only the delta
 ```
 
-## Being invoked after brd-grill
+## Being invoked after brd-reader
 
 If this invocation comes as a hand-off from
-[`brd-grill`](../brd-grill/SKILL.md) (a BRD file path and prior grill
-answers were passed in), treat the BRD as the source of truth for *what* —
-don't re-ask process/UI/data-impact questions already answered there. Read
-the BRD in full, then jump straight to Step 3 asking only genuinely new,
-implementation-level questions (which files, which endpoints, which
-components) that the BRD wouldn't have covered.
+[`brd-reader`](../brd-reader/SKILL.md) (a BRD file/text and its confirmed
+understanding were passed in), treat the BRD as the source of truth for
+*what* — don't re-ask process/UI/data-impact questions already answered
+there. Read the BRD in full, then jump straight to Step 3 asking only
+genuinely new, implementation-level questions (which files, which
+endpoints, which components) that the BRD wouldn't have covered.
 
 ## Step 1 — Scope: new plan vs. correction to an existing one
 
@@ -133,7 +132,12 @@ Whichever shape applies, always include:
 - The scope decisions from the grill, not generic boilerplate
 - An explicit "out of scope" section, even if short
 - A checklist-style breakdown for implementation — one item per
-  component/endpoint/test file, not one giant item
+  component/endpoint/test file, not one giant item. If a natural item would
+  touch more than ~5 files, can't state acceptance criteria in 3 bullets, or
+  spans independent subsystems, apply
+  `references/task-breakdown-technique.md` (dependency graph, vertical
+  slicing, sizing) to split it before writing the final checklist — don't
+  leave an oversized item in ISSUES.md.
 - If this repo has a fixed "definition of done" (tests pass, review step,
   manual/E2E verification step) documented anywhere (CLAUDE.md, CONTRIBUTING,
   etc.), append those as fixed closing checklist items verbatim — don't

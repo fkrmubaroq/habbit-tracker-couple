@@ -10,7 +10,6 @@ changes its format, this file is the one to update.
 | Claude Code | `.claude/agents/<name>.md` | `~/.claude/agents/<name>.md` | `name`, `description` | `model:` — short alias (e.g. `sonnet`, `opus`, `haiku`, `inherit`) |
 | OpenCode | `.opencode/agents/<name>.md` | per OpenCode config | `description` (body = system prompt) | model set via `mode`/provider config, not always in the agent file itself — check OpenCode's own config for the active model |
 | Antigravity | `.agents/agents/<name>.md` or `.agents/agents/<name>/agent.md` | `~/.gemini/config/agents/<name>.md` | `name`, `description`, `subagent: true` (to be invokable) | model typically inherited from the calling session, not per-agent |
-| Command Code | `.commandcode/agents/<name>.md` | `~/.commandcode/agents/<name>.md` | `name`, `description` | `model:` field, format depends on Command Code's configured provider |
 | Cursor | `.cursor/agents/<name>.md` | `~/.cursor/agents/<name>.md` | filename = agent identity | `model:` — must match a model Cursor's own model picker shows as available |
 | Codex CLI | `.codex/agents/<name>.toml` | `~/.codex/agents/<name>.toml` | `name`, `description`, `developer_instructions` (TOML, not Markdown+YAML) | `model` — full model string, must match what's configured/available in the Codex CLI provider config |
 

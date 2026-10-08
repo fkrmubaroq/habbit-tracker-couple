@@ -20,12 +20,24 @@ planned before it's built, not improvised while writing test code.
    layer you'll implement, then a final "run full suite" todo. This is
    multi-step work — post the plan up front instead of only revealing it
    through scattered file writes.
-1. **Always start with the `test-case-matrix` skill.** Never write or run
+1. **Don't self-trigger mid-pipeline.** Check whether this feature has a
+   tracked plan file (from `prd-grill`/`brd-reader`, e.g.
+   `docs/prd/todo/<slug>/ISSUES.md` or equivalent) that's already mid the
+   `/grill /dev /qa /gate /promote` pipeline. If one exists, this is
+   `/qa`'s job, not yours — `/qa` now always runs `test-case-matrix` itself
+   as its own Step 3 and implements against it in Step 4, so there's no gap
+   for you to fill here even before verification starts. Say so and stop,
+   defer to `/qa`, don't write a parallel test-case-matrix that the
+   pipeline's closing checklist won't know about. This guard is for the
+   proactive "qa fitur ini"-style trigger; it doesn't apply when the user
+   explicitly asks you by name, or when there's no tracked plan file at all
+   (ad hoc work, a feature that hasn't been through `/grill`).
+2. **Always start with the `test-case-matrix` skill.** Never write or run
    test code before this step — the matrix is the plan, implementation
    follows it. If a matrix already exists for this feature
    (`docs/qa/<slug>/test-matrix.md`), read it instead of regenerating one
    from scratch, and only extend it for scenarios it's missing.
-2. Once the matrix exists, implement coverage against it using whichever
+3. Once the matrix exists, implement coverage against it using whichever
    testing skill fits the layer being tested:
    - `react-testing` for component-level tests (RTL/Vitest/Jest).
    - `e2e-testing` for Playwright patterns/Page Object Model.
@@ -38,7 +50,7 @@ planned before it's built, not improvised while writing test code.
      flat final-state shot.
    Follow the matrix's checklist order — don't skip cases or invent new
    ones outside it without updating the matrix first.
-3. As each test case is implemented and passing, flip its `Status` cell
+4. As each test case is implemented and passing, flip its `Status` cell
    from `[ ]` to `[V]` in `test-matrix.md` — that's the only place status
    lives, so the file stays the live source of truth for coverage status.
 
