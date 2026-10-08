@@ -6,7 +6,7 @@ metadata:
   category: workflow
   source: "addyosmani/agent-skills (MIT)"
   author: lintang
-compatible_with: [claude-code, opencode, antigravity, commandcode]
+compatible_with: [claude-code, opencode, antigravity]
 ---
 
 # Incremental Implementation

@@ -1,0 +1,56 @@
+---
+description: Docker and Docker Compose patterns for local development, container security, networking, volume strategies, and multi-service orchestration. Trigger when setting up Compose for local dev, designing multi-container architectures, troubleshooting container networking/volumes, or reviewing a Dockerfile for security/size.
+globs:
+alwaysApply: false
+---
+
+# docker-patterns (Cursor)
+
+## Compose for local dev
+
+Multi-stage Dockerfile with a `dev` target for hot reload (bind-mount
+source, anonymous volume over `node_modules` to protect container deps),
+`depends_on` with `condition: service_healthy` for dependency ordering, a
+healthcheck on the DB service. Use `docker-compose.override.yml`
+(auto-loaded) for dev-only settings and an explicit
+`docker-compose.prod.yml` for production overrides (`target: production`,
+resource limits).
+
+## Networking
+
+Services resolve each other by service name inside the Compose network.
+Split networks so, e.g., a `db` service is only reachable from `api`, not
+`frontend`. Bind exposed ports to `127.0.0.1` in dev; omit `ports` entirely
+in production for services that don't need host access.
+
+## Volumes
+
+Named volumes persist data across restarts (`pgdata:`). Bind mounts map
+host directories in for hot reload. Anonymous volumes protect
+container-generated content (`node_modules`, build caches) from being
+overwritten by a bind-mount override.
+
+## Security
+
+- Pin exact image tags, never `:latest`.
+- Run as a non-root user (`USER app`) in every Dockerfile.
+- In Compose: `security_opt: [no-new-privileges:true]`, `read_only: true`
+  with `tmpfs` for writable dirs, `cap_drop: [ALL]` and only re-add what's
+  needed.
+- Secrets via env vars from a gitignored `.env` or Docker secrets — never
+  `ENV API_KEY=...` hardcoded in the image.
+- `.dockerignore` excludes `node_modules`, `.git`, `.env*`, build output,
+  logs.
+
+## Debugging
+
+`docker compose logs -f <service>`, `exec <service> sh` to shell in,
+`ps`/`top`/`docker stats` to inspect, `logs --tail=N` for recent output.
+For networking: `exec app nslookup db`, `docker network inspect`.
+
+## Anti-patterns
+
+Docker Compose as a production orchestrator (use Kubernetes/ECS/Swarm
+instead); storing data in containers without volumes (ephemeral, lost on
+restart); running as root; `:latest` tag; one giant multi-service
+container; secrets committed in `docker-compose.yml`.

@@ -1,0 +1,58 @@
+---
+description: Playwright browser E2E testing patterns — Page Object Model, config choices, artifact management, and flaky-test triage. Reference only, not executable — for actually running a webapp's E2E suite and generating the standard report, use webapp-testing. Not for pure API testing with no browser (use api-testing).
+globs:
+alwaysApply: false
+---
+
+# e2e-testing (Cursor)
+
+Patterns-only reference for writing good Playwright tests. No runner, no
+report, no CI wiring of its own — when the task is "set up or run E2E for
+a webapp," apply `webapp-testing` instead (it owns the standard runner and
+report format and points back here for pattern choices). Scope is
+browser-driven E2E only; pure API testing with no browser is `api-testing`.
+
+## Data hygiene
+
+A browser-driven test always creates data through a real running app —
+there's no in-process transaction to roll back. Tag what a spec creates
+and tear it down (automatic + a standalone script for crashed runs) rather
+than letting it accumulate — see `api-testing`'s DB-strategy reference for
+the approach. If a flow depends on an entity another repo/service owns,
+stop and ask before seeding it directly.
+
+## Organization and Page Object Model
+
+Structure tests under `tests/e2e/<area>/*.spec.ts`, with `fixtures/` for
+shared setup. Wrap each page's selectors and actions in a Page Object
+class (`goto`, `search`, `getItemCount`, ...) rather than repeating raw
+locators across tests.
+
+## Test structure
+
+`test.describe` per feature, `beforeEach` to construct the page object and
+navigate, one behavior per `test()`. Assert on visible outcomes
+(`expect(locator).toContainText(...)`), not internal state.
+
+## Config essentials
+
+`fullyParallel: true`, retries only in CI, `trace: 'on-first-retry'`,
+`screenshot: 'only-on-failure'`, `video: 'retain-on-failure'` for a plain
+Playwright setup (webapp-testing's own config differs — always/on for
+report richness). Multiple browser projects (chromium/firefox/webkit) plus
+a mobile viewport project as needed.
+
+## Flaky-test handling
+
+Prefer auto-waiting locators (`page.locator(...).click()`) over bare
+`page.click()`; wait for a specific network response instead of
+`waitForTimeout`; wait for element visibility/stability before interacting
+during animations. Quarantine known-flaky tests with `test.fixme`/
+`test.skip` referencing the tracking issue rather than leaving them
+red/ignored. Identify flakiness with `--repeat-each=10`.
+
+## Artifacts
+
+Screenshots (`page.screenshot`), traces (`browser.startTracing`), video —
+all should land under a consistent artifacts path so a failure report can
+link back to them.

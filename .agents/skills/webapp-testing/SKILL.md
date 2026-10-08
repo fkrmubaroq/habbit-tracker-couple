@@ -5,7 +5,7 @@ license: MIT
 metadata:
   category: testing
   author: lintang
-compatible_with: [claude-code, opencode, antigravity, commandcode]
+compatible_with: [claude-code, opencode, antigravity]
 ---
 
 # Webapp Testing (E2E + TDD, executable)

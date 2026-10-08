@@ -1,14 +1,14 @@
 ---
 name: test-case-matrix
-description: Use when a feature/spec needs test scenarios written down BEFORE implementation or before automating tests — triggers on "/test-case-matrix", "buatkan test matrix", "buatkan test case", "test scenario apa aja", or as the mandatory first step when a qa-engineer-style agent is invoked. Reads the PRD/issue/spec for a feature (or asks for a quick feature description if none exists), optionally builds a parameter/value combination matrix first for features with multiple interacting variables, groups scenarios into PB (Product Backlog/requirement) sections, and writes a single markdown file mirroring the manual-tester spreadsheet layout: header metadata, two-part Summary (pass/fail counts + automation-usage percentage), one section per PB with a mini traceability index (spec → covered? → test case id) followed by a test case table in the tester's exact column order (Group No, Feature, Process No (FC), TYPE, Test Case ID like `TC1-1`, Test Variable, Test Case, Pre-Condition, Test Data, Test Steps, Expected Result, Status, Evidence, Remarks, Automation Tools [Masuk Test Step/Test Data/Tanpa Automation], Date) plus Files/Requirement appended. Cell content in Bahasa Indonesia with concrete UI-accurate steps, column names left in English. Does not write or run any test code — that's `react-testing`/`e2e-testing`/`webapp-testing`'s job, this skill only produces the scenario list those skills implement against.
+description: Use when a feature/spec needs test scenarios written down BEFORE implementation or before automating tests — triggers on "/test-case-matrix", "buatkan test matrix", "buatkan test case", "test scenario apa aja", or as the mandatory first step when a qa-engineer-style agent is invoked. Reads the PRD/issue/spec for a feature (or asks for a quick feature description if none exists), optionally builds a parameter/value combination matrix first for features with multiple interacting variables, groups scenarios into PB (Product Backlog/requirement) sections, and writes a single markdown file mirroring the manual-tester spreadsheet layout: header metadata, two-part Summary (pass/fail counts + automation-usage percentage), one section per PB with a mini traceability index (spec → covered? → test case id) followed by a test case table in the tester's exact column order of spreadsheet "FORMAT TEST CASE V4" (Group No, Feature, Process No (FC), TYPE, Test Case ID like `TC1-1`, Test Variable, Scenario, Test Case, Pre-Condition, Test Data, Test Steps, Expected Result, Status [Progress/Passed/Failed/Re-Test/Skip], Evidence, Remarks, Automation Tools [Masuk Test Step/Test Data/Tanpa Automation], Date) plus Files/Requirement appended; V4 header metadata, checkbox traceability, and the V4 "Memenuhi Syarat" threshold (> 24%). Cell content in Bahasa Indonesia with concrete UI-accurate steps, column names left in English. Does not write or run any test code — that's `react-testing`/`e2e-testing`/`webapp-testing`'s job, this skill only produces the scenario list those skills implement against.
 license: MIT
 metadata:
   category: testing
   author: lintang
-  version: "1.0.0"
-allowed-tools: [Read, Write, Glob, Grep]
+  version: "2.0.0"
+allowed-tools: [Read, Write, Glob, Grep, Bash]
 argument-hint: "[feature/slug or PRD path]"
-compatible_with: [claude-code, opencode, antigravity, commandcode]
+compatible_with: [claude-code, opencode, antigravity]
 ---
 
 # /test-case-matrix
@@ -32,10 +32,11 @@ Nama kolom tabel tetap persis seperti di Step 4 (bahasa Inggris, match
 istilah tester manual: `Test Case ID`, `Pre-Condition`, `Test Data`, `Test
 Steps`, `Expected Result`, dst) — jangan diterjemahkan, supaya konsisten
 lintas file dan gampang di-grep. **Isi selnya** yang ditulis dalam
-**Bahasa Indonesia**: `Test Case`, `Feature`, `Pre-Condition`, `Test Data`,
-`Test Steps`, `Expected Result`, `Requirement` (ringkasan), dan `Remarks`.
-`Test Case ID`/status value (`TC1-1`, `✅ Passed`, `Masuk Test Step`, dst)
-tetap apa adanya.
+**Bahasa Indonesia**: `Scenario`, `Test Case`, `Feature`, `Pre-Condition`,
+`Test Data`, `Test Steps`, `Expected Result`, `Requirement` (ringkasan), dan
+`Remarks`. `Test Case ID`/status value (`TC1-1`, `Passed`, `Masuk Test Step`,
+dst) tetap apa adanya — persis nilai dropdown spreadsheet V4 supaya bisa
+di-copy ke sheet tester tanpa diubah.
 Kalau requirement source-nya berbahasa Inggris, terjemahkan isinya saat
 ditulis ke matrix, jangan copy-paste mentah.
 
@@ -52,8 +53,8 @@ daripada "1. Buka halaman login" + Expected "Berhasil". Kalau ada
 
 Look for a spec covering this feature, in priority order:
 1. A PRD/ISSUES pair from `prd-grill` (`docs/prd/**/PRD.md`,
-   `docs/prd/**/ISSUES.md`) or a BRD from `brd-grill`, if the slug/feature
-   name matches.
+   `docs/prd/**/ISSUES.md`) or a BRD read via `brd-reader`, if the
+   slug/feature name matches.
 2. A GitHub issue (`gh issue view <n>`) if the user references one.
 3. Any other plan/spec doc in the repo that plausibly covers this feature.
 
@@ -122,16 +123,36 @@ file changes, not just when a requirement changes.
 ## Step 4 — Write the matrix
 
 Write one file: `docs/qa/<slug>/test-matrix.md` (create the folder if
-missing). Use this exact structure — see `assets/test-matrix-template.md`
-for the literal template to copy and fill in. This mirrors the manual-
-tester spreadsheet layout (header block, two-part Summary, PB-grouped test
-case tables with a per-PB mini traceability index) — don't restructure it
-into a single flat table or a category-grouped layout, the whole point is
-that this reads the same as the tester's own sheet.
+missing). **Scaffold it with `scripts/new-test-matrix.mjs` first, don't
+hand-copy `assets/test-matrix-template.md` from memory:**
 
-- **Header** — feature name, requirement source (link), tester/programmer
-  (if known — ask or leave `<belum diisi>` rather than guessing), created/
-  updated date, scope / out-of-scope.
+```bash
+node scripts/new-test-matrix.mjs <slug> --feature "<Nama Fitur>" \
+  --source "docs/prd/todo/<slug>/PRD.md, .../ISSUES.md" \
+  --pb "PB-1 — <requirement group 1>" --pb "PB-2 — <requirement group 2>"
+```
+
+(repeat `--pb` once per PB group from Step 3; omit it entirely for a
+single-PB feature). This writes the file with the header block, both
+Summary tables, and one correctly-19-columned test case table per `--pb`
+already in place — confirmed necessary 2026-09-22: an audit of 38 real
+`test-matrix.md` files across a live program found 33 had silently drifted
+into a simplified 4-column ad-hoc format because the structure was
+reconstructed from memory each time instead of started from the template.
+Scaffolding removes that failure mode — the shape can't drift if it's
+generated, not recalled. Then fill in every `<placeholder>` per Steps 1-3.
+This mirrors the manual-tester spreadsheet layout (header block, two-part
+Summary, PB-grouped test case tables with a per-PB mini traceability index)
+— don't restructure it into a single flat table or a category-grouped
+layout, the whole point is that this reads the same as the tester's own
+sheet.
+
+- **Header** — the V4 metadata block, same labels as the sheet's top-left
+  cells: `PROGRAM VERSION RELEASE`, `FOLDER TEST APP`, `IP DEV`, `IP PROD`,
+  `TESTER`, `PROGRAMMER`, `TASK DEV`, `TEST CASE CREATED AT`, `TEST CASE
+  UPDATED AT` — plus this skill's own `Sumber requirement` (link), `Scope`,
+  and `Out of scope`. Unknown values are written `-` (what the sheet itself
+  uses for an empty cell) — ask rather than guess for tester/programmer.
 - **Summary** — two small tables, both recounted live from the `Status`/
   `Automation Tools` columns below every time the file is updated (never
   maintained separately, that's how these drift):
@@ -140,9 +161,10 @@ that this reads the same as the tester's own sheet.
     `Automation Tools` is `Test Data` or `Masuk Test Step` — anything but
     `Tanpa Automation`), `Test Data` (count), `Masuk Test Step` (count),
     `Tanpa Automation` (count), `Presentase` (Total Penggunaan Automation
-    Test ÷ Total Test Case), `Memenuhi Syarat` (`Ya`/`Tidak` — meets the
-    project's automation-coverage threshold; ask the user for the
-    threshold once per project if unknown, default assumption 50%).
+    Test ÷ Total Test Case), `Memenuhi Syarat` — `Memenuhi Syarat` when
+    `Presentase` **> 24%**, otherwise `Belum Memenuhi Syarat` (exactly the
+    V4 sheet formula `=IF(K9>24%,"Memenuhi Syarat","Belum Memenuhi Syarat")`;
+    don't ask for or assume a different threshold).
 - **Parameter Matrix** — only if Step 2 produced one; the variable/value
   table plus the combinations selected for testing.
 - **Test Cases** — one `### PB-<n> — <requirement id> · <link task> ·
@@ -151,19 +173,19 @@ that this reads the same as the tester's own sheet.
   1. A mini traceability table scoped to this PB:
      `NO | PROGRAM SPECIFICATIONS | TEST CASE | TEST CASE ID` — `NO` is
      sequential within the PB, `PROGRAM SPECIFICATIONS` is the spec/
-     acceptance criterion in Bahasa Indonesia, `TEST CASE` is `Ya`/`Tidak`
-     (does a case cover this spec), `TEST CASE ID` lists the covering
-     id(s) or is blank with `⚠️ Gap` in `TEST CASE` when nothing covers
-     it. This **replaces** a separate global traceability section — don't
-     add another one at the end of the file.
+     acceptance criterion in Bahasa Indonesia, `TEST CASE` is a checkbox
+     like the V4 sheet's: `[x]` when at least one case covers this spec,
+     `[ ]` when nothing does (then `TEST CASE ID` is `⚠️ Gap`), and `TEST
+     CASE ID` lists the covering id(s). This **replaces** a separate global
+     traceability section — don't add another one at the end of the file.
   2. The test case table itself, **one row per test case**, columns in
      this exact order:
      `Group No | Feature | Process No (FC) | TYPE | Test Case ID | Test
-     Variable | Test Case | Pre-Condition | Test Data | Test Steps |
-     Expected Result | Status | Evidence | Remarks | Automation Tools |
-     Date | Files | Requirement` — the first 16 match the tester
-     spreadsheet's own order (don't reorder these), `Files` and
-     `Requirement` are this skill's own addition, appended at the end
+     Variable | Scenario | Test Case | Pre-Condition | Test Data | Test
+     Steps | Expected Result | Status | Evidence | Remarks | Automation
+     Tools | Date | Files | Requirement` — the first 17 match spreadsheet
+     "FORMAT TEST CASE V4" column for column (don't reorder these), `Files`
+     and `Requirement` are this skill's own addition, appended at the end
      rather than interleaved.
 
   Column definitions:
@@ -180,8 +202,14 @@ that this reads the same as the tester's own sheet.
     cases are `TC1-1`, `TC1-2`, `TC1-3`; group 2's are `TC2-1`, `TC2-2`.
     Not the old `TC-F-01`/`TC-ERR-01` scheme — the category from Step 3 is
     elicitation-only and doesn't appear in the id anymore.
+  - `Scenario` — the scenario a group of cases verifies, in Bahasa
+    Indonesia (e.g. "Menguji edit order perubahan qty"). In the sheet this
+    cell is merged across the group's rows; in markdown write it on the
+    group's first row and leave it blank on the following rows of the same
+    scenario — an importer forward-fills it, exactly like the merged cell.
   - `Test Case` — short descriptive name of what's being tested, in
-    Bahasa Indonesia (this is the tester's "test case name" column).
+    Bahasa Indonesia (this is the tester's "test case name" column — the
+    case's title, distinct from `Scenario`).
   - `Pre-Condition`, `Test Data` — in Bahasa Indonesia; keep literal
     values (input strings, URLs, selectors) untranslated.
   - `Test Steps`, `Expected Result` — two separate columns (not merged),
@@ -189,12 +217,13 @@ that this reads the same as the tester's own sheet.
     inside the cell (`1. <aksi><br>2. <aksi>`); `Expected Result` = the
     matching numbered outcomes in the same cell layout, same numbering as
     the steps they belong to.
-  - `Status` — one of `⚪ Not Run`, `🟡 Progress`, `✅ Passed`,
-    `❌ Failed`, `🔁 Re-Test`, `⏭ Skip` (emoji + word, matches the tester's
-    own status words while staying scannable in a long table — markdown
-    renders the emoji in color, plain `[V]`-style codes don't). This is
-    the **only** place completion status lives; update this same cell as a
-    case's outcome changes, don't add checkboxes anywhere else.
+  - `Status` — one of `Progress`, `Passed`, `Failed`, `Re-Test`, `Skip` —
+    the V4 sheet's dropdown values plus `Skip` (which the sheet's Summary
+    counts), written exactly like that so rows paste into the sheet
+    unchanged. A case that hasn't run yet is `Progress` (the sheet's
+    default). This is the **only** place completion status lives; update
+    this same cell as a case's outcome changes, don't add checkboxes
+    anywhere else.
   - `Evidence` — link/path to screenshot, recording, or CI run for this
     case once it's been executed; leave blank until then.
   - `Remarks` — free-text notes in Bahasa Indonesia: blocker, bug ticket
@@ -216,13 +245,33 @@ that this reads the same as the tester's own sheet.
   - `Requirement` — link to the requirement/acceptance criterion this case
     covers, short description in Bahasa Indonesia if paraphrased.
 
-## Step 5 — Report gaps
+## Step 5 — Lint, then report gaps
 
-After writing the file, tell the user which `PROGRAM SPECIFICATIONS` rows
-have no covering test case (⚠️ Gap in any PB's mini traceability table) and
-which categories from Step 3 came up empty for a given PB — those are
-either genuinely inapplicable or a sign the requirement source
-under-specifies that area; say which you think it is per gap.
+Before reporting anything, run the structural check:
+
+```bash
+node scripts/lint-test-matrix.mjs docs/qa/<slug>/test-matrix.md
+```
+
+Fix any `ERROR`-level finding (wrong/missing columns, missing Summary
+tables — these mean the file doesn't actually match this skill's format)
+before moving on. `WARNING`-level findings (bad `Status`/`Automation Tools`
+value, `Test Case ID` not matching `TC<n>-<m>`, Summary counts stale, no
+traceability index, `Ya`/`Tidak` instead of a checkbox, a file still in the
+pre-V4 18-column layout without `Scenario`) are worth fixing too but don't
+block — when touching a pre-V4 file anyway, migrate it: insert the
+`Scenario` column after `Test Variable`, map emoji statuses to the plain V4
+words (`⚪ Not Run`/`🟡 Progress` → `Progress`), and switch traceability to
+`[x]`/`[ ]`. Run it with no
+arguments (or a directory) to sweep every `test-matrix.md` under the repo
+at once — useful for checking a whole program's existing coverage, not just
+the file just written.
+
+Then tell the user which `PROGRAM SPECIFICATIONS` rows have no covering
+test case (⚠️ Gap in any PB's mini traceability table) and which categories
+from Step 3 came up empty for a given PB — those are either genuinely
+inapplicable or a sign the requirement source under-specifies that area;
+say which you think it is per gap.
 
 ## What this skill does NOT do
 

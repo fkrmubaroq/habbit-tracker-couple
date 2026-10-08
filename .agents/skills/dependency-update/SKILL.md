@@ -5,7 +5,7 @@ license: MIT
 metadata:
   category: maintenance
   author: lintang
-compatible_with: [claude-code, opencode, antigravity, commandcode]
+compatible_with: [claude-code, opencode, antigravity]
 ---
 
 # Dependency Update

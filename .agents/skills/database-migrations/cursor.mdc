@@ -1,0 +1,60 @@
+---
+description: Database migration best practices for schema changes, data migrations, rollbacks, and zero-downtime deployments across PostgreSQL, MySQL, and common ORMs (Prisma, Drizzle, Kysely, Django, golang-migrate). Trigger when creating/altering tables, adding/removing columns or indexes, running data migrations, or planning zero-downtime schema changes.
+globs:
+alwaysApply: false
+---
+
+# database-migrations (Cursor)
+
+## Core principles
+
+Every change is a migration — never alter production databases manually.
+Migrations are forward-only in production (rollback = a new forward
+migration). Schema and data migrations stay separate (never mix DDL and DML
+in one migration). Test against production-sized data before applying —
+what works on 100 rows can lock on 10M. Never edit a migration that has
+already run in production.
+
+## Safety checklist before applying
+
+Both UP and DOWN present (or explicitly irreversible); no full table locks
+on large tables (use concurrent index creation); new columns nullable or
+have a default (never `NOT NULL` without a default on an existing table —
+it forces a full rewrite); backfill is a separate migration from the schema
+change; tested against production-sized data; rollback plan documented.
+
+## Safe patterns
+
+- Adding a column: nullable, or `NOT NULL DEFAULT` on Postgres 11+ (instant,
+  no rewrite). Never bare `NOT NULL` on an existing table.
+- Adding an index on a large table: `CREATE INDEX CONCURRENTLY` (can't run
+  inside a transaction block — most ORMs need special handling).
+- Renaming or removing a column: never directly. Use expand-contract — add
+  new column, backfill, deploy app reading/writing both, then drop old
+  column in a later migration once app code no longer references it.
+- Large data migrations: batch updates (e.g. `LIMIT`+`FOR UPDATE SKIP
+  LOCKED` loop), never a single unbounded `UPDATE` that locks the whole
+  table.
+
+## Zero-downtime (expand-contract)
+
+Phase 1 EXPAND: add new column/table, deploy app writing to both old and
+new, backfill. Phase 2 MIGRATE: deploy app reading from new, writing both,
+verify consistency. Phase 3 CONTRACT: deploy app using new only, drop old
+in a separate migration.
+
+## Per-tool workflow
+
+Prisma: `migrate dev` (create), `migrate deploy` (apply), custom SQL via
+`migrate dev --create-only` for anything Prisma can't express (concurrent
+indexes). Drizzle: `drizzle-kit generate`/`migrate`. Kysely: `kysely
+migrate make/latest/down`, always type migrations as `Kysely<any>` since
+they're frozen in time. Django: `makemigrations`/`migrate`,
+`SeparateDatabaseAndState` to drop a model field without touching the DB
+yet. golang-migrate: paired `.up.sql`/`.down.sql` files.
+
+## Anti-patterns
+
+Manual SQL in production, editing deployed migrations, `NOT NULL` without
+default, inline index on a large table, schema+data in one migration,
+dropping a column before removing the code that references it.

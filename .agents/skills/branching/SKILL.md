@@ -12,9 +12,8 @@ argument-hint: "new <slug> | sync <slug> | promote <slug>"
 when_to_use: "Also trigger proactively when the user says a feature is ready to test on staging/sandbox, or ready for production, in a repo already using this branch model."
 disable-model-invocation: false
 user-invocable: true
-model: inherit
 effort: medium
-compatible_with: [claude-code, opencode, antigravity, commandcode]
+compatible_with: [claude-code, opencode, antigravity]
 ---
 
 # branching
@@ -54,6 +53,15 @@ If it does apply, read the repo's own docs (often in `README.md`) for the
 (`-main`/`-dev`, `releases/sandbox`, `releases/main`) are the pattern to
 recognize, not to hardcode; a given repo may use `staging` instead of
 `sandbox`, or a different suffix scheme.
+
+**Naming isn't fixed — check which one this repo actually has.** The
+`git branch -a | grep -E 'releases/(sandbox|staging|main)'` above matches
+both `releases/sandbox` and `releases/staging`. Don't default to one:
+- If only one of `releases/sandbox` / `releases/staging` exists, use that
+  one.
+- If **both** exist, don't guess which is the real staging target — ask
+  the user to clarify (they may be two different environments, or one may
+  be stale/deprecated) before opening any sync/promote PR against either.
 
 ## `new <slug>` — start a new feature branch
 
@@ -122,23 +130,29 @@ Procedure:
    needs correcting, that's a decision for whoever owns the release
    process, not something to do unilaterally mid-sync.
 
-## `promote <slug>` — ready for production
+## `promote <slug>` — open the production PR
 
-1. Confirm testing sign-off happened (this repo's docs may specify who
-   signs off — e.g. a QA/tester role) before opening the promotion PR;
-   don't promote on the assumption that "it works on staging" alone is
-   sufficient if the repo's process requires explicit sign-off.
-2. Open a PR from `<slug>-main` (the working branch — not `-dev`, which is
+This step is git-PR mechanics only — it never checks CI, never checks
+whether a merge triggers a deploy, and never touches a `releases/main`-style
+branch. Confirm `/qa`/`/gate` (or this repo's equivalent verification +
+review sign-off) already passed before opening the PR — don't promote on
+the assumption that "it works on staging" alone is sufficient if the
+repo's process requires explicit sign-off.
+
+1. Open a PR from `<slug>-main` (the working branch — not `-dev`, which is
    a staging-only artifact) into the trunk (`main`).
-3. Check whether merging into `main` alone triggers a production deploy, or
-   whether this repo requires a **separate** push/merge into a
-   `releases/main`-style branch to actually deploy (per Step 0's CI check)
-   — these are commonly two different steps even though they sound
-   related; don't assume merging to `main` deploys anything.
-4. After the feature is live, offer to clean up the merged `-main` and
-   `-dev` branches — ask first, don't delete unilaterally, since `-dev` may
-   still be referenced by the staging branch's history via the `-x`
-   cherry-pick trailers.
+2. That's the whole step. Whatever happens after the PR merges (deploy
+   triggers, a separate `releases/main` push, CI gates) is outside this
+   skill's scope — don't chase it.
+3. Once the PR is merged, offer to clean up the merged `-main` and `-dev`
+   branches — ask first, don't delete unilaterally, since `-dev` may still
+   be referenced by the staging branch's history via the `-x` cherry-pick
+   trailers.
+
+In this repo's pipeline, `sync <slug>` and `promote <slug>` are both run
+from inside `/promote` (see `commands/promote/`) rather than invoked as
+separate user-facing steps — `/promote` opens the trunk PR and runs the
+sync-to-staging PR together, in one pass, once `/gate` has approved.
 
 ## What this skill is not
 

@@ -1,5 +1,14 @@
 # Worked example: a project-scoped exec-todo
 
+**Note:** the generic `exec-todo` skill this reference informed no longer
+owns a "Step 3 closing gates" section itself — that responsibility moved to
+separate `/qa` (verification), `/gate` (review), and `/promote` (ship/
+close-out) commands, so a full test/review pass isn't paid on every
+`exec-todo` invocation. This worked example is kept for historical context
+and because its lessons (definition-of-done is repo-specific, the
+move-to-`done/` step is easy to silently skip) still apply — just to
+`/promote` now instead of `exec-todo` Step 3.
+
 A real chat-platform monorepo (the same one referenced in
 `prd-grill`'s and `branching`'s worked examples) keeps a project-scoped
 `exec-todo` at `.claude/skills/exec-todo/SKILL.md` because its generic

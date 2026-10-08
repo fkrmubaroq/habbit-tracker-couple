@@ -5,7 +5,7 @@ license: MIT
 metadata:
   category: foundation
   author: lintang
-compatible_with: [claude-code, opencode, antigravity, commandcode]
+compatible_with: [claude-code, opencode, antigravity]
 ---
 
 # Project Bootstrap

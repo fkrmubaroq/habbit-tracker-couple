@@ -1,0 +1,47 @@
+---
+description: Create and manage GitHub Projects boards (org knittotextile) with multi-PB README contract, 3-scope issues (Definition/Changes/Success incl Test), waves, explicit dependencies, and standard views incl Development Sequence. Trigger on "create project board", "buat board PB", "add issue to project".
+globs:
+alwaysApply: false
+---
+
+# github-projects (Cursor)
+
+One board can contain more than one PB. Board is source of truth.
+README is contract. Issue is execution unit for AI and human.
+
+## Clarify first (mandatory)
+
+Do NOT create board or issues if any is missing. Ask until complete:
+PB list + titles, Owner + author (written by name/date),
+affected repos + work branch + base per PB,
+wave plan (W0 foundation, W1 backend, W2 frontend, W3 QA/deploy),
+per issue Definition, Changes, Success (Test mandatory), Dependencies.
+Do not guess.
+
+## README multi-PB
+
+Header (Owner, Written by, Status), PB list table,
+How We Work (waves), Affected Repos table (Repo, Used by PB, Branch, Base),
+detail section per PB, decisions, open questions.
+See `references/template-readme.md`.
+
+## Issue 3-scope
+
+1. Definition + out-of-scope.
+2. Changes + repo/branch.
+3. Success: Functional + Test (command + evidence, mandatory) + Regression.
+Header: `Wave: Wx | Repo: | Branch: | Depends: | Blocks:`.
+No Test block = NOT Ready. See `references/template-issue.md`.
+
+## Waves + dependencies
+
+Waves sequential, parallel inside one wave allowed.
+If Depends is not Done, issue stays Todo/Backlog.
+Use waves for large features. See `references/views.md` for views.
+
+## Views
+
+Create manually (no CLI for views):
+All Work Items (table), Engineering Workflow (board by Status),
+Delivery Roadmap (roadmap), Development Sequence
+(table, filter `-delivery-stage:Tracking`, sort Delivery Stage then Target Date).

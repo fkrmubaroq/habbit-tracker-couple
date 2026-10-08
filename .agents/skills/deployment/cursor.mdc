@@ -1,0 +1,51 @@
+---
+description: Safe release practices for shipping a change to a real environment — pre-deploy checklist, rollback plan, gradual rollout (feature flags/canary), post-deploy verification. Trigger when the user asks to deploy/release/ship to production/staging, or plan a risky rollout. Not for local git branch management (see branching) or writing CI pipeline files.
+globs:
+alwaysApply: false
+---
+
+# deployment (Cursor)
+
+Judgment and checklist for shipping a change safely, not a platform CLI
+reference — complements `branching` (how code moves between branches) by
+covering the release itself.
+
+## When NOT to use
+
+Pushing to a regular dev/feature branch with no effect on a real
+environment (that's `branching`); writing/changing CI pipeline files
+(platform-specific, out of scope); a trivial very-low-risk change in a
+project that genuinely auto-deploys with no gate.
+
+## Steps
+
+1. **Classify the risk before choosing a rollout strategy.** High risk:
+   schema/data migration, breaking API contract change, touches
+   payment/auth/sensitive data, large change with weak test coverage.
+2. **Pre-deploy checklist** (adapt to context): relevant test suite passes
+   including regressions in the touched area; migrations reviewed as
+   backward-compatible for the transition window; new env vars/config set
+   in the target environment *before* the code that needs them deploys;
+   rollback plan already worked out (see step 4), not improvised later.
+3. **Gradual rollout for high-risk changes**, not a big-bang push: feature
+   flag turned on gradually per segment, or canary/staged deploy to a
+   slice of traffic first, monitoring between stages. If the platform
+   supports neither, at minimum deploy to staging before production.
+4. **Write the rollback plan BEFORE deploying.** For every risky change,
+   have a clear fastest-path-back answer: revert the deploy, flip off a
+   flag, or roll back a migration. Destructive migrations (dropping a
+   column) need staged, backward-compatible handling since they can't be
+   reverted as easily as code.
+5. **Post-deploy verification beyond "the pipeline is green."** Smoke-test
+   the main flow touched, check error rate/metrics against baseline, check
+   the relevant dashboard if observability exists.
+6. **Report the deploy outcome clearly**: what deployed, to which
+   environment, verification result, and — if staged — current stage and
+   what triggers the next one.
+
+## Confirm before executing
+
+Deploying to production, destructive migrations, and rollbacks are wide-
+blast-radius, hard-to-reverse actions — always show the plan (steps 1-4)
+and confirm with the user before running any command that changes a real
+environment.

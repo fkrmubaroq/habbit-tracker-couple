@@ -1,0 +1,76 @@
+---
+description: MySQL and MariaDB schema, query, indexing, transaction, replication, and connection-pool patterns for production backends. Trigger when designing tables/indexes/constraints, reviewing migrations against large tables, debugging slow queries/lock waits/deadlocks/connection exhaustion, or configuring connection pools/read replicas/TLS.
+globs:
+alwaysApply: false
+---
+
+# mysql-patterns (Cursor)
+
+Check the engine and exact version first (`SELECT VERSION()`) — MySQL and
+MariaDB diverge on several details, most notably `ON DUPLICATE KEY UPDATE`
+row-alias syntax (MySQL) vs `VALUES(col)` (MariaDB, still deprecated-but-
+supported on MySQL for cross-engine compatibility).
+
+## Schema defaults
+
+`BIGINT UNSIGNED AUTO_INCREMENT` for surrogate keys on tables that can grow
+large; `DECIMAL` for money, never `FLOAT`/`DOUBLE`; `utf8mb4` everywhere,
+not `utf8`/`utf8mb3`; `DATETIME` with UTC managed by the app; soft deletes
+via `deleted_at DATETIME NULL` with a scoped index; a lookup table or
+constrained `VARCHAR` over `ENUM` for values that change often.
+
+## Indexing
+
+Composite index order: equality predicates first, then range/sort columns.
+Always run `EXPLAIN` before adding or changing an index — watch for `type:
+ALL` on a large table, `key: NULL` despite a selective predicate, high
+`rows`, or `Using temporary`/`Using filesort` in `Extra`. Don't add indexes
+blindly — each one costs write throughput, migration time, and buffer-pool
+pressure.
+
+## Query patterns
+
+Upsert via `ON DUPLICATE KEY UPDATE` with `VALUES(col)` for cross-engine
+code, or the row-alias form only once the target is confirmed MySQL.
+Keyset pagination (`WHERE (created_at, id) < (?, ?) ORDER BY ... LIMIT`)
+backed by a matching composite index — never deep `OFFSET` on large
+tables. JSON columns for extension data only; expose a generated+indexed
+column for any JSON path queried frequently, keep FK/ownership/tenancy
+fields relational. Full-text search via `FULLTEXT` index +
+`MATCH...AGAINST`; reach for external search when typo-tolerance or
+cross-table ranking is needed.
+
+## Transactions
+
+Keep them short, lock rows in a deterministic order across code paths, do
+external API calls before opening the transaction not inside it, add
+indexes for predicates used in locking reads/updates/deletes, retry on
+deadlock with a bounded budget, capture `SHOW ENGINE INNODB STATUS\G`
+immediately after a deadlock since it's overwritten by later events. Use
+`SKIP LOCKED` only for queue-style worker claims, never as a substitute for
+normal transactional consistency.
+
+## Connection pools
+
+Keep pool recycle time below the server's `wait_timeout`; enable
+`pool_pre_ping`/keepalive to recover from network/failover events.
+
+## Replication
+
+Read replicas can lag — never route read-your-own-write paths, checkout
+flows, permission checks, or idempotency-key reads to a replica right
+after a write. Monitor SQL/IO thread health and lag, not just the TCP
+connection.
+
+## Security
+
+Never grant `ALL PRIVILEGES`/`*.*` to application users; require TLS for
+cross-host traffic; separate migration/admin users from runtime users;
+credentials in a secret manager, never in code/scripts.
+
+## Anti-patterns
+
+`SELECT *` in hot paths, deep `OFFSET` pagination, no index on FK joins,
+long transactions, direct DML against `mysql.user`, an app user with admin
+grants, pool recycle above `wait_timeout`, replica reads right after
+writes.

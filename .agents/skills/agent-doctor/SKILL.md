@@ -5,7 +5,7 @@ license: MIT
 metadata:
   category: foundation
   author: lintang
-compatible_with: [claude-code, opencode, antigravity, commandcode]
+compatible_with: [claude-code, opencode, antigravity]
 ---
 
 # Agent Doctor
@@ -37,7 +37,7 @@ exists" means "it works".
 ## Steps
 
 1. **Ask which platform(s) the user is running right now** (Claude Code,
-   OpenCode, Antigravity, Command Code, Cursor, Codex CLI) — don't guess
+   OpenCode, Antigravity, Cursor, Codex CLI) — don't guess
    from file presence alone, since a project can have agent files for
    multiple platforms installed but the user only actively uses one or
    two of them day to day.

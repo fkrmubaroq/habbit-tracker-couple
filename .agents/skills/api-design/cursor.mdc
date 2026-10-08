@@ -1,0 +1,74 @@
+---
+description: REST API design patterns — resource naming, status codes, pagination, filtering, error responses, versioning, and rate limiting for production APIs. Trigger when designing new endpoints, reviewing API contracts, adding pagination/filtering/sorting, implementing API error handling, or planning versioning.
+globs:
+alwaysApply: false
+---
+
+# api-design (Cursor)
+
+Reference conventions for consistent, developer-friendly REST APIs.
+
+## Resource design
+
+URLs are nouns, plural, kebab-case, no verbs: `GET /api/v1/users`,
+`GET /api/v1/users/:id/orders`. Actions that don't map to CRUD use a verb
+sparingly as a sub-resource: `POST /api/v1/orders/:id/cancel`. Avoid
+`/getUsers`, singular resources, snake_case, verbs in nested paths.
+
+## HTTP methods and status codes
+
+GET/PUT/DELETE are idempotent, POST/PATCH generally aren't. Use status
+codes semantically: 200 (read), 201 (created, with `Location` header), 204
+(no body), 400/422 (validation), 401/403 (auth), 404, 409 (conflict), 429
+(rate limit), 500/502/503 for server-side. Never return 200 for everything
+with a `success: false` body — use the real status code.
+
+## Response format
+
+Success: `{ "data": {...} }`. Collections add `meta` (pagination) and
+`links`. Errors: `{ "error": { "code", "message", "details": [...] } }`
+with field-level detail for validation failures.
+
+## Pagination
+
+Offset (`?page=2&per_page=20`) for admin dashboards/small datasets/search
+results where users expect page numbers. Cursor-based (`?cursor=...`) for
+infinite scroll, feeds, and public APIs — consistent performance and stable
+under concurrent inserts, but can't jump to an arbitrary page.
+
+## Filtering, sorting, search
+
+Equality (`?status=active`), comparison via bracket notation
+(`?price[gte]=10`), comma-separated multi-value, dot notation for nested
+fields, `-` prefix on `sort` for descending, `q=` for full-text, `fields=`
+for sparse fieldsets.
+
+## Auth
+
+Bearer token or API key in headers, never in the URL. Check both
+authentication (who) and authorization (can this user touch this
+resource) — resource-level ownership checks and role-based checks are
+different concerns, do both where relevant.
+
+## Rate limiting
+
+Return `X-RateLimit-*` headers and `429` + `Retry-After` when exceeded.
+Tier limits by trust level (anonymous < authenticated < premium <
+internal).
+
+## Versioning
+
+Prefer URL path versioning (`/api/v1/`) over header versioning — explicit,
+cacheable, easy to route. Don't version until you need to; maintain at most
+2 active versions; announce deprecation with a `Sunset` header before
+returning `410 Gone`. Additive changes (new fields/params/endpoints) don't
+need a new version; removing/renaming fields, changing types, URL
+structure, or auth method does.
+
+## Before shipping an endpoint, check
+
+Naming conventions, correct HTTP method, real status codes, schema
+validation on input, standard error format, pagination on list endpoints,
+auth + authorization, rate limiting, no leaked internals (stack
+traces/SQL errors), consistent naming with existing endpoints, docs
+updated (OpenAPI/Swagger).

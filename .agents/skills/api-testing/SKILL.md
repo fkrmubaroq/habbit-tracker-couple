@@ -8,7 +8,7 @@ metadata:
   version: "1.0.0"
 compatibility: "Requires a running (or in-process) backend to test against, and a test HTTP client (Supertest, httpx, or the project's existing one)."
 allowed-tools: [Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion]
-compatible_with: [claude-code, opencode, antigravity, commandcode]
+compatible_with: [claude-code, opencode, antigravity]
 ---
 
 # API Testing (backend, no browser)

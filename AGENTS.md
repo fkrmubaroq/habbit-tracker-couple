@@ -141,3 +141,28 @@ habbit-tracker-couple/
    - Vite in `apps/habbit-tracker-web` proxies `/api` requests to `http://localhost:1906`.
 4. **Environment Variables**:
    - Backend requires `PORT`, `NODE_ENV`, `DB_PROVIDER`, `JWT_SECRET`, plus relevant database credentials in `apps/api/.env`.
+
+---
+
+## 6. Installed Skills & Pipeline Commands
+
+Repository ini dilengkapi dengan skill dan pipeline command dari [knitto-agent-skills](https://github.com/knittotextile/knitto-agent-skills).
+
+### Pipeline Commands (`DEFINE → BUILD → VERIFY → REVIEW → SHIP`)
+- `/grill` — **DEFINE**: Perencanaan Product Backlog ke BRD / PRD+ISSUES melalui tanya-jawab terstruktur (`brd-reader` & `prd-grill`).
+- `/dev` — **BUILD**: Implementasi checklist fitur pada plan `ISSUES.md` secara bertahap dengan cheap checks (`exec-todo`).
+- `/qa` — **VERIFY**: Pengujian menyeluruh berbasis skenario via `test-case-matrix` dan test runner (`webapp-testing`, `api-testing`, dll).
+- `/gate` — **REVIEW**: Code review lima-axis dan security review sebelum rilis (`code-review-and-quality` & `security-review`).
+- `/promote` — **SHIP**: Membuka / update Pull Request ke branch trunk dan sync staging (`branching`).
+- `/skill-sync` — Memeriksa dan memperbarui skill, agent, dan command terhadap katalog upstream menggunakan `.agent-skills-lock.json`.
+
+### Subagents
+- `reviewer` (`.agents/agents/reviewer.md`) — Independent code reviewer berbasis lima-axis quality review.
+- `qa-engineer` (`.agents/agents/qa-engineer.md`) — Perencanaan & implementasi coverage pengujian berbasis test matrix.
+
+---
+
+## 7. Bahasa Operasional
+
+Skill/agent dari katalog ini berinteraksi (pertanyaan, laporan, dan dokumen yang dihasilkan seperti PRD, BRD, test-case matrix, report review) dalam **Bahasa Indonesia**, kecuali user secara eksplisit meminta Bahasa Inggris untuk sesi/task tertentu.
+

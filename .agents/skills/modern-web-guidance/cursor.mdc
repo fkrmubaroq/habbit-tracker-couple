@@ -1,0 +1,38 @@
+---
+description: Search tool for modern web platform best practices — performance, accessibility, security, forms, built-in AI, and WebMCP. Run first before implementing any of those concerns. Scoped in this catalog to skip UI/visual-design categories (owned by the project's UI/UX team and React template).
+globs:
+alwaysApply: false
+---
+
+# modern-web-guidance (Cursor)
+
+Search tool wrapping `npx modern-web-guidance` against Google Chrome's
+semantic guide database — not a static doc, since browser APIs change too
+fast for a fixed file to stay accurate.
+
+**Scope note for this catalog:** skip the `ui-atoms`/`ui-behaviors`/
+`ui-components`/`visual-design` guide categories — this project has its
+own UI/UX team and React template for that. Use this for `performance`,
+`accessibility`, `security`, `privacy`, `forms`, `html`/`css` correctness,
+`built-in-ai`, and `webmcp` only. For crawler/AI-answer-engine
+discoverability (llms.txt, structured data, robots for AI bots), see
+`ai-discoverability` instead — this skill doesn't cover that.
+
+## Usage
+
+1. Search: `npx -y modern-web-guidance@latest search "<query>"`
+2. Retrieve full guide: `npx -y modern-web-guidance@latest retrieve "<id>"`
+3. Cross-check the implementation against the retrieved guide before
+   concluding — don't force unrequested features, don't hallucinate
+   guides.
+
+On Windows, use `npx.cmd` if plain `npx` fails. Requires outbound network
+access — request/allowlist `npx -y modern-web-guidance@latest *`
+explicitly in sandboxed environments before first use.
+
+## Browser support defaults
+
+Baseline Widely Available features need no fallback. Non-Baseline
+features must follow the guide's fallback recommendation unless the user
+has an explicit browser-support policy documented (offer to write one
+into CLAUDE.md/AGENTS.md if the user gives signals they care about this).

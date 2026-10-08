@@ -1,8 +1,12 @@
 # Test Matrix — <Nama Fitur>
 
+| PROGRAM VERSION RELEASE | <versi rilis, atau -> | TESTER | <nama, atau -> | TEST CASE CREATED AT | <YYYY-MM-DD> |
+|---|---|---|---|---|---|
+| FOLDER TEST APP | <folder, atau -> | PROGRAMMER | <nama, atau -> | TEST CASE UPDATED AT | <YYYY-MM-DD> |
+| IP DEV | <ip, atau -> | TASK DEV | <link/kode task, atau -> | | |
+| IP PROD | <ip, atau -> | | | | |
+
 **Sumber requirement:** <link PRD/ISSUES/BRD/issue, atau "informal — dari deskripsi user">
-**Tester:** <nama, atau "belum diisi"> · **Programmer:** <nama, atau "belum diisi">
-**Dibuat:** <YYYY-MM-DD> · **Diupdate:** <YYYY-MM-DD>
 **Scope:** <apa yang dicakup>
 **Out of scope:** <apa yang eksplisit tidak dicakup>
 
@@ -17,7 +21,9 @@ setiap file ini diupdate — jangan dipelihara terpisah.
 
 | Total Penggunaan Automation Test | Test Data | Masuk Test Step | Tanpa Automation | Presentase | Memenuhi Syarat |
 |---|---|---|---|---|---|
-| <n> | <n> | <n> | <n> | <n%> | Ya/Tidak |
+| <n> | <n> | <n> | <n> | <n%> | Memenuhi Syarat / Belum Memenuhi Syarat |
+
+`Memenuhi Syarat` bila `Presentase` > 24% (rumus sheet V4).
 
 ## Parameter Matrix
 
@@ -42,9 +48,10 @@ mengikuti istilah tester manual persis (bahasa Inggris, urutan sama, jangan
 diterjemahkan/diubah) — isinya ditulis dalam **Bahasa Indonesia**.
 
 `Test Case ID` = `TC<Group No>-<urutan dalam grup>` (mis. `TC1-1`, `TC1-2`,
-`TC2-1`) — bukan skema `TC-F-01`/`TC-ERR-01`. `Status`: `⚪ Not Run`,
-`🟡 Progress`, `✅ Passed`, `❌ Failed`, `🔁 Re-Test`, `⏭ Skip` — satu-satunya
-tempat status dilacak. `TYPE` `+` = skenario positif/input valid, `-` = skenario
+`TC2-1`) — bukan skema `TC-F-01`/`TC-ERR-01`. `Status`: `Progress`, `Passed`,
+`Failed`, `Re-Test`, `Skip` (nilai dropdown sheet V4; belum dijalankan =
+`Progress`) — satu-satunya tempat status dilacak. `Scenario` ditulis di baris
+pertama grupnya saja (di sheet sel ini di-merge). `TYPE` `+` = skenario positif/input valid, `-` = skenario
 negatif/input invalid. `Automation Tools` selalu salah satu dari `Masuk
 Test Step` (step-nya otomatis end-to-end), `Test Data` (otomasi cuma buat
 data, eksekusi manual), atau `Tanpa Automation` (manual penuh) — tidak ada
@@ -57,20 +64,20 @@ Mini traceability khusus PB ini — ganti "Traceability Matrix" global:
 
 | NO | PROGRAM SPECIFICATIONS | TEST CASE | TEST CASE ID |
 |---|---|---|---|
-| 1 | <spec/acceptance criterion, ID> | Ya | TC1-1, TC1-2 |
-| 2 | <spec/acceptance criterion, ID> | Tidak | ⚠️ Gap |
+| 1 | <spec/acceptance criterion, ID> | [x] | TC1-1, TC1-2 |
+| 2 | <spec/acceptance criterion, ID> | [ ] | ⚠️ Gap |
 
-| Group No | Feature | Process No (FC) | TYPE | Test Case ID | Test Variable | Test Case | Pre-Condition | Test Data | Test Steps | Expected Result | Status | Evidence | Remarks | Automation Tools | Date | Files | Requirement |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | <nama sub-fitur/flow, ID> | <FC x.x - Proses x, atau kosong> | + | TC1-1 | K1 — <ringkas variasi input, ID> | <judul deskriptif, ID> | <state awal, ID> | <input spesifik, ID> | 1. <aksi, ID><br>2. <aksi, ID> | 1. <hasil, ID><br>2. <hasil, ID> | ✅ Passed | <link screenshot/recording> | | Masuk Test Step | 2026-08-28 | `src/pages/Login.tsx`, `src/hooks/useAuth.ts` | <link requirement> |
-| 1 | <nama sub-fitur/flow, ID> | | - | TC1-2 | K2 — <ringkas variasi input, ID> | <judul deskriptif, ID> | <state awal, ID> | <input spesifik, ID> | 1. <aksi, ID> | 1. <hasil, ID> | ⚪ Not Run | | | Tanpa Automation | | `src/components/ProductForm.tsx` | <link requirement> |
+| Group No | Feature | Process No (FC) | TYPE | Test Case ID | Test Variable | Scenario | Test Case | Pre-Condition | Test Data | Test Steps | Expected Result | Status | Evidence | Remarks | Automation Tools | Date | Files | Requirement |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | <nama sub-fitur/flow, ID> | <FC x.x - Proses x, atau kosong> | + | TC1-1 | K1 — <ringkas variasi input, ID> | <skenario yang diuji grup ini, ID> | <judul deskriptif, ID> | <state awal, ID> | <input spesifik, ID> | 1. <aksi, ID><br>2. <aksi, ID> | 1. <hasil, ID><br>2. <hasil, ID> | Passed | <link screenshot/recording> | | Masuk Test Step | 2026-08-28 | `src/pages/Login.tsx`, `src/hooks/useAuth.ts` | <link requirement> |
+| 1 | <nama sub-fitur/flow, ID> | | - | TC1-2 | K2 — <ringkas variasi input, ID> | | <judul deskriptif, ID> | <state awal, ID> | <input spesifik, ID> | 1. <aksi, ID> | 1. <hasil, ID> | Progress | | | Tanpa Automation | | `src/components/ProductForm.tsx` | <link requirement> |
 
 ### PB-2 — <BRD/requirement id> · [Link Task PB](<url>) · [Link Figma](<url>)
 
 | NO | PROGRAM SPECIFICATIONS | TEST CASE | TEST CASE ID |
 |---|---|---|---|
-| 1 | <spec/acceptance criterion, ID> | Ya | TC2-1 |
+| 1 | <spec/acceptance criterion, ID> | [x] | TC2-1 |
 
-| Group No | Feature | Process No (FC) | TYPE | Test Case ID | Test Variable | Test Case | Pre-Condition | Test Data | Test Steps | Expected Result | Status | Evidence | Remarks | Automation Tools | Date | Files | Requirement |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2 | <nama sub-fitur/flow, ID> | | - | TC2-1 | <ringkas variasi input, ID> | <judul deskriptif, ID> | <state awal, ID> | <input spesifik, ID> | 1. <aksi, ID> | 1. <hasil, ID> | ⚪ Not Run | | | Tanpa Automation | | `src/api/products.ts` | <link requirement> |
+| Group No | Feature | Process No (FC) | TYPE | Test Case ID | Test Variable | Scenario | Test Case | Pre-Condition | Test Data | Test Steps | Expected Result | Status | Evidence | Remarks | Automation Tools | Date | Files | Requirement |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2 | <nama sub-fitur/flow, ID> | | - | TC2-1 | <ringkas variasi input, ID> | <skenario yang diuji grup ini, ID> | <judul deskriptif, ID> | <state awal, ID> | <input spesifik, ID> | 1. <aksi, ID> | 1. <hasil, ID> | Progress | | | Tanpa Automation | | `src/api/products.ts` | <link requirement> |
