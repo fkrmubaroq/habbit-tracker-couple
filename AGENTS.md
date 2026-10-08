@@ -14,6 +14,7 @@ The repository is organized as a **Turborepo** monorepo using **pnpm workspaces*
 - `packages/types`: Shared TypeScript interfaces and DTOs (`@repo/types`)
 - `packages/ui`: Shared UI component primitives (`@repo/ui`)
 - `packages/typescript-config`: Shared base `tsconfig.json` configurations (`@repo/typescript-config`)
+- `packages/tailwind-config`: Shared Tailwind CSS v4 design tokens and utilities (`@repo/tailwind-config`)
 
 ---
 
@@ -28,7 +29,7 @@ The repository is organized as a **Turborepo** monorepo using **pnpm workspaces*
 | **Auth** | JWT + Cookie | `jsonwebtoken`, `cookie-parser`, `bcryptjs` |
 | **Frontend** | React 18 + Vite 5 | TypeScript, Tailwind CSS, TanStack Router & Query |
 | **Frontend UI/State** | Radix UI + Zustand | `@repo/ui`, `lucide-react`, `dayjs`, `recharts`, `canvas-confetti`, Vite PWA |
-| **Shared Packages** | `@repo/types`, `@repo/ui`, `@repo/typescript-config` | Internal workspace packages (`workspace:*`) |
+| **Shared Packages** | `@repo/types`, `@repo/ui`, `@repo/typescript-config`, `@repo/tailwind-config` | Internal workspace packages (`workspace:*`) |
 | **Linting** | ESLint 9 (Flat Config) + TypeScript `tsc --noEmit` | Configured across apps and packages |
 
 ---
@@ -119,6 +120,7 @@ habbit-tracker-couple/
 ├── packages/
 │   ├── types/                        # @repo/types (User, Habit, Log, DTOs)
 │   ├── ui/                           # @repo/ui (Button, Card, Dialog primitives)
+│   ├── tailwind-config/              # @repo/tailwind-config (Tailwind v4 tokens & styles)
 │   └── typescript-config/            # @repo/typescript-config (base, node, react)
 ├── scripts/                          # Deployment & infra helper scripts (deploy.sh, nginx.conf)
 ├── .agents/                          # Agent configurations & engineering skills

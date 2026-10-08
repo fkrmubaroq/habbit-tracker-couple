@@ -23,12 +23,22 @@ async function runMySQLMigrations() {
   });
 
   try {
-    const migrationFile = path.join(__dirname, "mysql", "001-initial-schema.sql");
-    const sql = fs.readFileSync(migrationFile, "utf8");
+    const migrationDir = path.join(__dirname, "mysql");
+    const migrationFiles = fs
+      .readdirSync(migrationDir)
+      .filter((file) => file.endsWith(".sql"))
+      .sort();
 
-    console.log("Executing migration SQL...");
-    await connection.query(sql);
-    console.log("MySQL migration completed successfully.");
+    console.log(`Found ${migrationFiles.length} MySQL migration file(s): ${migrationFiles.join(", ")}`);
+
+    for (const file of migrationFiles) {
+      console.log(`Executing MySQL migration: ${file}...`);
+      const sql = fs.readFileSync(path.join(migrationDir, file), "utf8");
+      await connection.query(sql);
+      console.log(`✓ MySQL migration ${file} completed.`);
+    }
+
+    console.log("All MySQL migrations completed successfully.");
   } catch (error: any) {
     console.error("MySQL migration failed:", error.message);
     throw error;
@@ -51,12 +61,22 @@ async function runSupabaseMigrations() {
   await client.connect();
 
   try {
-    const migrationFile = path.join(__dirname, "supabase", "001-initial-schema.sql");
-    const sql = fs.readFileSync(migrationFile, "utf8");
+    const migrationDir = path.join(__dirname, "supabase");
+    const migrationFiles = fs
+      .readdirSync(migrationDir)
+      .filter((file) => file.endsWith(".sql"))
+      .sort();
 
-    console.log("Executing migration SQL...");
-    await client.query(sql);
-    console.log("Supabase/PostgreSQL migration completed successfully.");
+    console.log(`Found ${migrationFiles.length} Supabase/PostgreSQL migration file(s): ${migrationFiles.join(", ")}`);
+
+    for (const file of migrationFiles) {
+      console.log(`Executing Supabase/PostgreSQL migration: ${file}...`);
+      const sql = fs.readFileSync(path.join(migrationDir, file), "utf8");
+      await client.query(sql);
+      console.log(`✓ Supabase/PostgreSQL migration ${file} completed.`);
+    }
+
+    console.log("All Supabase/PostgreSQL migrations completed successfully.");
   } catch (error: any) {
     console.error("Supabase/PostgreSQL migration failed:", error.message);
     throw error;

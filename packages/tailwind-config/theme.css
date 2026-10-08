@@ -1,0 +1,97 @@
+@theme {
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-highlight: var(--highlight);
+  --color-shared-bg: var(--shared-bg);
+  --color-card-surface: var(--card-surface);
+  --color-border-color: var(--border-color);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+
+  --font-sans: "Quicksand", "Nunito", system-ui, sans-serif;
+}
+
+:root {
+  /* Default: Sakura Pink (Wife Theme) */
+  --primary: #FF8FB1;
+  --secondary: #FFD6E7;
+  --accent: #CDB4FF;
+  --highlight: #FFF0F5;
+  --shared-bg: #FFFDF8;
+  --card-surface: #FFFFFF;
+  --border-color: #EAEAEA;
+  --text-primary: #1F2937;
+  --text-secondary: #6B7280;
+}
+
+[data-theme="Sakura"] {
+  --primary: #FF8FB1;
+  --secondary: #FFD6E7;
+  --accent: #CDB4FF;
+  --highlight: #FFF0F5;
+  --shared-bg: #FFFDF8;
+  --card-surface: #FFFFFF;
+  --border-color: #FBD5E0;
+  --text-primary: #2C1820;
+  --text-secondary: #8E6E7C;
+}
+
+[data-theme="Duo"] {
+  --primary: #58CC02;
+  --secondary: #1CB0F6;
+  --accent: #FFC715;
+  --highlight: #F7F7F7;
+  --shared-bg: #FCFDFB;
+  --card-surface: #FFFFFF;
+  --border-color: #E5E5E5;
+  --text-primary: #3C3C3C;
+  --text-secondary: #777777;
+}
+
+[data-theme="Light"] {
+  --primary: #2C3E50;
+  --secondary: #5C7AEA;
+  --accent: #A7C4A0;
+  --highlight: #F4F6F8;
+  --shared-bg: #FCFDFE;
+  --card-surface: #FFFFFF;
+  --border-color: #E2E8F0;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+}
+
+[data-theme="Dark"] {
+  --primary: #A7C4A0;
+  --secondary: #3B82F6;
+  --accent: #F59E0B;
+  --highlight: #1E293B;
+  --shared-bg: #0F172A;
+  --card-surface: #1E293B;
+  --border-color: #334155;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+}
+
+/* Personal Finance Tracker Theme (Teal/Purple/Orange) */
+[data-theme="Finance"] {
+  --primary: #38B2AC;
+  --secondary: #805AD5;
+  --accent: #ED8936;
+  --highlight: #E6FFFA;
+  --shared-bg: #F7FAFC;
+  --card-surface: #FFFFFF;
+  --border-color: #E2E8F0;
+  --text-primary: #1A202C;
+  --text-secondary: #718096;
+}
+
+/* Global body styling */
+body {
+  background-color: var(--shared-bg);
+  color: var(--text-primary);
+  font-family: "Quicksand", "Nunito", sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

@@ -88,6 +88,7 @@ async function main() {
     await db.query("DELETE FROM streaks");
     await db.query("DELETE FROM habit_logs");
     await db.query("DELETE FROM habits");
+    await db.query("DELETE FROM grocery_items").catch(() => {});
     await db.query("UPDATE users SET partner_id = NULL");
     await db.query("DELETE FROM users");
 
