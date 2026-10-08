@@ -2,14 +2,17 @@
   "name": "habbit-tracker-couple",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"pnpm --dir backend dev\" \"pnpm --dir frontend dev\"",
-    "build": "pnpm --dir backend build && pnpm --dir frontend build",
-    "db:migrate": "pnpm --dir backend db:migrate",
-    "db:seed": "pnpm --dir backend db:seed",
-    "install:all": "pnpm --dir backend install && pnpm --dir frontend install",
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "check-types": "turbo run check-types",
+    "db:migrate": "turbo run db:migrate --filter=@repo/api",
+    "db:seed": "turbo run db:seed --filter=@repo/api",
+    "clean": "turbo run clean",
     "deploy": "bash scripts/deploy.sh"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
-  }
+    "turbo": "^2.4.4"
+  },
+  "packageManager": "pnpm@12.9.1"
 }

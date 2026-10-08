@@ -23,3 +23,4 @@ CVS
 frontend/dist
 backend/dist
 ./package.json
+.turbo/

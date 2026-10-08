@@ -8,7 +8,12 @@ This file provides operational guidance, architecture overview, and verified wor
 
 **Habit Pasutri (Couple Habit Tracker)** is a collaborative habit-tracking application designed for couples. It features daily habit tracking, streaks, shared progress visualization, celebratory animations, and analytics.
 
-The repository is organized as a lightweight monorepo containing a TypeScript Express backend and a React/Vite frontend.
+The repository is organized as a **Turborepo** monorepo using **pnpm workspaces**, containing:
+- `apps/api`: TypeScript Express backend REST API
+- `apps/habbit-tracker-web`: React 18 + Vite frontend SPA
+- `packages/types`: Shared TypeScript interfaces and DTOs (`@repo/types`)
+- `packages/ui`: Shared UI component primitives (`@repo/ui`)
+- `packages/typescript-config`: Shared base `tsconfig.json` configurations (`@repo/typescript-config`)
 
 ---
 
@@ -16,13 +21,15 @@ The repository is organized as a lightweight monorepo containing a TypeScript Ex
 
 | Component | Technology | Details |
 |---|---|---|
-| **Package Manager** | `pnpm` (v11+) | Workspace/multi-directory orchestration |
+| **Monorepo Engine** | Turborepo (`turbo` v2) | Task orchestration, pipeline execution, and caching |
+| **Package Manager** | `pnpm` (v11+) | Workspaces via `pnpm-workspace.yaml` |
 | **Backend** | Node.js + Express 4 | TypeScript (`tsc`), `tsx` runner, Zod validation |
 | **Database** | MySQL / PostgreSQL / Neon | Multi-provider support via `mysql2`, `pg`, `@neondatabase/serverless` |
 | **Auth** | JWT + Cookie | `jsonwebtoken`, `cookie-parser`, `bcryptjs` |
 | **Frontend** | React 18 + Vite 5 | TypeScript, Tailwind CSS, TanStack Router & Query |
-| **Frontend UI/State** | Radix UI + Zustand | `lucide-react`, `dayjs`, `recharts`, `canvas-confetti`, Vite PWA |
-| **Linting** | ESLint 9 (Flat Config) | TypeScript-ESLint, React Hooks, React Refresh |
+| **Frontend UI/State** | Radix UI + Zustand | `@repo/ui`, `lucide-react`, `dayjs`, `recharts`, `canvas-confetti`, Vite PWA |
+| **Shared Packages** | `@repo/types`, `@repo/ui`, `@repo/typescript-config` | Internal workspace packages (`workspace:*`) |
+| **Linting** | ESLint 9 (Flat Config) + TypeScript `tsc --noEmit` | Configured across apps and packages |
 
 ---
 
@@ -32,45 +39,52 @@ All commands below have been tested and verified to work:
 
 ### Development
 ```bash
-# Start both backend and frontend concurrently
+# Start all apps concurrently with Turborepo
 pnpm dev
+# (or: pnpm turbo run dev)
 
-# Start backend dev server only (port 1906, tsx watch)
-pnpm --dir backend dev
+# Start backend only
+pnpm --filter=@repo/api dev
 
-# Start frontend dev server only (port 5173, Vite HMR)
-pnpm --dir frontend dev
+# Start frontend only
+pnpm --filter=@repo/habbit-tracker-web dev
 ```
 
 ### Build
 ```bash
-# Build both backend and frontend in sequence
+# Build all packages and apps with Turborepo caching
 pnpm build
+# (or: pnpm turbo run build)
 
-# Build backend only (tsc -> dist/)
-pnpm --dir backend build
+# Build backend only
+pnpm --filter=@repo/api build
 
-# Build frontend only (tsc & vite build -> dist/)
-pnpm --dir frontend build
+# Build frontend only
+pnpm --filter=@repo/habbit-tracker-web build
 ```
 
 ### Database Operations
 ```bash
 # Run database migrations
 pnpm db:migrate
-# Or directly in backend:
-pnpm --dir backend db:migrate
+# Or via filter:
+pnpm --filter=@repo/api db:migrate
 
 # Seed sample/initial database data
 pnpm db:seed
-# Or directly in backend:
-pnpm --dir backend db:seed
+# Or via filter:
+pnpm --filter=@repo/api db:seed
 ```
 
-### Linting
+### Linting & Type Checking
 ```bash
-# Run ESLint on frontend code
-pnpm --dir frontend lint
+# Run lint across all workspaces
+pnpm lint
+# (or: pnpm turbo run lint)
+
+# Type-check across all workspaces
+pnpm check-types
+# (or: pnpm turbo run check-types)
 ```
 
 ---
@@ -79,43 +93,51 @@ pnpm --dir frontend lint
 
 ```text
 habbit-tracker-couple/
-├── backend/                  # Express REST API
-│   ├── src/
-│   │   ├── config/           # Database pool (MySQL/Postgres) & env parsing
-│   │   ├── controllers/      # Route request handlers
-│   │   ├── middleware/       # Auth (JWT) & error handling middleware
-│   │   ├── migrations/       # Schema definitions and seed scripts
-│   │   ├── routes/           # Express router definitions
-│   │   ├── services/         # Business logic layer
-│   │   └── app.ts & index.ts # App setup and server listener
-│   ├── .env                  # Backend local environment config
-│   └── package.json
-├── frontend/                 # React single-page app
-│   ├── src/
-│   │   ├── components/       # UI components (Radix primitives, habit cards, charts)
-│   │   ├── hooks/            # Custom React hooks
-│   │   ├── routes/           # TanStack router routes
-│   │   ├── store/            # Zustand global stores
-│   │   └── services/         # Axios API clients
-│   ├── vite.config.ts        # Vite configuration + API proxy
-│   ├── eslint.config.js      # ESLint 9 flat config
-│   └── package.json
-├── scripts/                  # Deployment & infra helper scripts (deploy.sh, nginx.conf)
-├── .agents/                  # Agent configurations & engineering skills
-└── package.json              # Monorepo root scripts (dev, build, db:migrate, deploy)
+├── apps/
+│   ├── api/                          # Express REST API (@repo/api)
+│   │   ├── src/
+│   │   │   ├── config/               # Database pool & env parsing
+│   │   │   ├── controllers/          # Route request handlers
+│   │   │   ├── middleware/           # Auth (JWT) & error handling middleware
+│   │   │   ├── migrations/           # Schema definitions and seed scripts
+│   │   │   ├── modules/              # Domain modules (habit, auth, grocery, etc.)
+│   │   │   ├── repositories/         # Multi-database repositories
+│   │   │   ├── types/                # Types re-exported from @repo/types
+│   │   │   └── app.ts & index.ts     # App setup and server listener
+│   │   ├── .env                      # Backend local environment config
+│   │   └── package.json
+│   └── habbit-tracker-web/           # React SPA (@repo/habbit-tracker-web)
+│       ├── src/
+│       │   ├── components/           # UI components & @repo/ui re-exports
+│       │   ├── hooks/                # Custom React hooks
+│       │   ├── routes/               # TanStack router routes
+│       │   ├── stores/               # Zustand global stores
+│       │   └── services/             # Axios API clients
+│       ├── vite.config.ts            # Vite configuration + API proxy
+│       ├── eslint.config.js          # ESLint 9 flat config
+│       └── package.json
+├── packages/
+│   ├── types/                        # @repo/types (User, Habit, Log, DTOs)
+│   ├── ui/                           # @repo/ui (Button, Card, Dialog primitives)
+│   └── typescript-config/            # @repo/typescript-config (base, node, react)
+├── scripts/                          # Deployment & infra helper scripts (deploy.sh, nginx.conf)
+├── .agents/                          # Agent configurations & engineering skills
+├── pnpm-workspace.yaml               # PNPM workspace definition
+├── turbo.json                        # Turborepo task pipeline configuration
+└── package.json                      # Root scripts and devDependencies
 ```
 
 ---
 
 ## 5. Important Conventions & Gotchas
 
-1. **pnpm v11 Build Scripts**:
-   - `esbuild` and `core-js` postinstall build scripts are approved via `.npmrc` (`onlyBuiltDependencies` / `confirmModulesPurge=false`).
-   - If clean-installing on a fresh machine without TTY, run `pnpm approve-builds --all` if prompted by pnpm.
+1. **pnpm Workspace Execution**:
+   - Workspace packages are linked via `"@repo/<pkg>": "workspace:*"`.
+   - On Windows, if execution policy blocks `pnpm.ps1`, use `pnpm.cmd` directly from `C:\Users\Fikri\AppData\Local\pnpm\bin\pnpm.cmd` or add that directory to the front of `PATH`.
 2. **Database Provider Switching**:
-   - Backend database choice is governed by `DB_PROVIDER` in `backend/.env` (`mysql`, `supabase`, or `neondb`).
+   - Backend database choice is governed by `DB_PROVIDER` in `apps/api/.env` (`mysql`, `supabase`, or `neondb`).
    - In local dev without active MySQL, the backend server logs a warning and still starts up cleanly so frontend development is unblocked.
 3. **Frontend API Proxying**:
-   - Vite is configured to proxy `/api` requests to `http://localhost:1906`.
+   - Vite in `apps/habbit-tracker-web` proxies `/api` requests to `http://localhost:1906`.
 4. **Environment Variables**:
-   - Backend requires `PORT`, `NODE_ENV`, `DB_PROVIDER`, `JWT_SECRET`, plus relevant database credentials.
+   - Backend requires `PORT`, `NODE_ENV`, `DB_PROVIDER`, `JWT_SECRET`, plus relevant database credentials in `apps/api/.env`.
