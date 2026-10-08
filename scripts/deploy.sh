@@ -73,18 +73,18 @@ echo "=========================================="
 echo "📦 4. Mengirim File (/dist, package.json, pnpm-lock.yaml)..."
 echo "=========================================="
 
-echo "→ Mengirim backend (apps/api)..."
-scp "${SCP_OPTS[@]}" -r "${ROOT_DIR}/apps/api/dist" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/"
-scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/api/package.json" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/"
+echo "→ Mengirim backend (apps/habbit-tracker-api)..."
+scp "${SCP_OPTS[@]}" -r "${ROOT_DIR}/apps/habbit-tracker-api/dist" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/"
+scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/habbit-tracker-api/package.json" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/"
 [ -f "${ROOT_DIR}/pnpm-lock.yaml" ] && scp "${SCP_OPTS[@]}" "${ROOT_DIR}/pnpm-lock.yaml" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/"
 
 # Mengirim file .env backend
-if [ -f "${ROOT_DIR}/apps/api/.env.production" ]; then
-    echo "→ Mengirim apps/api/.env.production sebagai .env..."
-    scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/api/.env.production" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/.env"
-elif [ -f "${ROOT_DIR}/apps/api/.env" ]; then
-    echo "→ Mengirim apps/api/.env..."
-    scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/api/.env" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/.env"
+if [ -f "${ROOT_DIR}/apps/habbit-tracker-api/.env.production" ]; then
+    echo "→ Mengirim apps/habbit-tracker-api/.env.production sebagai .env..."
+    scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/habbit-tracker-api/.env.production" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/.env"
+elif [ -f "${ROOT_DIR}/apps/habbit-tracker-api/.env" ]; then
+    echo "→ Mengirim apps/habbit-tracker-api/.env..."
+    scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/habbit-tracker-api/.env" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/backend/.env"
 fi
 
 echo "→ Mengirim frontend (apps/habbit-tracker-web)..."

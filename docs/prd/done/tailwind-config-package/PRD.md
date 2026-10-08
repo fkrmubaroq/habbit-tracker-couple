@@ -36,8 +36,8 @@ Untuk meningkatkan konsistensi desain, menghindari duplikasi definisi tema/utili
 - Modifikasi runtime Vite atau plugin bundler selain integrasi import stylesheet.
 
 ## Success Criteria
-- [ ] Package `packages/tailwind-config` terdaftar dan terhubung dalam workspace pnpm (`workspace:*`).
-- [ ] File stylesheet modular (`theme.css`, `utilities.css`, `styles.css`) terdefinisi dengan bersih dan diekspor via `package.json`.
-- [ ] `apps/habbit-tracker-web` berhasil mengimpor stylesheet dari `@repo/tailwind-config` dengan styling visual tetap identik dan tidak ada regresi tampilan.
-- [ ] Tema `Finance` (Teal palette) terdaftar dan dapat digunakan melalui atribut `data-theme="Finance"`.
-- [ ] Perintah `pnpm build`, `pnpm check-types`, dan `pnpm lint` lolos 100% tanpa error.
+- [x] Package `packages/tailwind-config` terdaftar dan terhubung dalam workspace pnpm (`workspace:*`).
+- [x] File stylesheet modular (`theme.css`, `utilities.css`, `styles.css`) terdefinisi dengan bersih dan diekspor via `package.json`.
+- [x] `apps/habbit-tracker-web` berhasil mengimpor stylesheet dari `@repo/tailwind-config` dengan styling visual tetap identik dan tidak ada regresi tampilan.
+- [x] Tema `Finance` (Teal palette) terdaftar dan dapat digunakan melalui atribut `data-theme="Finance"`.
+- [x] Perintah `pnpm build`, `pnpm check-types`, dan `pnpm lint` lolos 100% tanpa error.

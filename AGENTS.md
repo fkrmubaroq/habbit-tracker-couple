@@ -9,7 +9,7 @@ This file provides operational guidance, architecture overview, and verified wor
 **Habit Pasutri (Couple Habit Tracker)** is a collaborative habit-tracking application designed for couples. It features daily habit tracking, streaks, shared progress visualization, celebratory animations, and analytics.
 
 The repository is organized as a **Turborepo** monorepo using **pnpm workspaces**, containing:
-- `apps/api`: TypeScript Express backend REST API
+- `apps/habbit-tracker-api`: TypeScript Express backend REST API (@repo/habbit-tracker-api)
 - `apps/habbit-tracker-web`: React 18 + Vite frontend SPA
 - `packages/types`: Shared TypeScript interfaces and DTOs (`@repo/types`)
 - `packages/ui`: Shared UI component primitives (`@repo/ui`)
@@ -45,7 +45,7 @@ pnpm dev
 # (or: pnpm turbo run dev)
 
 # Start backend only
-pnpm --filter=@repo/api dev
+pnpm --filter=@repo/habbit-tracker-api dev
 
 # Start frontend only
 pnpm --filter=@repo/habbit-tracker-web dev
@@ -58,7 +58,7 @@ pnpm build
 # (or: pnpm turbo run build)
 
 # Build backend only
-pnpm --filter=@repo/api build
+pnpm --filter=@repo/habbit-tracker-api build
 
 # Build frontend only
 pnpm --filter=@repo/habbit-tracker-web build
@@ -69,12 +69,12 @@ pnpm --filter=@repo/habbit-tracker-web build
 # Run database migrations
 pnpm db:migrate
 # Or via filter:
-pnpm --filter=@repo/api db:migrate
+pnpm --filter=@repo/habbit-tracker-api db:migrate
 
 # Seed sample/initial database data
 pnpm db:seed
 # Or via filter:
-pnpm --filter=@repo/api db:seed
+pnpm --filter=@repo/habbit-tracker-api db:seed
 ```
 
 ### Linting & Type Checking
@@ -95,7 +95,7 @@ pnpm check-types
 ```text
 habbit-tracker-couple/
 ├── apps/
-│   ├── api/                          # Express REST API (@repo/api)
+│   ├── habbit-tracker-api/           # Express REST API (@repo/habbit-tracker-api)
 │   │   ├── src/
 │   │   │   ├── config/               # Database pool & env parsing
 │   │   │   ├── controllers/          # Route request handlers
@@ -137,12 +137,12 @@ habbit-tracker-couple/
    - Workspace packages are linked via `"@repo/<pkg>": "workspace:*"`.
    - On Windows, if execution policy blocks `pnpm.ps1`, use `pnpm.cmd` directly from `C:\Users\Fikri\AppData\Local\pnpm\bin\pnpm.cmd` or add that directory to the front of `PATH`.
 2. **Database Provider Switching**:
-   - Backend database choice is governed by `DB_PROVIDER` in `apps/api/.env` (`mysql`, `supabase`, or `neondb`).
+   - Backend database choice is governed by `DB_PROVIDER` in `apps/habbit-tracker-api/.env` (`mysql`, `supabase`, or `neondb`).
    - In local dev without active MySQL, the backend server logs a warning and still starts up cleanly so frontend development is unblocked.
 3. **Frontend API Proxying**:
    - Vite in `apps/habbit-tracker-web` proxies `/api` requests to `http://localhost:1906`.
 4. **Environment Variables**:
-   - Backend requires `PORT`, `NODE_ENV`, `DB_PROVIDER`, `JWT_SECRET`, plus relevant database credentials in `apps/api/.env`.
+   - Backend requires `PORT`, `NODE_ENV`, `DB_PROVIDER`, `JWT_SECRET`, plus relevant database credentials in `apps/habbit-tracker-api/.env`.
 
 ---
 
