@@ -1,11 +1,22 @@
-import React, { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CreateTransactionDTO, createTransactionSchema } from "@repo/types";
 import confetti from "canvas-confetti";
-import { X, ArrowDownRight, ArrowUpRight, Calendar, FileText, Tag, Loader2 } from "lucide-react";
-import { createTransactionSchema, CreateTransactionDTO } from "@repo/types";
-import { useFinanceUIStore } from "../stores/finance-ui.store.js";
-import { useFinanceCategories, useCreateTransactionMutation } from "../hooks/use-finance.js";
+import { ArrowDownRight, ArrowUpRight, Calendar, FileText, Loader2, Tag } from "lucide-react";
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useCreateTransactionMutation, useFinanceCategories } from "../hooks/use-finance";
+import { useFinanceUIStore } from "../stores/finance-ui.store";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  Input,
+  Select,
+  Textarea,
+} from "./ui";
 
 export function TransactionFormDialog() {
   const { isTransactionModalOpen, defaultTransactionType, closeTransactionModal } = useFinanceUIStore();
@@ -56,8 +67,6 @@ export function TransactionFormDialog() {
     }
   }, [selectedType, filteredCategories, setValue, watch]);
 
-  if (!isTransactionModalOpen) return null;
-
   const onSubmit = async (data: CreateTransactionDTO) => {
     try {
       await createTxMutation.mutateAsync(data);
@@ -71,48 +80,45 @@ export function TransactionFormDialog() {
     }
   };
 
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-card-surface border-2 border-border-color rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b-2 border-border-color bg-highlight/40">
-          <h2 className="text-lg font-black text-text-primary">Catat Transaksi</h2>
-          <button
-            onClick={closeTransactionModal}
-            className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-highlight cursor-pointer"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+    <Dialog open={isTransactionModalOpen} onOpenChange={(open) => !open && closeTransactionModal()}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-lg font-black text-text-primary">Catat Transaksi</DialogTitle>
+          <DialogDescription className="sr-only">
+            Form pencatatan transaksi keuangan baru
+          </DialogDescription>
+        </DialogHeader>
 
         {/* Modal Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 overflow-y-auto flex flex-col gap-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 pt-2">
           {/* Type Toggle: Expense vs Income */}
           <div className="flex gap-2 p-1.5 bg-highlight rounded-2xl border-2 border-border-color">
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => setValue("type", "expense")}
-              className={`flex-1 py-2 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                selectedType === "expense"
-                  ? "bg-card-surface text-text-primary border-2 border-border-color shadow-[0_2px_0_0_var(--border-color)]"
-                  : "text-text-secondary hover:text-text-primary border-2 border-transparent"
-              }`}
+              className={`flex-1 py-2 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${selectedType === "expense"
+                ? "bg-card-surface text-text-primary border-2 border-border-color shadow-[0_2px_0_0_var(--border-color)]"
+                : "text-text-secondary hover:text-text-primary border-2 border-transparent"
+                }`}
             >
               <ArrowDownRight className="h-4 w-4 stroke-[3]" />
               <span>Pengeluaran</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => setValue("type", "income")}
-              className={`flex-1 py-2 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                selectedType === "income"
-                  ? "bg-card-surface text-primary border-2 border-primary shadow-[0_2px_0_0_var(--border-color)]"
-                  : "text-text-secondary hover:text-text-primary border-2 border-transparent"
-              }`}
+              className={`flex-1 py-2 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${selectedType === "income"
+                ? "bg-card-surface text-primary border-2 border-primary shadow-[0_2px_0_0_var(--border-color)]"
+                : "text-text-secondary hover:text-text-primary border-2 border-transparent"
+                }`}
             >
               <ArrowUpRight className="h-4 w-4 stroke-[3]" />
               <span>Pemasukan</span>
-            </button>
+            </Button>
           </div>
 
           {/* Amount Input */}
@@ -125,17 +131,17 @@ export function TransactionFormDialog() {
               control={control}
               render={({ field }) => (
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-extrabold text-text-secondary">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-extrabold text-text-secondary z-10 pointer-events-none">
                     Rp
                   </span>
-                  <input
+                  <Input
                     type="number"
                     step="any"
                     min="0"
                     placeholder="0"
                     value={field.value ?? ""}
                     onChange={(e) => field.onChange(e.target.value === "" ? "" : Number(e.target.value))}
-                    className="w-full pl-12 pr-4 py-3 bg-card-surface border-2 border-border-color rounded-xl font-black text-xl text-text-primary focus:outline-hidden focus:border-primary transition-colors"
+                    className="pl-12 pr-4 py-3 font-black text-xl"
                   />
                 </div>
               )}
@@ -155,9 +161,8 @@ export function TransactionFormDialog() {
               name="category_id"
               control={control}
               render={({ field }) => (
-                <select
+                <Select
                   {...field}
-                  className="w-full px-4 py-2.5 bg-card-surface border-2 border-border-color rounded-xl font-bold text-sm text-text-primary focus:outline-hidden focus:border-primary transition-colors cursor-pointer"
                   disabled={isLoadingCategories}
                 >
                   <option value="" disabled>
@@ -168,7 +173,7 @@ export function TransactionFormDialog() {
                       {c.name}
                     </option>
                   ))}
-                </select>
+                </Select>
               )}
             />
             {errors.category_id && (
@@ -186,10 +191,9 @@ export function TransactionFormDialog() {
               name="date"
               control={control}
               render={({ field }) => (
-                <input
+                <Input
                   type="date"
                   {...field}
-                  className="w-full px-4 py-2.5 bg-card-surface border-2 border-border-color rounded-xl font-bold text-sm text-text-primary focus:outline-hidden focus:border-primary transition-colors"
                 />
               )}
             />
@@ -208,11 +212,10 @@ export function TransactionFormDialog() {
               name="description"
               control={control}
               render={({ field }) => (
-                <input
+                <Input
                   type="text"
                   placeholder="Contoh: Belanja mingguan di pasar, Gaji bulanan..."
                   {...field}
-                  className="w-full px-4 py-2.5 bg-card-surface border-2 border-border-color rounded-xl font-bold text-sm text-text-primary focus:outline-hidden focus:border-primary transition-colors"
                 />
               )}
             />
@@ -230,12 +233,12 @@ export function TransactionFormDialog() {
               name="notes"
               control={control}
               render={({ field }) => (
-                <textarea
+                <Textarea
                   rows={2}
                   placeholder="Catatan tambahan bila diperlukan..."
                   value={field.value ?? ""}
                   onChange={field.onChange}
-                  className="w-full px-4 py-2.5 bg-card-surface border-2 border-border-color rounded-xl text-sm text-text-primary focus:outline-hidden focus:border-primary transition-colors resize-none"
+                  className="resize-none"
                 />
               )}
             />
@@ -243,30 +246,32 @@ export function TransactionFormDialog() {
 
           {/* Form Actions */}
           <div className="flex gap-3 pt-2">
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={closeTransactionModal}
-              className="flex-1 py-3 px-4 rounded-xl font-bold text-sm border-2 border-border-color hover:bg-highlight text-text-secondary transition-all cursor-pointer"
+              className="flex-1"
             >
               Batal
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
+              variant="3d"
               disabled={createTxMutation.isPending}
-              className="btn-3d flex-1 py-3 px-4 rounded-xl font-extrabold text-sm shadow-[0_3px_0_0_color-mix(in_srgb,var(--primary)_75%,#000)] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="flex-1"
             >
               {createTxMutation.isPending ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin mr-1" />
                   <span>Menyimpan...</span>
                 </>
               ) : (
                 <span>Simpan Transaksi</span>
               )}
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

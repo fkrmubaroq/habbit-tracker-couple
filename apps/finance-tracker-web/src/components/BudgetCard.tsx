@@ -1,6 +1,7 @@
 import React from "react";
 import { AlertCircle, Tag, Trash2, Edit2 } from "lucide-react";
 import { FinanceBudget } from "@repo/types";
+import { Card, Button } from "./ui";
 
 interface BudgetCardProps {
   budget: FinanceBudget;
@@ -45,8 +46,8 @@ export function BudgetCard({ budget, onEdit, onDelete }: BudgetCardProps) {
   }
 
   return (
-    <div
-      className={`bg-card-surface border-2 rounded-2xl p-5 shadow-[0_3px_0_0_var(--border-color)] flex flex-col justify-between gap-4 transition-all hover:border-primary/50 ${
+    <Card
+      className={`p-5 shadow-[0_3px_0_0_var(--border-color)] flex flex-col justify-between gap-4 transition-all hover:border-primary/50 ${
         isOverbudget ? "border-red-500/60" : "border-border-color"
       }`}
     >
@@ -110,24 +111,30 @@ export function BudgetCard({ budget, onEdit, onDelete }: BudgetCardProps) {
       {/* Bottom Actions */}
       <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-border-color">
         {onEdit && (
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => onEdit(budget)}
-            className="p-1.5 text-text-secondary hover:text-primary hover:bg-highlight rounded-xl transition-colors cursor-pointer"
+            className="h-8 w-8 p-0 text-text-secondary hover:text-primary"
             title="Ubah Anggaran"
           >
             <Edit2 className="h-4 w-4" />
-          </button>
+          </Button>
         )}
         {onDelete && (
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => onDelete(budget.id)}
-            className="p-1.5 text-text-secondary hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-colors cursor-pointer"
+            className="h-8 w-8 p-0 text-text-secondary hover:text-red-500 hover:bg-red-500/10"
             title="Hapus Anggaran"
           >
             <Trash2 className="h-4 w-4" />
-          </button>
+          </Button>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

@@ -1,24 +1,29 @@
+import { FinanceTransaction } from "@repo/types";
 import { createFileRoute } from "@tanstack/react-router";
-import React, { useState, useMemo } from "react";
 import dayjs from "dayjs";
 import {
-  Search,
-  Filter,
   ArrowDownRight,
   ArrowUpRight,
-  Trash2,
   Calendar,
-  Plus,
-  Loader2,
   Coins,
+  Loader2,
+  Plus,
+  Search,
+  Trash2,
 } from "lucide-react";
+import { useMemo, useState } from "react";
 import {
-  useFinanceTransactions,
-  useFinanceCategories,
+  Button,
+  Card,
+  Input,
+  Select,
+} from "../components/ui";
+import {
   useDeleteTransactionMutation,
-} from "../hooks/use-finance.js";
-import { useFinanceUIStore } from "../stores/finance-ui.store.js";
-import { FinanceTransaction } from "@repo/types";
+  useFinanceCategories,
+  useFinanceTransactions,
+} from "../hooks/use-finance";
+import { useFinanceUIStore } from "../stores/finance-ui.store";
 
 export const Route = createFileRoute("/transactions")({
   component: TransactionsPage,
@@ -119,34 +124,35 @@ function TransactionsPage() {
           </p>
         </div>
 
-        <button
+        <Button
+          type="button"
+          variant="3d"
           onClick={() => openTransactionModal("expense")}
-          className="btn-3d self-start sm:self-auto px-4 py-2.5 rounded-xl font-extrabold text-xs shadow-[0_3px_0_0_color-mix(in_srgb,var(--primary)_75%,#000)] flex items-center gap-1.5 cursor-pointer"
+          className="self-start sm:self-auto flex items-center gap-1.5"
         >
           <Plus className="h-4 w-4 stroke-[3]" />
           <span>+ Transaksi Baru</span>
-        </button>
+        </Button>
       </div>
 
       {/* Filter Presets Toolbar */}
-      <div className="flex flex-col gap-3.5 bg-card-surface border-2 border-border-color rounded-2xl p-4 sm:p-5 shadow-[0_4px_0_0_var(--border-color)]">
+      <Card className="flex flex-col gap-3.5 p-4 sm:p-5 shadow-[0_4px_0_0_var(--border-color)]">
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
           <span className="text-xs font-black text-text-secondary uppercase tracking-wider shrink-0 flex items-center gap-1 mr-1">
             <Calendar className="h-3.5 w-3.5 text-primary stroke-[2.5]" />
             <span>Periode:</span>
           </span>
           {presets.map((p) => (
-            <button
+            <Button
               key={p.id}
+              type="button"
+              variant={activePreset === p.id ? "default" : "outline"}
+              size="sm"
               onClick={() => setActivePreset(p.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer ${
-                activePreset === p.id
-                  ? "bg-highlight text-primary border-2 border-primary shadow-[0_2px_0_0_var(--border-color)]"
-                  : "bg-highlight/50 border-2 border-border-color text-text-secondary hover:text-text-primary"
-              }`}
+              className="text-xs shrink-0"
             >
               {p.label}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -154,56 +160,61 @@ function TransactionsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t-2 border-border-color">
           {/* Search Box */}
           <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary stroke-[2.5]" />
-            <input
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary stroke-[2.5] z-10 pointer-events-none" />
+            <Input
               type="text"
               placeholder="Cari transaksi..."
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
-              className="w-full pl-10 pr-3 py-2 bg-card-surface border-2 border-border-color rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-primary"
+              className="pl-10"
             />
           </div>
 
           {/* Type Filter */}
           <div className="flex gap-1.5 p-1 bg-highlight rounded-xl border-2 border-border-color">
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setSelectedType(undefined)}
-              className={`flex-1 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
-                selectedType === undefined
+              className={`flex-1 text-xs font-extrabold ${selectedType === undefined
                   ? "bg-card-surface text-text-primary border-2 border-border-color shadow-xs"
                   : "text-text-secondary hover:text-text-primary border-2 border-transparent"
-              }`}
+                }`}
             >
               Semua
-            </button>
-            <button
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setSelectedType("expense")}
-              className={`flex-1 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
-                selectedType === "expense"
+              className={`flex-1 text-xs font-extrabold ${selectedType === "expense"
                   ? "bg-card-surface text-text-primary border-2 border-border-color shadow-xs"
                   : "text-text-secondary hover:text-text-primary border-2 border-transparent"
-              }`}
+                }`}
             >
               Pengeluaran
-            </button>
-            <button
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setSelectedType("income")}
-              className={`flex-1 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
-                selectedType === "income"
+              className={`flex-1 text-xs font-extrabold ${selectedType === "income"
                   ? "bg-card-surface text-primary border-2 border-primary shadow-xs"
                   : "text-text-secondary hover:text-text-primary border-2 border-transparent"
-              }`}
+                }`}
             >
               Pemasukan
-            </button>
+            </Button>
           </div>
 
           {/* Category Dropdown */}
           <div>
-            <select
+            <Select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 bg-card-surface border-2 border-border-color rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-primary cursor-pointer"
             >
               <option value="">Semua Kategori</option>
               {categories.map((c) => (
@@ -211,10 +222,10 @@ function TransactionsPage() {
                   {c.name} ({c.type === "income" ? "Pemasukan" : "Pengeluaran"})
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Transaction List */}
       {isLoading ? (
@@ -231,12 +242,14 @@ function TransactionsPage() {
           <p className="text-xs text-text-secondary font-semibold max-w-sm">
             Tidak ada transaksi ditemukan pada periode atau filter yang dipilih. Silakan catat transaksi baru atau ubah filter.
           </p>
-          <button
+          <Button
+            type="button"
+            variant="3d"
             onClick={() => openTransactionModal("expense")}
-            className="btn-3d mt-2 px-5 py-2.5 rounded-xl text-xs font-extrabold cursor-pointer"
+            className="mt-2 text-xs"
           >
-            + Catat Transaksi Sekarang
-          </button>
+            + Catat Transaksi
+          </Button>
         </div>
       ) : (
         <div className="flex flex-col gap-6">
@@ -267,11 +280,10 @@ function TransactionsPage() {
                         {/* Left: Icon & Description */}
                         <div className="flex items-center gap-3 min-w-0">
                           <div
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border-2 ${
-                              isIncome
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border-2 ${isIncome
                                 ? "bg-highlight border-primary/30 text-primary"
                                 : "bg-highlight border-border-color text-text-secondary"
-                            }`}
+                              }`}
                           >
                             {isIncome ? (
                               <ArrowUpRight className="h-5 w-5 stroke-[2.5]" />
@@ -300,21 +312,23 @@ function TransactionsPage() {
                         {/* Right: Amount & Delete Button */}
                         <div className="flex items-center gap-3 shrink-0">
                           <span
-                            className={`font-black text-sm md:text-base ${
-                              isIncome ? "text-primary" : "text-text-primary"
-                            }`}
+                            className={`font-black text-sm md:text-base ${isIncome ? "text-primary" : "text-text-primary"
+                              }`}
                           >
                             {isIncome ? "+" : "-"}
                             {formatRupiah(tx.amount)}
                           </span>
 
-                          <button
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
                             onClick={() => handleDelete(tx.id, tx.description)}
-                            className="p-1.5 text-text-secondary hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-colors cursor-pointer"
+                            className="h-8 w-8 p-0 text-text-secondary hover:text-red-500 hover:bg-red-500/10"
                             title="Hapus Transaksi"
                           >
                             <Trash2 className="h-4 w-4" />
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     );

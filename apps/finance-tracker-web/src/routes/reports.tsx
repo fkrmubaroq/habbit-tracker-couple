@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import React, { useState, useMemo } from "react";
 import dayjs from "dayjs";
 import {
-  Calendar,
   ArrowUpRight,
   ArrowDownRight,
   TrendingUp,
@@ -11,12 +10,13 @@ import {
   PieChart as PieIcon,
   Activity,
 } from "lucide-react";
-import { useFinanceReports } from "../hooks/use-finance.js";
+import { useFinanceReports } from "../hooks/use-finance";
 import {
   IncomeExpenseBarChart,
   CategoryDonutChart,
   CashFlowAreaChart,
-} from "../components/FinanceCharts.js";
+} from "../components/FinanceCharts";
+import { Button, Card } from "../components/ui";
 
 export const Route = createFileRoute("/reports")({
   component: ReportsPage,
@@ -75,17 +75,16 @@ function ReportsPage() {
         {/* Presets */}
         <div className="flex items-center gap-1.5 self-start sm:self-auto bg-card-surface border-2 border-border-color rounded-xl p-1.5 shadow-[0_2px_0_0_var(--border-color)]">
           {presets.map((p) => (
-            <button
+            <Button
               key={p.id}
+              type="button"
+              variant={activePreset === p.id ? "default" : "outline"}
+              size="sm"
               onClick={() => setActivePreset(p.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
-                activePreset === p.id
-                  ? "bg-highlight text-primary border-2 border-primary shadow-[0_2px_0_0_var(--border-color)]"
-                  : "bg-highlight/50 border-2 border-border-color text-text-secondary hover:text-text-primary"
-              }`}
+              className="text-xs shrink-0"
             >
               {p.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -103,7 +102,7 @@ function ReportsPage() {
           {/* Summary Metric Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Total Income */}
-            <div className="bg-card-surface border-2 border-border-color rounded-2xl p-5 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-2">
+            <Card className="p-5 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase tracking-wider text-text-secondary">
                   Total Pemasukan
@@ -118,10 +117,10 @@ function ReportsPage() {
               <span className="text-[11px] text-text-secondary font-semibold">
                 Periode {dayjs(startDate).format("DD MMM")} – {dayjs(endDate).format("DD MMM YYYY")}
               </span>
-            </div>
+            </Card>
 
             {/* Total Expense */}
-            <div className="bg-card-surface border-2 border-border-color rounded-2xl p-5 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-2">
+            <Card className="p-5 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase tracking-wider text-text-secondary">
                   Total Pengeluaran
@@ -136,10 +135,10 @@ function ReportsPage() {
               <span className="text-[11px] text-text-secondary font-semibold">
                 Rata-rata: {formatRupiah(report.average_daily_expense)}/hari
               </span>
-            </div>
+            </Card>
 
             {/* Net Cash Flow */}
-            <div className="bg-card-surface border-2 border-border-color rounded-2xl p-5 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-2">
+            <Card className="p-5 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase tracking-wider text-text-secondary">
                   Net Cash Flow
@@ -158,10 +157,10 @@ function ReportsPage() {
               <span className="text-[11px] text-text-secondary font-semibold">
                 {report.net_cash_flow >= 0 ? "Surplus kas positif" : "Defisit arus kas"}
               </span>
-            </div>
+            </Card>
 
             {/* Savings Ratio */}
-            <div className="bg-card-surface border-2 border-border-color rounded-2xl p-5 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-2">
+            <Card className="p-5 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase tracking-wider text-text-secondary">
                   Rasio Tabungan
@@ -178,13 +177,13 @@ function ReportsPage() {
               <span className="text-[11px] text-text-secondary font-semibold">
                 Proporsi pemasukan tersimpan
               </span>
-            </div>
+            </Card>
           </div>
 
           {/* Charts Row 1: Income vs Expense & Category Breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Chart 1: Bar Comparison */}
-            <div className="bg-card-surface border-2 border-border-color rounded-2xl p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
+            <Card className="p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
               <div className="flex items-center gap-2.5">
                 <BarChart3 className="h-5 w-5 text-primary stroke-[2.5]" />
                 <h2 className="font-extrabold text-base text-text-primary">
@@ -195,10 +194,10 @@ function ReportsPage() {
                 totalIncome={report.total_income}
                 totalExpense={report.total_expense}
               />
-            </div>
+            </Card>
 
             {/* Chart 2: Donut Category Distribution */}
-            <div className="bg-card-surface border-2 border-border-color rounded-2xl p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
+            <Card className="p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
               <div className="flex items-center gap-2.5">
                 <PieIcon className="h-5 w-5 text-accent stroke-[2.5]" />
                 <h2 className="font-extrabold text-base text-text-primary">
@@ -206,11 +205,11 @@ function ReportsPage() {
                 </h2>
               </div>
               <CategoryDonutChart categories={report.expense_by_category} />
-            </div>
+            </Card>
           </div>
 
           {/* Charts Row 2: Cash Flow Trend */}
-          <div className="bg-card-surface border-2 border-border-color rounded-2xl p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
+          <Card className="p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
             <div className="flex items-center gap-2.5">
               <TrendingUp className="h-5 w-5 text-primary stroke-[2.5]" />
               <h2 className="font-extrabold text-base text-text-primary">
@@ -218,7 +217,7 @@ function ReportsPage() {
               </h2>
             </div>
             <CashFlowAreaChart trend={report.cash_flow_trend} />
-          </div>
+          </Card>
         </>
       )}
     </div>

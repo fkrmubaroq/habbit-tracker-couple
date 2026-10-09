@@ -9,7 +9,6 @@ import {
   Wallet,
   Building,
   Loader2,
-  X,
 } from "lucide-react";
 import {
   useFinanceNetWorth,
@@ -17,7 +16,18 @@ import {
   useDeleteAssetMutation,
   useCreateLiabilityMutation,
   useDeleteLiabilityMutation,
-} from "../hooks/use-finance.js";
+} from "../hooks/use-finance";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  Button,
+  Input,
+  Select,
+  Card,
+} from "../components/ui";
 
 export const Route = createFileRoute("/net-worth")({
   component: NetWorthPage,
@@ -123,7 +133,7 @@ function NetWorthPage() {
       </div>
 
       {/* Hero Net Worth Card */}
-      <div className="bg-card-surface border-2 border-border-color rounded-3xl p-6 md:p-8 shadow-[0_4px_0_0_var(--border-color)] relative overflow-hidden flex flex-col justify-between">
+      <Card className="p-6 md:p-8 shadow-[0_4px_0_0_var(--border-color)] relative overflow-hidden flex flex-col justify-between">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none -mr-16 -mt-16" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary/15 rounded-full blur-2xl pointer-events-none -ml-12 -mb-12" />
 
@@ -172,24 +182,27 @@ function NetWorthPage() {
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Two Column Grid: Assets vs Liabilities */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column: Assets */}
-        <div className="bg-card-surface border-2 border-border-color rounded-2xl p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
+        <Card className="p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-text-primary font-extrabold text-base">
               <ShieldCheck className="h-5 w-5 text-primary stroke-[2.5]" />
               <span>Daftar Aset ({assets.length + 1})</span>
             </div>
-            <button
+            <Button
+              type="button"
+              variant="3d"
+              size="sm"
               onClick={() => setIsAssetModalOpen(true)}
-              className="btn-3d px-3.5 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1 cursor-pointer"
+              className="flex items-center gap-1"
             >
               <Plus className="h-3.5 w-3.5 stroke-[3]" />
               <span>Tambah Aset</span>
-            </button>
+            </Button>
           </div>
 
           {/* Cash Balance Item (Auto synced) */}
@@ -232,31 +245,37 @@ function NetWorthPage() {
                 <span className="font-black text-sm text-text-primary">
                   {formatRupiah(ast.amount)}
                 </span>
-                <button
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleDeleteAsset(ast.id, ast.name)}
-                  className="p-1.5 text-text-secondary hover:text-red-500 hover:bg-red-500/10 rounded-xl cursor-pointer transition-colors"
+                  className="h-8 w-8 p-0 text-text-secondary hover:text-red-500 hover:bg-red-500/10"
                 >
                   <Trash2 className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
             </div>
           ))}
-        </div>
+        </Card>
 
         {/* Right Column: Liabilities */}
-        <div className="bg-card-surface border-2 border-border-color rounded-2xl p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
+        <Card className="p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-text-primary font-extrabold text-base">
               <AlertTriangle className="h-5 w-5 text-red-500 stroke-[2.5]" />
               <span>Daftar Liabilitas / Hutang ({liabilities.length})</span>
             </div>
-            <button
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
               onClick={() => setIsLiabilityModalOpen(true)}
-              className="px-3.5 py-1.5 bg-highlight hover:bg-highlight/80 text-text-primary border-2 border-border-color rounded-xl text-xs font-extrabold shadow-[0_2px_0_0_var(--border-color)] active:translate-y-0.5 active:shadow-none flex items-center gap-1 cursor-pointer"
+              className="flex items-center gap-1"
             >
               <Plus className="h-3.5 w-3.5 stroke-[3]" />
               <span>Tambah Hutang</span>
-            </button>
+            </Button>
           </div>
 
           {liabilities.length === 0 ? (
@@ -285,155 +304,164 @@ function NetWorthPage() {
                   <span className="font-black text-sm text-red-500">
                     {formatRupiah(lib.amount)}
                   </span>
-                  <button
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => handleDeleteLiability(lib.id, lib.name)}
-                    className="p-1.5 text-text-secondary hover:text-red-500 hover:bg-red-500/10 rounded-xl cursor-pointer transition-colors"
+                    className="h-8 w-8 p-0 text-text-secondary hover:text-red-500 hover:bg-red-500/10"
                   >
                     <Trash2 className="h-4 w-4" />
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))
           )}
-        </div>
+        </Card>
       </div>
 
       {/* Add Asset Modal */}
-      {isAssetModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-card-surface border-2 border-border-color rounded-2xl w-full max-w-md shadow-2xl p-6 flex flex-col gap-4">
-            <div className="flex items-center justify-between border-b-2 border-border-color pb-3">
-              <h3 className="font-black text-base text-text-primary">+ Tambah Aset</h3>
-              <button onClick={() => setIsAssetModalOpen(false)} className="cursor-pointer">
-                <X className="h-5 w-5 text-text-secondary" />
-              </button>
+      <Dialog open={isAssetModalOpen} onOpenChange={setIsAssetModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-black text-base text-text-primary">
+              + Tambah Aset
+            </DialogTitle>
+            <DialogDescription className="text-xs text-text-secondary">
+              Catat aset baru untuk menghitung kekayaan bersih keluarga Anda.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSaveAsset} className="flex flex-col gap-3 pt-2">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-text-secondary">Nama Aset</label>
+              <Input
+                type="text"
+                placeholder="Contoh: Deposito Bank, Saham BBCA, Emas Antam..."
+                value={assetName}
+                onChange={(e) => setAssetName(e.target.value)}
+                autoFocus
+              />
             </div>
-            <form onSubmit={handleSaveAsset} className="flex flex-col gap-3">
-              <div>
-                <label className="text-xs font-bold text-text-secondary">Nama Aset</label>
-                <input
-                  type="text"
-                  placeholder="Contoh: Deposito Bank, Saham BBCA, Emas Antam..."
-                  value={assetName}
-                  onChange={(e) => setAssetName(e.target.value)}
-                  className="w-full mt-1 px-3.5 py-2.5 bg-card-surface border-2 border-border-color rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-primary"
-                  autoFocus
-                />
-              </div>
-              <div>
-                <label className="text-xs font-bold text-text-secondary">Kategori Aset</label>
-                <select
-                  value={assetCategory}
-                  onChange={(e) => setAssetCategory(e.target.value)}
-                  className="w-full mt-1 px-3.5 py-2.5 bg-card-surface border-2 border-border-color rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-primary"
-                >
-                  <option value="Tabungan">Tabungan / Rekening</option>
-                  <option value="Investasi">Investasi / Saham / Reksadana</option>
-                  <option value="Logam Mulia">Logam Mulia / Emas</option>
-                  <option value="Properti">Properti / Tanah / Bangunan</option>
-                  <option value="Kendaraan">Kendaraan</option>
-                  <option value="Lainnya">Aset Lainnya</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-xs font-bold text-text-secondary">Nilai Taksiran Aset (Rp)</label>
-                <input
-                  type="number"
-                  min="1"
-                  placeholder="0"
-                  value={assetAmount}
-                  onChange={(e) => setAssetAmount(e.target.value === "" ? "" : Number(e.target.value))}
-                  className="w-full mt-1 px-3.5 py-2.5 bg-card-surface border-2 border-border-color rounded-xl text-xs font-black text-primary focus:outline-hidden focus:border-primary"
-                />
-              </div>
-              <div className="flex gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsAssetModalOpen(false)}
-                  className="flex-1 py-2.5 rounded-xl border-2 border-border-color hover:bg-highlight text-xs font-bold text-text-secondary cursor-pointer"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={createAssetMutation.isPending || !assetName.trim() || !assetAmount}
-                  className="btn-3d flex-1 py-2.5 rounded-xl text-xs font-extrabold cursor-pointer disabled:opacity-50"
-                >
-                  Simpan Aset
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-text-secondary">Kategori Aset</label>
+              <Select
+                value={assetCategory}
+                onChange={(e) => setAssetCategory(e.target.value)}
+              >
+                <option value="Tabungan">Tabungan / Rekening</option>
+                <option value="Investasi">Investasi / Saham / Reksadana</option>
+                <option value="Logam Mulia">Logam Mulia / Emas</option>
+                <option value="Properti">Properti / Tanah / Bangunan</option>
+                <option value="Kendaraan">Kendaraan</option>
+                <option value="Lainnya">Aset Lainnya</option>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-text-secondary">Nilai Taksiran Aset (Rp)</label>
+              <Input
+                type="number"
+                min="1"
+                placeholder="0"
+                value={assetAmount}
+                onChange={(e) => setAssetAmount(e.target.value === "" ? "" : Number(e.target.value))}
+              />
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsAssetModalOpen(false)}
+                className="flex-1"
+              >
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                variant="3d"
+                disabled={createAssetMutation.isPending || !assetName.trim() || !assetAmount}
+                className="flex-1"
+              >
+                Simpan Aset
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Add Liability Modal */}
-      {isLiabilityModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-card-surface border-2 border-border-color rounded-2xl w-full max-w-md shadow-2xl p-6 flex flex-col gap-4">
-            <div className="flex items-center justify-between border-b-2 border-border-color pb-3">
-              <h3 className="font-black text-base text-text-primary">+ Tambah Liabilitas</h3>
-              <button onClick={() => setIsLiabilityModalOpen(false)} className="cursor-pointer">
-                <X className="h-5 w-5 text-text-secondary" />
-              </button>
+      <Dialog open={isLiabilityModalOpen} onOpenChange={setIsLiabilityModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-black text-base text-text-primary">
+              + Tambah Liabilitas
+            </DialogTitle>
+            <DialogDescription className="text-xs text-text-secondary">
+              Catat hutang atau kewajiban finansial yang masih berjalan.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSaveLiability} className="flex flex-col gap-3 pt-2">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-text-secondary">Nama Liabilitas / Hutang</label>
+              <Input
+                type="text"
+                placeholder="Contoh: KPR Rumah, Cicilan Kendaraan, Kartu Kredit..."
+                value={liabilityName}
+                onChange={(e) => setLiabilityName(e.target.value)}
+                autoFocus
+              />
             </div>
-            <form onSubmit={handleSaveLiability} className="flex flex-col gap-3">
-              <div>
-                <label className="text-xs font-bold text-text-secondary">Nama Liabilitas / Hutang</label>
-                <input
-                  type="text"
-                  placeholder="Contoh: KPR Rumah, Cicilan Kendaraan, Kartu Kredit..."
-                  value={liabilityName}
-                  onChange={(e) => setLiabilityName(e.target.value)}
-                  className="w-full mt-1 px-3.5 py-2.5 bg-card-surface border-2 border-border-color rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-primary"
-                  autoFocus
-                />
-              </div>
-              <div>
-                <label className="text-xs font-bold text-text-secondary">Kategori</label>
-                <select
-                  value={liabilityCategory}
-                  onChange={(e) => setLiabilityCategory(e.target.value)}
-                  className="w-full mt-1 px-3.5 py-2.5 bg-card-surface border-2 border-border-color rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-primary"
-                >
-                  <option value="KPR">KPR</option>
-                  <option value="Kendaraan">Cicilan Kendaraan</option>
-                  <option value="Kartu Kredit">Kartu Kredit</option>
-                  <option value="Pinjaman Bank">Pinjaman Bank</option>
-                  <option value="Lainnya">Hutang Lainnya</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-xs font-bold text-text-secondary">Sisa Hutang (Rp)</label>
-                <input
-                  type="number"
-                  min="1"
-                  placeholder="0"
-                  value={liabilityAmount}
-                  onChange={(e) => setLiabilityAmount(e.target.value === "" ? "" : Number(e.target.value))}
-                  className="w-full mt-1 px-3.5 py-2.5 bg-card-surface border-2 border-border-color rounded-xl text-xs font-black text-red-500 focus:outline-hidden focus:border-primary"
-                />
-              </div>
-              <div className="flex gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsLiabilityModalOpen(false)}
-                  className="flex-1 py-2.5 rounded-xl border-2 border-border-color hover:bg-highlight text-xs font-bold text-text-secondary cursor-pointer"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={createLiabilityMutation.isPending || !liabilityName.trim() || !liabilityAmount}
-                  className="btn-3d flex-1 py-2.5 rounded-xl text-xs font-extrabold cursor-pointer disabled:opacity-50"
-                >
-                  Simpan Liabilitas
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-text-secondary">Kategori</label>
+              <Select
+                value={liabilityCategory}
+                onChange={(e) => setLiabilityCategory(e.target.value)}
+              >
+                <option value="KPR">KPR</option>
+                <option value="Kendaraan">Cicilan Kendaraan</option>
+                <option value="Kartu Kredit">Kartu Kredit</option>
+                <option value="Pinjaman Bank">Pinjaman Bank</option>
+                <option value="Lainnya">Hutang Lainnya</option>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-text-secondary">Sisa Hutang (Rp)</label>
+              <Input
+                type="number"
+                min="1"
+                placeholder="0"
+                value={liabilityAmount}
+                onChange={(e) => setLiabilityAmount(e.target.value === "" ? "" : Number(e.target.value))}
+              />
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsLiabilityModalOpen(false)}
+                className="flex-1"
+              >
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                variant="3d"
+                disabled={createLiabilityMutation.isPending || !liabilityName.trim() || !liabilityAmount}
+                className="flex-1"
+              >
+                Simpan Liabilitas
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

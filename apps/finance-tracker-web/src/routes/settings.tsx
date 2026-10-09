@@ -15,10 +15,15 @@ import {
   useFinanceCategories,
   useCreateCategoryMutation,
   useDeleteCategoryMutation,
-} from "../hooks/use-finance.js";
-import { DeleteCategoryDialog } from "../components/DeleteCategoryDialog.js";
-import { ThemeSwitcherSection } from "../components/ThemeSwitcher.js";
+} from "../hooks/use-finance";
+import { DeleteCategoryDialog } from "../components/DeleteCategoryDialog";
+import { ThemeSwitcherSection } from "../components/ThemeSwitcher";
 import { FinanceCategory } from "@repo/types";
+import {
+  Button,
+  Input,
+  Card,
+} from "../components/ui";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -114,7 +119,7 @@ function SettingsPage() {
       <ThemeSwitcherSection />
 
       {/* Section 2: Saldo Awal (Initial Balance) */}
-      <div className="bg-card-surface border-2 border-border-color rounded-2xl p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
+      <Card className="p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-highlight border-2 border-border-color flex items-center justify-center text-primary shadow-[0_2px_0_0_var(--border-color)]">
             <Wallet className="h-5 w-5 stroke-[2.5]" />
@@ -133,24 +138,25 @@ function SettingsPage() {
               Nominal Saldo Awal (Rp)
             </label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-extrabold text-text-secondary">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-extrabold text-text-secondary z-10 pointer-events-none">
                 Rp
               </span>
-              <input
+              <Input
                 type="number"
                 step="any"
                 value={initialBalance}
                 onChange={(e) => setInitialBalance(Number(e.target.value))}
-                className="w-full pl-12 pr-4 py-2.5 bg-highlight/30 border-2 border-border-color rounded-xl font-black text-base text-text-primary focus:outline-hidden focus:border-primary"
+                className="pl-12 font-black text-base"
                 disabled={isLoadingSettings}
               />
             </div>
           </div>
 
-          <button
+          <Button
             type="submit"
+            variant="3d"
             disabled={updateSettingsMutation.isPending}
-            className="btn-3d py-2.5 px-6 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="btn-3d py-2.5 px-6 flex items-center justify-center gap-2"
           >
             {updateSettingsMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -165,12 +171,12 @@ function SettingsPage() {
                 <span>Simpan Saldo Awal</span>
               </>
             )}
-          </button>
+          </Button>
         </form>
-      </div>
+      </Card>
 
       {/* Card 2: Kelola Kategori */}
-      <div className="bg-card-surface border-2 border-border-color rounded-2xl p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-5">
+      <Card className="p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-highlight border-2 border-border-color flex items-center justify-center text-primary shadow-[0_2px_0_0_var(--border-color)]">
@@ -184,37 +190,44 @@ function SettingsPage() {
             </div>
           </div>
 
-          <button
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
             onClick={() => setIsAddingCat(true)}
-            className="self-start sm:self-auto px-4 py-2 bg-highlight hover:bg-highlight/80 border-2 border-border-color text-text-primary rounded-xl font-extrabold text-xs flex items-center gap-1.5 transition-all shadow-[0_2px_0_0_var(--border-color)] active:translate-y-0.5 active:shadow-none cursor-pointer"
+            className="self-start sm:self-auto flex items-center gap-1.5"
           >
             <Plus className="h-4 w-4 text-primary stroke-[3]" />
             <span>Tambah Kategori</span>
-          </button>
+          </Button>
         </div>
 
         {/* Tab Selection: Pengeluaran vs Pemasukan */}
         <div className="flex gap-2 p-1.5 bg-highlight rounded-2xl border-2 border-border-color">
-          <button
+          <Button
+            type="button"
+            variant="ghost"
             onClick={() => setActiveCategoryTab("expense")}
-            className={`flex-1 py-2 px-3 rounded-xl font-extrabold text-xs transition-all cursor-pointer ${
+            className={`flex-1 py-2 px-3 text-xs font-extrabold ${
               activeCategoryTab === "expense"
                 ? "bg-card-surface text-text-primary border-2 border-border-color shadow-[0_2px_0_0_var(--border-color)]"
                 : "text-text-secondary hover:text-text-primary border-2 border-transparent"
             }`}
           >
             Kategori Pengeluaran ({categories.filter((c) => c.type === "expense").length})
-          </button>
-          <button
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
             onClick={() => setActiveCategoryTab("income")}
-            className={`flex-1 py-2 px-3 rounded-xl font-extrabold text-xs transition-all cursor-pointer ${
+            className={`flex-1 py-2 px-3 text-xs font-extrabold ${
               activeCategoryTab === "income"
                 ? "bg-card-surface text-primary border-2 border-primary shadow-[0_2px_0_0_var(--border-color)]"
                 : "text-text-secondary hover:text-text-primary border-2 border-transparent"
             }`}
           >
             Kategori Pemasukan ({categories.filter((c) => c.type === "income").length})
-          </button>
+          </Button>
         </div>
 
         {/* Add Category Form Inline */}
@@ -227,40 +240,42 @@ function SettingsPage() {
               <span className="font-black text-xs text-primary uppercase tracking-wider">
                 + Tambah Kategori {activeCategoryTab === "expense" ? "Pengeluaran" : "Pemasukan"}
               </span>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => setIsAddingCat(false)}
-                className="text-xs text-text-secondary hover:text-text-primary font-bold cursor-pointer"
+                className="h-7 text-xs text-text-secondary hover:text-text-primary font-bold"
               >
                 Tutup
-              </button>
+              </Button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <input
+              <Input
                 type="text"
                 placeholder="Nama Kategori (misal: Investasi, Zakat, dll)"
                 value={newCatName}
                 onChange={(e) => setNewCatName(e.target.value)}
-                className="px-3.5 py-2.5 bg-card-surface border-2 border-border-color rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-primary"
                 autoFocus
               />
 
               <div className="flex items-center gap-2">
-                <span className="text-xs text-text-secondary font-bold">Warna Label:</span>
+                <span className="text-xs text-text-secondary font-bold shrink-0">Warna Label:</span>
                 <input
                   type="color"
                   value={newCatColor}
                   onChange={(e) => setNewCatColor(e.target.value)}
-                  className="w-10 h-9 rounded-xl cursor-pointer border-2 border-border-color"
+                  className="w-10 h-9 rounded-xl cursor-pointer border-2 border-border-color shrink-0"
                 />
-                <button
+                <Button
                   type="submit"
+                  variant="3d"
                   disabled={createCategoryMutation.isPending || !newCatName.trim()}
-                  className="btn-3d flex-1 py-2 px-4 rounded-xl text-xs font-extrabold cursor-pointer disabled:opacity-50"
+                  className="flex-1 py-2 px-4 text-xs"
                 >
                   Simpan Kategori
-                </button>
+                </Button>
               </div>
             </div>
           </form>
@@ -294,19 +309,22 @@ function SettingsPage() {
                 </div>
 
                 {!cat.is_system && (
-                  <button
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => handleDeleteCategoryClick(cat)}
-                    className="p-1.5 text-text-secondary hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-colors cursor-pointer"
+                    className="h-8 w-8 p-0 text-text-secondary hover:text-red-500 hover:bg-red-500/10"
                     title="Hapus Kategori"
                   >
                     <Trash2 className="h-4 w-4" />
-                  </button>
+                  </Button>
                 )}
               </div>
             ))}
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Delete Category Reassign Confirmation Modal */}
       <DeleteCategoryDialog

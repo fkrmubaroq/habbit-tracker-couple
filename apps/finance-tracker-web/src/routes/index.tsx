@@ -5,16 +5,15 @@ import {
   Wallet,
   ArrowUpRight,
   ArrowDownRight,
-  TrendingUp,
-  Plus,
   Coins,
   PieChart,
   ArrowRight,
   Loader2,
   Calendar,
 } from "lucide-react";
-import { useFinanceOverview } from "../hooks/use-finance.js";
-import { useFinanceUIStore } from "../stores/finance-ui.store.js";
+import { useFinanceOverview } from "../hooks/use-finance";
+import { useFinanceUIStore } from "../stores/finance-ui.store";
+import { Button, Card } from "../components/ui";
 
 export const Route = createFileRoute("/")({
   component: DashboardPage,
@@ -68,27 +67,31 @@ function DashboardPage() {
         </div>
 
         <div className="flex items-center gap-2.5 self-start sm:self-auto">
-          <button
+          <Button
+            type="button"
+            variant="outline"
             onClick={() => openTransactionModal("income")}
-            className="px-4 py-2.5 bg-highlight hover:bg-highlight/80 text-primary border-2 border-primary/40 rounded-xl font-extrabold text-xs flex items-center gap-1.5 transition-all shadow-[0_2px_0_0_var(--border-color)] active:translate-y-0.5 active:shadow-none cursor-pointer"
+            className="flex items-center gap-1.5"
           >
             <ArrowUpRight className="h-4 w-4 stroke-[3]" />
             <span>+ Pemasukan</span>
-          </button>
-          <button
+          </Button>
+          <Button
+            type="button"
+            variant="3d"
             onClick={() => openTransactionModal("expense")}
-            className="btn-3d py-2.5 px-4 rounded-xl font-extrabold text-xs flex items-center gap-1.5 cursor-pointer shadow-[0_3px_0_0_color-mix(in_srgb,var(--primary)_75%,#000)]"
+            className="btn-3d flex items-center gap-1.5"
           >
             <ArrowDownRight className="h-4 w-4 stroke-[3]" />
             <span>+ Pengeluaran</span>
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Main Balance Hero Card & Net Worth */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 Cols: Main Balance */}
-        <div className="lg:col-span-2 bg-card-surface border-2 border-border-color rounded-3xl p-6 sm:p-8 shadow-[0_4px_0_0_var(--border-color)] relative overflow-hidden flex flex-col justify-between">
+        <Card className="lg:col-span-2 p-6 sm:p-8 shadow-[0_4px_0_0_var(--border-color)] relative overflow-hidden flex flex-col justify-between">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary/15 rounded-full blur-2xl -ml-12 -mb-12 pointer-events-none" />
 
@@ -139,10 +142,10 @@ function DashboardPage() {
               </span>
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Right 1 Col: Net Worth Mini Card */}
-        <div className="bg-card-surface border-2 border-border-color rounded-3xl p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-4">
+        <Card className="p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Coins className="h-5 w-5 text-accent stroke-[2.5]" />
@@ -178,13 +181,13 @@ function DashboardPage() {
               <span className="font-extrabold text-red-500">{formatRupiah(total_liabilities)}</span>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Row 2: Budget Progress & Recent Transactions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Budget Progress Summary (1 Col) */}
-        <div className="bg-card-surface border-2 border-border-color rounded-2xl p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-4">
+        <Card className="p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <PieChart className="h-5 w-5 text-primary stroke-[2.5]" />
@@ -243,17 +246,20 @@ function DashboardPage() {
           </div>
 
           <div className="pt-3 border-t-2 border-border-color text-center">
-            <Link
-              to="/budget"
-              className="w-full py-2.5 px-3 bg-highlight hover:bg-highlight/70 border-2 border-border-color rounded-xl text-xs font-bold text-text-primary inline-block transition-colors shadow-xs"
+            <Button
+              asChild
+              variant="outline"
+              className="w-full text-xs font-bold"
             >
-              Kelola Alokasi Anggaran
-            </Link>
+              <Link to="/budget">
+                Kelola Alokasi Anggaran
+              </Link>
+            </Button>
           </div>
-        </div>
+        </Card>
 
         {/* Recent Transactions (2 Cols) */}
-        <div className="lg:col-span-2 bg-card-surface border-2 border-border-color rounded-2xl p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
+        <Card className="lg:col-span-2 p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary stroke-[2.5]" />
@@ -322,7 +328,7 @@ function DashboardPage() {
               })}
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   );

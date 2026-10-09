@@ -66,15 +66,21 @@ pnpm --filter=@repo/habbit-tracker-web build
 
 ### Database Operations
 ```bash
-# Run database migrations
-pnpm db:migrate
+# Run migrations for all services
+pnpm db:migrate:all
+# (or: pnpm migrate:all)
+
+# Run database migrations for specific service
+pnpm db:migrate           # Habit Tracker API
+pnpm db:migrate:finance   # Finance Tracker API
 # Or via filter:
 pnpm --filter=@repo/habbit-tracker-api db:migrate
+pnpm --filter=@repo/finance-tracker-api db:migrate
 
 # Seed sample/initial database data
-pnpm db:seed
-# Or via filter:
-pnpm --filter=@repo/habbit-tracker-api db:seed
+pnpm db:seed:all          # All services
+pnpm db:seed              # Habit Tracker API
+pnpm db:seed:finance      # Finance Tracker API
 ```
 
 ### Linting & Type Checking

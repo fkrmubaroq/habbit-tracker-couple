@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { financeService } from "../services/finance.service.js";
+import { financeService } from "../services/finance.service";
 import {
   CreateTransactionDTO,
   UpdateTransactionDTO,

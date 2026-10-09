@@ -1,12 +1,13 @@
 import React from "react";
 import { Palette, Check, Sparkles } from "lucide-react";
-import { useThemeStore, THEME_OPTIONS, Theme } from "../stores/theme.store.js";
+import { useThemeStore, THEME_OPTIONS } from "../stores/theme.store";
+import { Card, Button } from "./ui";
 
 export function ThemeSwitcherSection() {
   const { theme, setTheme } = useThemeStore();
 
   return (
-    <section className="bg-card-surface border-2 border-border-color rounded-2xl p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-5">
+    <Card className="p-6 shadow-[0_4px_0_0_var(--border-color)] flex flex-col gap-5">
       <div>
         <h2 className="text-lg font-black text-text-primary flex items-center gap-2">
           <Palette className="h-5 w-5 text-primary stroke-[2.5]" />
@@ -54,7 +55,7 @@ export function ThemeSwitcherSection() {
           );
         })}
       </div>
-    </section>
+    </Card>
   );
 }
 
@@ -63,11 +64,13 @@ export function QuickThemeToggle() {
   const currentOption = THEME_OPTIONS.find((t) => t.name === theme) || THEME_OPTIONS[0];
 
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
+      size="sm"
       onClick={toggleNextTheme}
       title={`Tema saat ini: ${currentOption.label}. Klik untuk ganti tema.`}
-      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border-2 border-border-color bg-card-surface hover:bg-highlight text-text-primary text-xs font-bold transition-all shadow-[0_2px_0_0_var(--border-color)] active:translate-y-0.5 active:shadow-none cursor-pointer"
+      className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold"
     >
       <span
         className="w-3.5 h-3.5 rounded-full border border-text-primary/40 shrink-0"
@@ -75,6 +78,6 @@ export function QuickThemeToggle() {
       />
       <span className="hidden sm:inline">{currentOption.label}</span>
       <Sparkles className="h-3.5 w-3.5 text-primary stroke-[2.5]" />
-    </button>
+    </Button>
   );
 }

@@ -7,16 +7,26 @@ import {
   Plus,
   PieChart,
   Loader2,
-  X,
 } from "lucide-react";
 import {
   useFinanceBudgets,
   useFinanceCategories,
   useCreateBudgetMutation,
   useDeleteBudgetMutation,
-} from "../hooks/use-finance.js";
-import { BudgetCard } from "../components/BudgetCard.js";
+} from "../hooks/use-finance";
+import { BudgetCard } from "../components/BudgetCard";
 import { FinanceBudget } from "@repo/types";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  Button,
+  Input,
+  Select,
+  Card,
+} from "../components/ui";
 
 export const Route = createFileRoute("/budget")({
   component: BudgetPage,
@@ -31,39 +41,43 @@ function formatRupiah(amount: number): string {
 }
 
 function BudgetPage() {
-  const [currentDate, setCurrentDate] = useState(dayjs());
-  const monthYearStr = currentDate.format("YYYY-MM");
-  const monthLabel = currentDate.format("MMMM YYYY");
-
-  const { data: budgets = [], isLoading } = useFinanceBudgets(monthYearStr);
-  const { data: categories = [] } = useFinanceCategories();
-
-  const createBudgetMutation = useCreateBudgetMutation();
-  const deleteBudgetMutation = useDeleteBudgetMutation();
-
-  // Add/Edit modal state
+  const [selectedMonth, setSelectedMonth] = useState(() => dayjs().format("YYYY-MM"));
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCatId, setSelectedCatId] = useState("");
   const [budgetAmount, setBudgetAmount] = useState<number | "">("");
 
+  const monthLabel = dayjs(`${selectedMonth}-01`).format("MMMM YYYY");
+
+  const { data: budgets = [], isLoading } = useFinanceBudgets(selectedMonth);
+  const { data: categories = [] } = useFinanceCategories();
+  const createBudgetMutation = useCreateBudgetMutation();
+  const deleteBudgetMutation = useDeleteBudgetMutation();
+
   const expenseCategories = categories.filter((c) => c.type === "expense");
 
-  // Filter out categories that already have budget this month
+  // Filter out categories already allocated for this month
   const availableCategories = expenseCategories.filter(
     (c) => !budgets.some((b) => b.category_id === c.id)
   );
 
-  const prevMonth = () => setCurrentDate((prev) => prev.subtract(1, "month"));
-  const nextMonth = () => setCurrentDate((prev) => prev.add(1, "month"));
+  const prevMonth = () => {
+    setSelectedMonth(dayjs(`${selectedMonth}-01`).subtract(1, "month").format("YYYY-MM"));
+  };
 
-  // Calculate totals
-  const totalBudget = budgets.reduce((acc, b) => acc + b.amount, 0);
-  const totalSpent = budgets.reduce((acc, b) => acc + (b.spent || 0), 0);
+  const nextMonth = () => {
+    setSelectedMonth(dayjs(`${selectedMonth}-01`).add(1, "month").format("YYYY-MM"));
+  };
+
+  // Stats
+  const totalBudget = budgets.reduce((acc, b) => acc + Number(b.amount || 0), 0);
+  const totalSpent = budgets.reduce((acc, b) => acc + Number(b.spent || 0), 0);
   const overallPercentage = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
 
   const handleOpenAdd = () => {
     if (availableCategories.length > 0) {
       setSelectedCatId(availableCategories[0].id);
+    } else {
+      setSelectedCatId("");
     }
     setBudgetAmount("");
     setIsModalOpen(true);
@@ -75,9 +89,8 @@ function BudgetPage() {
 
     await createBudgetMutation.mutateAsync({
       category_id: selectedCatId,
+      month: selectedMonth,
       amount: Number(budgetAmount),
-      month_year: monthYearStr,
-      period: "monthly",
     });
 
     setIsModalOpen(false);
@@ -104,26 +117,32 @@ function BudgetPage() {
 
         {/* Month Selector Buttons */}
         <div className="flex items-center gap-2 self-start sm:self-auto bg-card-surface border-2 border-border-color rounded-xl p-1.5 shadow-[0_2px_0_0_var(--border-color)]">
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
             onClick={prevMonth}
-            className="p-1 rounded-lg text-text-secondary hover:text-text-primary hover:bg-highlight cursor-pointer"
+            className="h-8 w-8 p-0"
           >
             <ChevronLeft className="h-5 w-5" />
-          </button>
+          </Button>
           <span className="font-extrabold text-sm px-2 text-text-primary">{monthLabel}</span>
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
             onClick={nextMonth}
-            className="p-1 rounded-lg text-text-secondary hover:text-text-primary hover:bg-highlight cursor-pointer"
+            className="h-8 w-8 p-0"
           >
             <ChevronRight className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Hero Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Total Budget Card */}
-        <div className="bg-card-surface border-2 border-border-color rounded-2xl p-5 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-2">
+        <Card className="p-5 flex flex-col justify-between gap-2 shadow-[0_4px_0_0_var(--border-color)]">
           <span className="text-xs font-black uppercase tracking-wider text-text-secondary">
             Total Anggaran Bulan Ini
           </span>
@@ -133,10 +152,10 @@ function BudgetPage() {
           <span className="text-xs text-text-secondary font-semibold">
             {budgets.length} kategori dialokasikan
           </span>
-        </div>
+        </Card>
 
         {/* Total Spent Card */}
-        <div className="bg-card-surface border-2 border-border-color rounded-2xl p-5 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-2">
+        <Card className="p-5 flex flex-col justify-between gap-2 shadow-[0_4px_0_0_var(--border-color)]">
           <span className="text-xs font-black uppercase tracking-wider text-text-secondary">
             Total Pengeluaran Aktual
           </span>
@@ -146,10 +165,10 @@ function BudgetPage() {
           <span className="text-xs text-text-secondary font-semibold">
             {overallPercentage}% dari total anggaran
           </span>
-        </div>
+        </Card>
 
         {/* Remaining Budget Card */}
-        <div className="bg-card-surface border-2 border-border-color rounded-2xl p-5 shadow-[0_4px_0_0_var(--border-color)] flex flex-col justify-between gap-2">
+        <Card className="p-5 flex flex-col justify-between gap-2 shadow-[0_4px_0_0_var(--border-color)]">
           <span className="text-xs font-black uppercase tracking-wider text-text-secondary">
             Sisa Kuota Anggaran
           </span>
@@ -163,19 +182,21 @@ function BudgetPage() {
           <span className="text-xs text-text-secondary font-semibold">
             {totalBudget - totalSpent < 0 ? "⚠️ Melebihi batas total" : "Kondisi arus kas terkendali"}
           </span>
-        </div>
+        </Card>
       </div>
 
       {/* Action Bar */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-extrabold text-text-primary">Alokasi per Kategori</h2>
-        <button
+        <Button
+          type="button"
+          variant="3d"
           onClick={handleOpenAdd}
-          className="btn-3d px-4 py-2 rounded-xl font-extrabold text-xs shadow-[0_3px_0_0_color-mix(in_srgb,var(--primary)_75%,#000)] flex items-center gap-1.5 cursor-pointer"
+          className="flex items-center gap-1.5"
         >
           <Plus className="h-4 w-4 stroke-[3]" />
           <span>+ Tambah Anggaran</span>
-        </button>
+        </Button>
       </div>
 
       {/* Budgets Grid */}
@@ -192,12 +213,14 @@ function BudgetPage() {
           <p className="text-xs text-text-secondary font-semibold max-w-sm">
             Tentukan batas belanja untuk kategori pengeluaran Anda (seperti Makanan, Transportasi, Tagihan) agar pengeluaran tetap terkontrol.
           </p>
-          <button
+          <Button
+            type="button"
+            variant="3d"
             onClick={handleOpenAdd}
-            className="btn-3d mt-2 px-5 py-2.5 rounded-xl text-xs font-extrabold cursor-pointer"
+            className="mt-2 text-xs"
           >
             + Buat Anggaran Sekarang
-          </button>
+          </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -208,90 +231,86 @@ function BudgetPage() {
       )}
 
       {/* Add / Edit Budget Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-card-surface border-2 border-border-color rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between px-6 py-4 border-b-2 border-border-color bg-highlight/40">
-              <h3 className="text-base font-extrabold text-text-primary">
-                Atur Anggaran — {monthLabel}
-              </h3>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary cursor-pointer"
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base font-extrabold text-text-primary">
+              Atur Anggaran — {monthLabel}
+            </DialogTitle>
+            <DialogDescription className="text-xs text-text-secondary">
+              Tentukan batas kuota belanja per kategori untuk bulan ini.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleSaveBudget} className="flex flex-col gap-4 pt-2">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-text-secondary">
+                Kategori Pengeluaran
+              </label>
+              <Select
+                value={selectedCatId}
+                onChange={(e) => setSelectedCatId(e.target.value)}
               >
-                <X className="h-5 w-5" />
-              </button>
+                {availableCategories.length === 0 ? (
+                  <option value="" disabled>
+                    Semua kategori pengeluaran telah dialokasikan
+                  </option>
+                ) : (
+                  availableCategories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))
+                )}
+              </Select>
             </div>
 
-            <form onSubmit={handleSaveBudget} className="p-6 flex flex-col gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-text-secondary">
-                  Kategori Pengeluaran
-                </label>
-                <select
-                  value={selectedCatId}
-                  onChange={(e) => setSelectedCatId(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-card-surface border-2 border-border-color rounded-xl font-bold text-sm text-text-primary focus:outline-hidden focus:border-primary cursor-pointer"
-                >
-                  {availableCategories.length === 0 ? (
-                    <option value="" disabled>
-                      Semua kategori pengeluaran telah dialokasikan
-                    </option>
-                  ) : (
-                    availableCategories.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))
-                  )}
-                </select>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-text-secondary">
+                Batas Anggaran (Rp)
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-extrabold text-text-secondary z-10 pointer-events-none">
+                  Rp
+                </span>
+                <Input
+                  type="number"
+                  step="any"
+                  min="1"
+                  placeholder="Contoh: 1500000"
+                  value={budgetAmount}
+                  onChange={(e) => setBudgetAmount(e.target.value === "" ? "" : Number(e.target.value))}
+                  className="pl-12 pr-4 font-black text-base"
+                  autoFocus
+                />
               </div>
+            </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-text-secondary">
-                  Batas Anggaran (Rp)
-                </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-extrabold text-text-secondary">
-                    Rp
-                  </span>
-                  <input
-                    type="number"
-                    step="any"
-                    min="1"
-                    placeholder="Contoh: 1500000"
-                    value={budgetAmount}
-                    onChange={(e) => setBudgetAmount(e.target.value === "" ? "" : Number(e.target.value))}
-                    className="w-full pl-12 pr-4 py-2.5 bg-card-surface border-2 border-border-color rounded-xl font-black text-base text-text-primary focus:outline-hidden focus:border-primary"
-                    autoFocus
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-3">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-2.5 px-4 rounded-xl font-bold text-sm border-2 border-border-color hover:bg-highlight text-text-secondary cursor-pointer"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={createBudgetMutation.isPending || !selectedCatId || !budgetAmount}
-                  className="btn-3d flex-1 py-2.5 px-4 rounded-xl font-extrabold text-sm shadow-[0_3px_0_0_color-mix(in_srgb,var(--primary)_75%,#000)] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                >
-                  {createBudgetMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <span>Simpan Anggaran</span>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            <div className="flex gap-3 pt-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsModalOpen(false)}
+                className="flex-1"
+              >
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                variant="3d"
+                disabled={createBudgetMutation.isPending || !selectedCatId || !budgetAmount}
+                className="flex-1"
+              >
+                {createBudgetMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <span>Simpan Anggaran</span>
+                )}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
