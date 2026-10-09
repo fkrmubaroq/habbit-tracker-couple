@@ -1,25 +1,34 @@
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateTransactionDTO, createTransactionSchema } from "@repo/types";
 import confetti from "canvas-confetti";
-import { ArrowDownRight, ArrowUpRight, Calendar, FileText, Loader2, Tag } from "lucide-react";
+import {
+  ArrowDownRight,
+  ArrowLeft,
+  ArrowUpRight,
+  Calendar,
+  FileText,
+  Loader2,
+  Tag,
+  Wallet,
+} from "lucide-react";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useCreateTransactionMutation, useFinanceCategories } from "../hooks/use-finance";
-import { useFinanceUIStore } from "../stores/finance-ui.store";
 import {
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+  Card,
   Input,
   Select,
   Textarea,
-} from "./ui";
+} from "../components/ui";
 
-export function TransactionFormDialog() {
-  const { isTransactionModalOpen, defaultTransactionType, closeTransactionModal } = useFinanceUIStore();
+export const Route = createFileRoute("/transactions_/create")({
+  component: CreateTransactionPage,
+});
+
+function CreateTransactionPage() {
+  const navigate = useNavigate();
   const { data: categories = [], isLoading: isLoadingCategories } = useFinanceCategories();
   const createTxMutation = useCreateTransactionMutation();
 
@@ -35,7 +44,7 @@ export function TransactionFormDialog() {
   } = useForm<CreateTransactionDTO>({
     resolver: zodResolver(createTransactionSchema),
     defaultValues: {
-      type: defaultTransactionType,
+      type: "expense",
       amount: undefined as any,
       description: "",
       date: todayStr,
@@ -45,13 +54,6 @@ export function TransactionFormDialog() {
   });
 
   const selectedType = watch("type");
-
-  useEffect(() => {
-    if (isTransactionModalOpen) {
-      setValue("type", defaultTransactionType);
-      setValue("date", todayStr);
-    }
-  }, [isTransactionModalOpen, defaultTransactionType, setValue, todayStr]);
 
   // Filter categories by selected type
   const filteredCategories = categories.filter((c) => c.type === selectedType);
@@ -74,51 +76,80 @@ export function TransactionFormDialog() {
         confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
       }
       reset();
-      closeTransactionModal();
+      navigate({ to: "/transactions" });
     } catch (err) {
-      // Handled by react-query
+      // Handled by react-query mutation error handlers
     }
   };
 
+  const handleCancel = () => {
+    navigate({ to: "/transactions" });
+  };
 
   return (
-    <Dialog open={isTransactionModalOpen} onOpenChange={(open) => !open && closeTransactionModal()}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-black text-text-primary">Catat Transaksi</DialogTitle>
-          <DialogDescription className="sr-only">
-            Form pencatatan transaksi keuangan baru
-          </DialogDescription>
-        </DialogHeader>
+    <div className="flex flex-col gap-6 max-w-2xl mx-auto animate-in fade-in duration-300 pb-12">
+      {/* Navigation Header */}
+      <div className="flex items-center justify-between gap-4">
+        <Link
+          to="/transactions"
+          className="inline-flex items-center gap-2 text-xs font-bold text-text-secondary hover:text-text-primary px-3 py-1.5 rounded-xl bg-card-surface border-2 border-border-color shadow-[0_2px_0_0_var(--border-color)] transition-all cursor-pointer"
+        >
+          <ArrowLeft className="h-4 w-4 stroke-[2.5]" />
+          <span>Kembali ke Riwayat</span>
+        </Link>
+      </div>
 
-        {/* Modal Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 pt-2">
+      {/* Page Title */}
+      <div className="flex items-center gap-3">
+        <div className="w-12 h-12 rounded-2xl bg-highlight border-2 border-border-color flex items-center justify-center text-primary shadow-[0_3px_0_0_var(--border-color)]">
+          <Wallet className="h-6 w-6 stroke-[2.5]" />
+        </div>
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight">
+            Catat Transaksi Baru
+          </h1>
+          <p className="text-xs sm:text-sm text-text-secondary mt-0.5 font-semibold">
+            Tambahkan catatan mutasi pengeluaran atau pemasukan keluarga Anda
+          </p>
+        </div>
+      </div>
+
+      {/* Form Card */}
+      <Card className="p-6 sm:p-8 shadow-[0_4px_0_0_var(--border-color)] border-2 border-border-color rounded-3xl">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
           {/* Type Toggle: Expense vs Income */}
-          <div className="flex gap-2 p-1.5 bg-highlight rounded-2xl border-2 border-border-color">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => setValue("type", "expense")}
-              className={`flex-1 py-2 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${selectedType === "expense"
-                ? "bg-card-surface text-text-primary border-2 border-border-color shadow-[0_2px_0_0_var(--border-color)]"
-                : "text-text-secondary hover:text-text-primary border-2 border-transparent"
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-bold uppercase tracking-wider text-text-secondary">
+              Jenis Transaksi
+            </label>
+            <div className="flex gap-2 p-1.5 bg-highlight rounded-2xl border-2 border-border-color">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setValue("type", "expense")}
+                className={`flex-1 py-2.5 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  selectedType === "expense"
+                    ? "bg-card-surface text-text-primary border-2 border-border-color shadow-[0_2px_0_0_var(--border-color)]"
+                    : "text-text-secondary hover:text-text-primary border-2 border-transparent"
                 }`}
-            >
-              <ArrowDownRight className="h-4 w-4 stroke-[3]" />
-              <span>Pengeluaran</span>
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => setValue("type", "income")}
-              className={`flex-1 py-2 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${selectedType === "income"
-                ? "bg-card-surface text-primary border-2 border-primary shadow-[0_2px_0_0_var(--border-color)]"
-                : "text-text-secondary hover:text-text-primary border-2 border-transparent"
+              >
+                <ArrowDownRight className="h-4 w-4 stroke-[3] text-red-500" />
+                <span>Pengeluaran</span>
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setValue("type", "income")}
+                className={`flex-1 py-2.5 px-3 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  selectedType === "income"
+                    ? "bg-card-surface text-primary border-2 border-primary shadow-[0_2px_0_0_var(--border-color)]"
+                    : "text-text-secondary hover:text-text-primary border-2 border-transparent"
                 }`}
-            >
-              <ArrowUpRight className="h-4 w-4 stroke-[3]" />
-              <span>Pemasukan</span>
-            </Button>
+              >
+                <ArrowUpRight className="h-4 w-4 stroke-[3] text-primary" />
+                <span>Pemasukan</span>
+              </Button>
+            </div>
           </div>
 
           {/* Amount Input */}
@@ -234,7 +265,7 @@ export function TransactionFormDialog() {
               control={control}
               render={({ field }) => (
                 <Textarea
-                  rows={2}
+                  rows={3}
                   placeholder="Catatan tambahan bila diperlukan..."
                   value={field.value ?? ""}
                   onChange={field.onChange}
@@ -245,12 +276,12 @@ export function TransactionFormDialog() {
           </div>
 
           {/* Form Actions */}
-          <div className="flex gap-3 pt-2">
+          <div className="flex gap-3 pt-3">
             <Button
               type="button"
               variant="outline"
-              onClick={closeTransactionModal}
-              className="flex-1"
+              onClick={handleCancel}
+              className="flex-1 py-3"
             >
               Batal
             </Button>
@@ -258,7 +289,7 @@ export function TransactionFormDialog() {
               type="submit"
               variant="3d"
               disabled={createTxMutation.isPending}
-              className="flex-1"
+              className="flex-1 py-3"
             >
               {createTxMutation.isPending ? (
                 <>
@@ -271,7 +302,7 @@ export function TransactionFormDialog() {
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </Card>
+    </div>
   );
 }

@@ -1,5 +1,5 @@
 import { FinanceTransaction } from "@repo/types";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import dayjs from "dayjs";
 import {
   ArrowDownRight,
@@ -23,7 +23,6 @@ import {
   useFinanceCategories,
   useFinanceTransactions,
 } from "../hooks/use-finance";
-import { useFinanceUIStore } from "../stores/finance-ui.store";
 
 export const Route = createFileRoute("/transactions")({
   component: TransactionsPage,
@@ -38,7 +37,6 @@ function formatRupiah(amount: number): string {
 }
 
 function TransactionsPage() {
-  const { openTransactionModal } = useFinanceUIStore();
   const deleteTxMutation = useDeleteTransactionMutation();
 
   // Filters state
@@ -124,15 +122,16 @@ function TransactionsPage() {
           </p>
         </div>
 
-        <Button
-          type="button"
-          variant="3d"
-          onClick={() => openTransactionModal("expense")}
-          className="self-start sm:self-auto flex items-center gap-1.5"
-        >
-          <Plus className="h-4 w-4 stroke-[3]" />
-          <span>+ Transaksi Baru</span>
-        </Button>
+        <Link to="/transactions/create">
+          <Button
+            type="button"
+            variant="3d"
+            className="self-start sm:self-auto flex items-center gap-1.5"
+          >
+            <Plus className="h-4 w-4 stroke-[3]" />
+            <span>+ Transaksi Baru</span>
+          </Button>
+        </Link>
       </div>
 
       {/* Filter Presets Toolbar */}
@@ -242,14 +241,15 @@ function TransactionsPage() {
           <p className="text-xs text-text-secondary font-semibold max-w-sm">
             Tidak ada transaksi ditemukan pada periode atau filter yang dipilih. Silakan catat transaksi baru atau ubah filter.
           </p>
-          <Button
-            type="button"
-            variant="3d"
-            onClick={() => openTransactionModal("expense")}
-            className="mt-2 text-xs"
-          >
-            + Catat Transaksi
-          </Button>
+          <Link to="/transactions/create">
+            <Button
+              type="button"
+              variant="3d"
+              className="mt-2 text-xs"
+            >
+              + Catat Transaksi
+            </Button>
+          </Link>
         </div>
       ) : (
         <div className="flex flex-col gap-6">

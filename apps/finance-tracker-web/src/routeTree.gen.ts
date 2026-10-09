@@ -15,6 +15,7 @@ import { Route as NetWorthRouteImport } from './routes/net-worth'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as TransactionsRouteImport } from './routes/transactions'
+import { Route as TransactionsCreateRouteImport } from './routes/transactions_.create'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const TransactionsRoute = TransactionsRouteImport.update({
   path: '/transactions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TransactionsCreateRoute = TransactionsCreateRouteImport.update({
+  id: '/transactions_/create',
+  path: '/transactions/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/transactions': typeof TransactionsRoute
+  '/transactions/create': typeof TransactionsCreateRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/transactions': typeof TransactionsRoute
+  '/transactions/create': typeof TransactionsCreateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,14 +79,27 @@ export interface FileRoutesById {
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/transactions': typeof TransactionsRoute
+  '/transactions_/create': typeof TransactionsCreateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/budget' | '/net-worth' | '/reports' | '/settings' | '/transactions'
+    | '/'
+    | '/budget'
+    | '/net-worth'
+    | '/reports'
+    | '/settings'
+    | '/transactions'
+    | '/transactions/create'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/budget' | '/net-worth' | '/reports' | '/settings' | '/transactions'
+    | '/'
+    | '/budget'
+    | '/net-worth'
+    | '/reports'
+    | '/settings'
+    | '/transactions'
+    | '/transactions/create'
   id:
     | '__root__'
     | '/'
@@ -87,6 +108,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/settings'
     | '/transactions'
+    | '/transactions_/create'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -96,6 +118,7 @@ export interface RootRouteChildren {
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
   TransactionsRoute: typeof TransactionsRoute
+  TransactionsCreateRoute: typeof TransactionsCreateRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -142,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TransactionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/transactions_/create': {
+      id: '/transactions_/create'
+      path: '/transactions/create'
+      fullPath: '/transactions/create'
+      preLoaderRoute: typeof TransactionsCreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -152,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
   TransactionsRoute: TransactionsRoute,
+  TransactionsCreateRoute: TransactionsCreateRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

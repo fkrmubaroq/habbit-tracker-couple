@@ -108,15 +108,14 @@ test("PB-3: finance-tracker-web ui folder provides wrappers for all primitives",
 });
 
 // 4. Modal Dialog Refactors
-test("PB-4: TransactionFormDialog uses Dialog, Button, Input, Select, Textarea and zero raw modal overlays", () => {
-  const content = fs.readFileSync(path.join(financeWebDir, "components/TransactionFormDialog.tsx"), "utf-8");
-  assert(content.includes("<Dialog"), "Must render Dialog");
-  assert(content.includes("<DialogContent"), "Must render DialogContent");
+test("PB-4: Dedicated Create Transaction Route uses Button, Input, Select, Textarea from @repo/ui without modal overlay", () => {
+  const content = fs.readFileSync(path.join(financeWebDir, "routes/transactions_.create.tsx"), "utf-8");
   assert(content.includes("<Button"), "Must render Button");
   assert(content.includes("<Input"), "Must render Input");
   assert(content.includes("<Select"), "Must render Select");
   assert(content.includes("<Textarea"), "Must render Textarea");
-  assert(!content.includes("fixed inset-0 z-50"), "Must not use raw fixed overlay");
+  assert(content.includes("<Card"), "Must render Card");
+  assert(!content.includes("<Dialog"), "Must not use modal Dialog overlay");
 });
 
 test("PB-4: DeleteCategoryDialog uses Dialog and Button variant destructive", () => {

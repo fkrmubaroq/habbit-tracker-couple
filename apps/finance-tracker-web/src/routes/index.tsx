@@ -12,7 +12,6 @@ import {
   Calendar,
 } from "lucide-react";
 import { useFinanceOverview } from "../hooks/use-finance";
-import { useFinanceUIStore } from "../stores/finance-ui.store";
 import { Button, Card } from "../components/ui";
 
 export const Route = createFileRoute("/")({
@@ -29,7 +28,6 @@ function formatRupiah(amount: number): string {
 
 function DashboardPage() {
   const { data: overview, isLoading } = useFinanceOverview();
-  const { openTransactionModal } = useFinanceUIStore();
 
   const currentMonthName = dayjs().format("MMMM YYYY");
 
@@ -67,24 +65,26 @@ function DashboardPage() {
         </div>
 
         <div className="flex items-center gap-2.5 self-start sm:self-auto">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => openTransactionModal("income")}
-            className="flex items-center gap-1.5"
-          >
-            <ArrowUpRight className="h-4 w-4 stroke-[3]" />
-            <span>+ Pemasukan</span>
-          </Button>
-          <Button
-            type="button"
-            variant="3d"
-            onClick={() => openTransactionModal("expense")}
-            className="btn-3d flex items-center gap-1.5"
-          >
-            <ArrowDownRight className="h-4 w-4 stroke-[3]" />
-            <span>+ Pengeluaran</span>
-          </Button>
+          <Link to="/transactions/create">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex items-center gap-1.5"
+            >
+              <ArrowUpRight className="h-4 w-4 stroke-[3]" />
+              <span>+ Pemasukan</span>
+            </Button>
+          </Link>
+          <Link to="/transactions/create">
+            <Button
+              type="button"
+              variant="3d"
+              className="btn-3d flex items-center gap-1.5"
+            >
+              <ArrowDownRight className="h-4 w-4 stroke-[3]" />
+              <span>+ Pengeluaran</span>
+            </Button>
+          </Link>
         </div>
       </div>
 

@@ -10,8 +10,6 @@ import {
   Plus,
   Coins,
 } from "lucide-react";
-import { useFinanceUIStore } from "../stores/finance-ui.store";
-import { TransactionFormDialog } from "../components/TransactionFormDialog";
 import { QuickThemeToggle } from "../components/ThemeSwitcher";
 import { Button } from "../components/ui";
 
@@ -25,7 +23,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent() {
   const location = useLocation();
-  const { openTransactionModal } = useFinanceUIStore();
 
   const navItems = [
     { label: "Dashboard", to: "/", icon: LayoutDashboard },
@@ -87,15 +84,16 @@ function RootComponent() {
             <QuickThemeToggle />
           </div>
 
-          <Button
-            type="button"
-            variant="3d"
-            onClick={() => openTransactionModal("expense")}
-            className="btn-3d w-full py-3 px-4 flex items-center justify-center gap-2 text-sm shadow-[0_4px_0_0_color-mix(in_srgb,var(--primary)_75%,#000)]"
-          >
-            <Plus className="h-5 w-5 stroke-[3]" />
-            <span>+ Transaksi</span>
-          </Button>
+          <Link to="/transactions/create" className="w-full">
+            <Button
+              type="button"
+              variant="3d"
+              className="btn-3d w-full py-3 px-4 flex items-center justify-center gap-2 text-sm shadow-[0_4px_0_0_color-mix(in_srgb,var(--primary)_75%,#000)]"
+            >
+              <Plus className="h-5 w-5 stroke-[3]" />
+              <span>+ Transaksi</span>
+            </Button>
+          </Link>
         </div>
       </aside>
 
@@ -112,16 +110,17 @@ function RootComponent() {
 
           <div className="flex items-center gap-2">
             <QuickThemeToggle />
-            <Button
-              type="button"
-              variant="3d"
-              size="sm"
-              onClick={() => openTransactionModal("expense")}
-              className="btn-3d py-1.5 px-3 text-xs flex items-center gap-1"
-            >
-              <Plus className="h-4 w-4 stroke-[3]" />
-              <span>Catat</span>
-            </Button>
+            <Link to="/transactions/create">
+              <Button
+                type="button"
+                variant="3d"
+                size="sm"
+                className="btn-3d py-1.5 px-3 text-xs flex items-center gap-1"
+              >
+                <Plus className="h-4 w-4 stroke-[3]" />
+                <span>Catat</span>
+              </Button>
+            </Link>
           </div>
         </header>
 
@@ -149,9 +148,6 @@ function RootComponent() {
           );
         })}
       </nav>
-
-      {/* Global Transaction Form Dialog */}
-      <TransactionFormDialog />
     </div>
   );
 }
