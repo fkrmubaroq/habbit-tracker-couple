@@ -16,6 +16,7 @@ const buttonVariants = cva(
         outline: "border-2 border-border-color bg-card-surface text-text-primary hover:bg-highlight",
         secondary: "bg-secondary text-text-primary hover:opacity-90 border-2 border-text-primary shadow-[0_3px_0_0_#1f2937]",
         accent: "bg-accent text-text-primary hover:opacity-90 border-2 border-text-primary shadow-[0_3px_0_0_#1f2937]",
+        destructive: "bg-red-500 text-white hover:bg-red-600 border-2 border-red-700 shadow-[0_3px_0_0_#991b1b]",
         ghost: "hover:bg-highlight hover:text-text-primary",
         link: "text-primary underline-offset-4 hover:underline font-semibold",
       },

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="id" data-theme="Sakura">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keuangan Pasutri — Personal & Couple Finance Tracker</title>
+  <meta name="description" content="Aplikasi pencatatan keuangan pribadi dan pasutri: arus kas, anggaran belanja, laporan keuangan, dan kekayaan bersih." />
+  <script>
+    (function() {
+      try {
+        const stored = localStorage.getItem('theme');
+        if (stored && ['Sakura', 'Duo', 'Light', 'Dark'].includes(stored)) {
+          document.documentElement.setAttribute('data-theme', stored);
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body class="bg-shared-bg text-text-primary antialiased min-h-screen">
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
