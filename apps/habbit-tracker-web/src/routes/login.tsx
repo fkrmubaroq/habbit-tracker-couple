@@ -13,6 +13,9 @@ import { useAuthStore } from "../stores/auth.store";
 import { useThemeStore } from "../stores/theme.store";
 
 export const Route = createFileRoute("/login")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    returnTo: typeof search.returnTo === "string" ? search.returnTo : undefined,
+  }),
   component: LoginComponent,
 });
 
@@ -28,10 +31,20 @@ function LoginComponent() {
   const { login, isAuthenticated } = useAuthStore();
   const { setTheme } = useThemeStore();
   const navigate = useNavigate();
+  const { returnTo } = Route.useSearch();
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const { t } = useTranslation();
+
+  const isReturningToOtherApp = React.useMemo(() => {
+    if (!returnTo) return false;
+    try {
+      return new URL(returnTo).origin !== window.location.origin;
+    } catch {
+      return false;
+    }
+  }, [returnTo]);
 
   // Dynamic schema for localized error messages
   const loginSchema = React.useMemo(() => {
@@ -59,8 +72,8 @@ function LoginComponent() {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.post("/auth/login", data);
-      const { user, token } = response.data;
+      const response = await api.post("/auth/login", { ...data, returnTo });
+      const { user, redirectTo } = response.data;
 
       // Auto-set the correct user theme preference
       if (user.theme_preferences?.theme) {
@@ -69,8 +82,13 @@ function LoginComponent() {
         setTheme(user.role === "husband" ? "Duo" : "Sakura");
       }
 
-      login(user, token);
-      navigate({ to: "/" });
+      login(user);
+
+      if (redirectTo) {
+        window.location.href = redirectTo;
+      } else {
+        navigate({ to: "/" });
+      }
     } catch (err: any) {
       setError(
         err.response?.data?.error || t("login.connection_failed")
@@ -89,6 +107,13 @@ function LoginComponent() {
         <h1 className="text-2xl font-extrabold text-text-primary tracking-tight">{t("login.welcome_title")}</h1>
         <p className="text-text-secondary text-sm font-semibold mt-1">{t("login.welcome_subtitle")}</p>
       </div>
+
+      {isReturningToOtherApp && (
+        <div className="flex items-center gap-2 bg-highlight border-2 border-border-color text-text-secondary rounded-xl p-3 text-xs font-bold mb-4">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span>{t("login.redirect_notice", { defaultValue: "Setelah masuk, kamu akan diarahkan kembali ke aplikasi Keuangan Pasutri." })}</span>
+        </div>
+      )}
 
       {error && (
         <div className="flex items-center gap-2 bg-red-50 border-2 border-red-500 text-red-600 rounded-xl p-3 text-sm font-bold mb-4 animate-shake">

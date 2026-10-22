@@ -22,3 +22,8 @@
 - [x] Jalankan linting monorepo (`pnpm lint`)
 - [x] Jalankan build monorepo (`pnpm build`)
 - [x] Jalankan automated UI runner (`node apps/finance-tracker-web/tests/qa-ui-components-runner.mjs`)
+
+## Fase 5: Masking Input Nominal (Rp)
+- [x] Ganti input Nominal di `apps/finance-tracker-web/src/routes/transactions_.create.tsx` dari `type="number"` menjadi input teks dengan `inputMode="numeric"` yang menampilkan pemisah ribuan (`80000` → `80.000`)
+- [x] Simpan nilai form `amount` tetap sebagai `number` (hanya digit) agar `createTransactionSchema` tetap valid, dan kosongkan menjadi `undefined` saat input dikosongkan
+- [x] Jalankan `pnpm --filter=@repo/finance-tracker-web check-types`, `lint`, dan `build`

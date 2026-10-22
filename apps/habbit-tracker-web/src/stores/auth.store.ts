@@ -1,14 +1,19 @@
 import { create } from "zustand";
 import type { User } from "../types/index";
 
+const API_BASE = import.meta.env.VITE_BASE_URL_API
+  ? `${import.meta.env.VITE_BASE_URL_API}/api`
+  : "/api";
+
 interface AuthState {
   user: User | null;
-  token: string | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   setUser: (user: User) => void;
-  setToken: (token: string) => void;
-  login: (user: User, token: string) => void;
-  logout: () => void;
+  login: (user: User) => void;
+  logout: () => Promise<void>;
+  clearSession: () => void;
+  setLoading: (isLoading: boolean) => void;
 }
 
 const getStoredUser = (): User | null => {
@@ -20,34 +25,34 @@ const getStoredUser = (): User | null => {
   }
 };
 
-const getStoredToken = (): string | null => {
-  return localStorage.getItem("token");
-};
-
 export const useAuthStore = create<AuthState>((set) => ({
   user: getStoredUser(),
-  token: getStoredToken(),
-  isAuthenticated: !!getStoredToken(),
-  
+  isAuthenticated: false,
+  isLoading: true,
+
   setUser: (user) => {
     localStorage.setItem("user", JSON.stringify(user));
-    set({ user });
+    set({ user, isAuthenticated: true });
   },
-  
-  setToken: (token) => {
-    localStorage.setItem("token", token);
-    set({ token, isAuthenticated: true });
-  },
-  
-  login: (user, token) => {
+
+  login: (user) => {
     localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", token);
-    set({ user, token, isAuthenticated: true });
+    set({ user, isAuthenticated: true, isLoading: false });
   },
-  
-  logout: () => {
+
+  logout: async () => {
+    await fetch(`${API_BASE}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    }).catch(() => undefined);
     localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    set({ user: null, token: null, isAuthenticated: false });
+    set({ user: null, isAuthenticated: false, isLoading: false });
   },
+
+  clearSession: () => {
+    localStorage.removeItem("user");
+    set({ user: null, isAuthenticated: false, isLoading: false });
+  },
+
+  setLoading: (isLoading) => set({ isLoading }),
 }));

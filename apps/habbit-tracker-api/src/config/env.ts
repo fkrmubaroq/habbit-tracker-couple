@@ -23,7 +23,11 @@ const envSchema = z.object({
   // CORS
   ALLOW_ORIGIN_CORS: z.string().optional(),
 
+  // Shared session cookie across subdomains (e.g. .pasutri.com). Leave empty on localhost.
+  COOKIE_DOMAIN: z.string().optional(),
 
+  // Origins allowed as `returnTo` targets after login (comma-separated, exact origin match)
+  ALLOWED_REDIRECT_ORIGINS: z.string().optional(),
 }).superRefine((data, ctx) => {
   if (data.DB_PROVIDER === "mysql") {
     if (!data.MYSQL_HOST) {

@@ -30,6 +30,10 @@ export const AppSwitcher: React.FC<AppSwitcherProps> = ({
   const handleSelectApp = (app: MiniApp) => {
     if (app.status !== "active") return;
     setIsOpen(false);
+    if (app.externalUrl) {
+      window.location.href = app.externalUrl;
+      return;
+    }
     if (location.pathname !== app.route) {
       navigate({ to: app.route });
     }
@@ -217,7 +221,7 @@ export const AppSwitcher: React.FC<AppSwitcherProps> = ({
                         </div>
                       ) : (
                         <div className="h-6 w-6 rounded-full flex items-center justify-center text-text-secondary group-hover:text-primary group-hover:translate-x-0.5 transition-all">
-                          <ArrowRight className="h-4 w-4" />
+                          {app.externalUrl ? <ExternalLink className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
                         </div>
                       )}
                     </div>

@@ -9,9 +9,13 @@ import {
   Settings,
   Plus,
   Coins,
+  ExternalLink,
+  Loader2,
 } from "lucide-react";
 import { QuickThemeToggle } from "../components/ThemeSwitcher";
 import { Button } from "../components/ui";
+import { useSession } from "../hooks/use-session";
+import { HABIT_APP_URL } from "../services/session-url";
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -23,6 +27,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent() {
   const location = useLocation();
+  const { data: user, isLoading, isError } = useSession();
 
   const navItems = [
     { label: "Dashboard", to: "/", icon: LayoutDashboard },
@@ -32,6 +37,19 @@ function RootComponent() {
     { label: "Net Worth", to: "/net-worth", icon: Coins },
     { label: "Pengaturan", to: "/settings", icon: Settings },
   ];
+
+  if (isLoading || isError || !user) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-shared-bg">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-10 w-10 text-primary animate-spin" />
+          <span className="text-sm font-bold text-text-secondary">
+            Memeriksa sesi login...
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-shared-bg flex flex-col md:flex-row text-text-primary">
@@ -79,6 +97,32 @@ function RootComponent() {
 
         {/* Sidebar Footer: Quick Theme & Action Button */}
         <div className="pt-4 border-t-2 border-border-color flex flex-col gap-3">
+          <div className="flex items-center gap-3 bg-highlight p-3 rounded-xl border-2 border-border-color shadow-[0_2px_0_0_var(--border-color)]">
+            {user.avatar_image ? (
+              <img
+                src={user.avatar_image}
+                alt={user.name}
+                className="h-8 w-8 rounded-xl object-cover border-2 border-border-color shrink-0"
+              />
+            ) : (
+              <span className="text-2xl shrink-0">{user.avatar_emoji}</span>
+            )}
+            <div className="flex flex-col overflow-hidden">
+              <span className="font-bold text-sm text-text-primary truncate">{user.name}</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                {user.role}
+              </span>
+            </div>
+          </div>
+
+          <a
+            href={HABIT_APP_URL}
+            className="flex items-center gap-2.5 px-3 py-2 rounded-xl font-bold text-sm text-text-secondary hover:bg-highlight hover:text-text-primary border-2 border-transparent transition-all"
+          >
+            <ExternalLink className="h-4 w-4" />
+            <span>Buka Habit Tracker</span>
+          </a>
+
           <div className="flex items-center justify-between px-1">
             <span className="text-xs font-bold text-text-secondary">Tema:</span>
             <QuickThemeToggle />
@@ -101,14 +145,35 @@ function RootComponent() {
       <div className="flex-1 md:ml-64 flex flex-col min-h-screen pb-20 md:pb-6">
         {/* Top Header Mobile */}
         <header className="md:hidden flex items-center justify-between px-4 py-3 bg-card-surface border-b-2 border-border-color sticky top-0 z-30 shadow-xs">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-highlight border border-border-color flex items-center justify-center text-primary">
-              <Wallet className="h-5 w-5 stroke-[2.5]" />
+          <div className="flex items-center gap-2.5 min-w-0">
+            {user.avatar_image ? (
+              <img
+                src={user.avatar_image}
+                alt={user.name}
+                className="h-8 w-8 rounded-lg object-cover border-2 border-border-color shrink-0"
+              />
+            ) : (
+              <div className="h-8 w-8 rounded-lg bg-highlight border-2 border-border-color flex items-center justify-center shrink-0 text-base">
+                {user.avatar_emoji}
+              </div>
+            )}
+            <div className="flex flex-col leading-tight min-w-0">
+              <span className="font-extrabold text-sm text-text-primary truncate">Keuangan Pasutri</span>
+              <span className="text-[10px] font-semibold text-text-secondary truncate max-w-[110px]">
+                {user.name}
+              </span>
             </div>
-            <span className="font-extrabold text-base text-text-primary">Keuangan Pasutri</span>
           </div>
 
           <div className="flex items-center gap-2">
+            <a
+              href={HABIT_APP_URL}
+              aria-label="Buka Habit Tracker"
+              title="Buka Habit Tracker"
+              className="h-8 w-8 flex items-center justify-center rounded-lg border-2 border-border-color bg-card-surface text-text-secondary hover:text-primary"
+            >
+              <ExternalLink className="h-4 w-4" />
+            </a>
             <QuickThemeToggle />
             <Link to="/transactions/create">
               <Button

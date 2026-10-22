@@ -75,12 +75,12 @@ function RegisterComponent() {
     setError(null);
     try {
       const response = await api.post("/auth/register", data);
-      const { user, token } = response.data;
+      const { user } = response.data;
 
       // Auto-set the correct user theme preference
       setTheme(user.role === "husband" ? "Duo" : "Sakura");
 
-      login(user, token);
+      login(user);
       navigate({ to: "/" });
     } catch (err: any) {
       setError(

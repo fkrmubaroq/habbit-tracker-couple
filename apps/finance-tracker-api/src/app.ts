@@ -25,12 +25,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+import authRoutes from "./modules/auth/auth.routes.js";
 import financeRoutes from "./modules/finance/finance.routes.js";
 
 // Health Check
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", service: "finance-tracker-api", database: "connected", timestamp: new Date().toISOString() });
 });
+
+// Shared session (read-only) — session itself is issued by habbit-tracker-api
+app.use("/api/auth", authRoutes);
 
 // Finance routes
 app.use("/api", financeRoutes);

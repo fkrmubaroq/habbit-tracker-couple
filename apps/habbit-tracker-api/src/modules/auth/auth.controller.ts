@@ -1,9 +1,25 @@
-import { NextFunction, Request, Response } from "express";
+import { CookieOptions, NextFunction, Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
+import { env } from "../../config/env.js";
 import { userRepo } from "../../repositories/repository.factory.js";
 import { User } from "../../types/index.js";
 import { generateToken } from "../../utils/jwt.util.js";
 import { comparePassword, hashPassword } from "../../utils/password.util.js";
+import { resolveRedirectTarget } from "../../utils/redirect.util.js";
+
+const SESSION_MAX_AGE = 30 * 24 * 60 * 60 * 1000;
+
+// Shared across both apps: same domain, so a single cookie authenticates habit + finance.
+function cookieOptions(): CookieOptions {
+  return {
+    httpOnly: true,
+    secure: env.NODE_ENV === "production",
+    sameSite: "lax",
+    domain: env.COOKIE_DOMAIN || undefined,
+    path: "/",
+    maxAge: SESSION_MAX_AGE,
+  };
+}
 
 // Helper to query partner candidate by role (opposite role)
 async function findPartnerCandidate(role: "husband" | "wife"): Promise<User | null> {
@@ -65,11 +81,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
     const token = generateToken(newUser.id);
 
     // Set cookie
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    });
+    res.cookie("token", token, cookieOptions());
 
     return res.status(201).json({
       message: "Registration successful",
@@ -91,7 +103,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
 
 export async function login(req: Request, res: Response, next: NextFunction) {
   try {
-    const { username, password } = req.body;
+    const { username, password, returnTo } = req.body;
 
     const user = await userRepo.findByUsername(username);
     if (!user) {
@@ -105,15 +117,12 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 
     const token = generateToken(user.id);
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie("token", token, cookieOptions());
 
     return res.json({
       message: "Login successful",
       token,
+      redirectTo: resolveRedirectTarget(returnTo),
       user: {
         id: user.id,
         username: user.username,
@@ -130,7 +139,8 @@ export async function login(req: Request, res: Response, next: NextFunction) {
 }
 
 export async function logout(req: Request, res: Response) {
-  res.clearCookie("token");
+  const { maxAge: _maxAge, ...clearOptions } = cookieOptions();
+  res.clearCookie("token", clearOptions);
   return res.json({ message: "Logout successful" });
 }
 

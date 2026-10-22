@@ -24,6 +24,7 @@ export interface MiniApp {
   name: string;
   slug: string;
   route: string;
+  externalUrl?: string;
   icon: LucideIcon;
   emoji: string;
   description: string;
@@ -94,15 +95,17 @@ export const APPS_REGISTRY: MiniApp[] = [
     name: "Keuangan Pasutri",
     slug: "couple-finances",
     route: "#",
+    externalUrl: import.meta.env.VITE_FINANCE_APP_URL || "http://localhost:5175",
     icon: Wallet,
-    emoji: "💰",
+    emoji: "dY'�",
     description: "Pencatatan pengeluaran & tabungan bersama",
-    badge: "Segera Hadir",
-    status: "coming_soon",
+    badge: "Mini App",
+    status: "active",
     themeColor: "text-amber-500",
     bgLight: "bg-amber-100",
     navItems: [],
   },
+
   {
     id: "couple-calendar",
     name: "Jadwal & Kencan",

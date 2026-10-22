@@ -8,29 +8,15 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Inject token into requests
-api.interceptors.request.use(
-  (config) => {
-    const token = useAuthStore.getState().token;
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Catch 401 errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      console.warn("Unauthenticated request. Logging out user...");
-      useAuthStore.getState().logout();
+    const status = error.response?.status;
+    const url: string = error.config?.url || "";
 
-      // Redirect to login only if not already on the login or register page
+    if (status === 401 && !url.includes("/auth/me")) {
+      useAuthStore.getState().clearSession();
+
       const path = window.location.pathname;
       if (path !== "/login" && path !== "/register") {
         window.location.href = "/login";

@@ -27,6 +27,19 @@ export const Route = createFileRoute("/transactions_/create")({
   component: CreateTransactionPage,
 });
 
+function formatThousands(value: number | string | null | undefined): string {
+  if (value === null || value === undefined || value === "") return "";
+  const digits = String(value).replace(/\D/g, "");
+  if (!digits) return "";
+  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function parseThousands(raw: string): number | undefined {
+  const digits = raw.replace(/\D/g, "");
+  if (!digits) return undefined;
+  return Number(digits);
+}
+
 function CreateTransactionPage() {
   const navigate = useNavigate();
   const { data: categories = [], isLoading: isLoadingCategories } = useFinanceCategories();
@@ -166,12 +179,14 @@ function CreateTransactionPage() {
                     Rp
                   </span>
                   <Input
-                    type="number"
-                    step="any"
-                    min="0"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="off"
                     placeholder="0"
-                    value={field.value ?? ""}
-                    onChange={(e) => field.onChange(e.target.value === "" ? "" : Number(e.target.value))}
+                    value={formatThousands(field.value)}
+                    onChange={(e) => field.onChange(parseThousands(e.target.value))}
+                    onBlur={field.onBlur}
+                    name={field.name}
                     className="pl-12 pr-4 py-3 font-black text-xl"
                   />
                 </div>

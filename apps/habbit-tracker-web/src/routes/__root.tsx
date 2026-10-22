@@ -9,6 +9,7 @@ import { getActiveApp } from "../config/apps.config";
 import { Toaster } from "../components/Toaster";
 import { Button } from "../components/ui/button";
 import { BottomNavigation } from "../components/navigation/bottom-navigation";
+import { useSession } from "../hooks/use-session";
 import { useAuthStore } from "../stores/auth.store";
 
 interface RouterContext {
@@ -20,14 +21,15 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootComponent() {
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { user, logout } = useAuthStore();
+  const { isAuthenticated, isLoading } = useSession();
 
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate({ to: "/login" });
   };
 
@@ -35,28 +37,28 @@ function RootComponent() {
 
   // Redirect to login if not authenticated and not on an auth page
   React.useEffect(() => {
-    if (!isAuthenticated && !isAuthPage) {
+    if (!isLoading && !isAuthenticated && !isAuthPage) {
       navigate({ to: "/login" });
     }
-  }, [isAuthenticated, isAuthPage, navigate]);
-
-  // If loading or checking auth
-  if (!isAuthenticated && !isAuthPage) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center bg-shared-bg">
-        <div className="flex flex-col items-center gap-2">
-          <Heart className="h-10 w-10 text-primary animate-bounce fill-current" />
-          <span className="text-sm font-bold text-text-secondary">{t("common.loading")}</span>
-        </div>
-      </div>
-    );
-  }
+  }, [isLoading, isAuthenticated, isAuthPage, navigate]);
 
   // Auth pages layout
   if (isAuthPage) {
     return (
       <div className="min-h-screen bg-shared-bg flex items-center justify-center p-4">
         <Outlet />
+      </div>
+    );
+  }
+
+  // Checking session or unauthenticated (redirect in flight)
+  if (isLoading || !isAuthenticated) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-shared-bg">
+        <div className="flex flex-col items-center gap-2">
+          <Heart className="h-10 w-10 text-primary animate-bounce fill-current" />
+          <span className="text-sm font-bold text-text-secondary">{t("common.loading")}</span>
+        </div>
       </div>
     );
   }

@@ -5,9 +5,13 @@ import { executeQuery } from "../config/database.js";
 
 export interface AuthenticatedUser {
   id: string;
+  username: string;
   name: string;
+  avatar_emoji: string | null;
+  avatar_image: string | null;
   role: "husband" | "wife";
   partner_id: string | null;
+  theme_preferences: unknown;
 }
 
 export interface AuthenticatedRequest extends Request {
@@ -36,7 +40,7 @@ export async function authMiddleware(
         const payload = jwt.verify(token, env.JWT_SECRET) as any;
         if (payload && payload.userId) {
           const users = await executeQuery<any>(
-            `SELECT id, name, role, partner_id FROM users WHERE id = ? LIMIT 1`,
+            `SELECT id, username, name, avatar_emoji, avatar_image, role, partner_id, theme_preferences FROM users WHERE id = ? LIMIT 1`,
             [payload.userId]
           );
 
@@ -48,36 +52,8 @@ export async function authMiddleware(
           }
         }
       } catch (tokenErr) {
-        // Token invalid, fall through
+        // Token invalid, fall through to 401
       }
-    }
-
-    // In local development: fallback to first user in DB if exists, or a default couple user
-    if (env.NODE_ENV === "development") {
-      try {
-        const users = await executeQuery<any>(
-          `SELECT id, name, role, partner_id FROM users ORDER BY created_at ASC LIMIT 1`
-        );
-        if (users.length > 0) {
-          req.userId = users[0].id;
-          req.partnerId = users[0].partner_id;
-          req.user = users[0];
-          return next();
-        }
-      } catch (dbErr) {
-        // DB not available or empty
-      }
-
-      // Default mock user for standalone finance tracker dev
-      req.userId = "dev-user-001";
-      req.partnerId = "dev-user-002";
-      req.user = {
-        id: "dev-user-001",
-        name: "Fikri",
-        role: "husband",
-        partner_id: "dev-user-002",
-      };
-      return next();
     }
 
     return res.status(401).json({ success: false, error: "Unauthorized: Token tidak valid atau tidak ditemukan" });
