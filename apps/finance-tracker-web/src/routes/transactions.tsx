@@ -17,6 +17,10 @@ import {
   Card,
   Input,
   Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "../components/ui";
 import {
   useDeleteTransactionMutation,
@@ -212,15 +216,20 @@ function TransactionsPage() {
           {/* Category Dropdown */}
           <div>
             <Select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              value={selectedCategory || "all"}
+              onValueChange={(value) => setSelectedCategory(value === "all" ? "" : value)}
             >
-              <option value="">Semua Kategori</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name} ({c.type === "income" ? "Pemasukan" : "Pengeluaran"})
-                </option>
-              ))}
+              <SelectTrigger>
+                <SelectValue placeholder="Semua Kategori" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Semua Kategori</SelectItem>
+                {categories.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name} ({c.type === "income" ? "Pemasukan" : "Pengeluaran"})
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
           </div>
         </div>

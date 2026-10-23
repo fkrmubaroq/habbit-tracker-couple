@@ -26,6 +26,10 @@ import {
   Button,
   Input,
   Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Card,
 } from "../components/ui";
 
@@ -346,16 +350,18 @@ function NetWorthPage() {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-bold text-text-secondary">Kategori Aset</label>
-              <Select
-                value={assetCategory}
-                onChange={(e) => setAssetCategory(e.target.value)}
-              >
-                <option value="Tabungan">Tabungan / Rekening</option>
-                <option value="Investasi">Investasi / Saham / Reksadana</option>
-                <option value="Logam Mulia">Logam Mulia / Emas</option>
-                <option value="Properti">Properti / Tanah / Bangunan</option>
-                <option value="Kendaraan">Kendaraan</option>
-                <option value="Lainnya">Aset Lainnya</option>
+              <Select value={assetCategory} onValueChange={setAssetCategory}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih Kategori Aset" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Tabungan">Tabungan / Rekening</SelectItem>
+                  <SelectItem value="Investasi">Investasi / Saham / Reksadana</SelectItem>
+                  <SelectItem value="Logam Mulia">Logam Mulia / Emas</SelectItem>
+                  <SelectItem value="Properti">Properti / Tanah / Bangunan</SelectItem>
+                  <SelectItem value="Kendaraan">Kendaraan</SelectItem>
+                  <SelectItem value="Lainnya">Aset Lainnya</SelectItem>
+                </SelectContent>
               </Select>
             </div>
 
@@ -418,15 +424,17 @@ function NetWorthPage() {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-bold text-text-secondary">Kategori</label>
-              <Select
-                value={liabilityCategory}
-                onChange={(e) => setLiabilityCategory(e.target.value)}
-              >
-                <option value="KPR">KPR</option>
-                <option value="Kendaraan">Cicilan Kendaraan</option>
-                <option value="Kartu Kredit">Kartu Kredit</option>
-                <option value="Pinjaman Bank">Pinjaman Bank</option>
-                <option value="Lainnya">Hutang Lainnya</option>
+              <Select value={liabilityCategory} onValueChange={setLiabilityCategory}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih Kategori" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="KPR">KPR</SelectItem>
+                  <SelectItem value="Kendaraan">Cicilan Kendaraan</SelectItem>
+                  <SelectItem value="Kartu Kredit">Kartu Kredit</SelectItem>
+                  <SelectItem value="Pinjaman Bank">Pinjaman Bank</SelectItem>
+                  <SelectItem value="Lainnya">Hutang Lainnya</SelectItem>
+                </SelectContent>
               </Select>
             </div>
 

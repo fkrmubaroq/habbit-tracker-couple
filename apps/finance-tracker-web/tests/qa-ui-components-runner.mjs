@@ -50,12 +50,17 @@ test("PB-1: @repo/ui exports Input component with forwardRef", () => {
   assert(content.includes("export { Input }"), "Must export Input");
 });
 
-test("PB-1: @repo/ui exports Select component with ChevronDown", () => {
+test("PB-1: @repo/ui exports shadcn-style Select compound built on Radix", () => {
   const content = fs.readFileSync(path.join(repoUiDir, "components/select.tsx"), "utf-8");
-  assert(content.includes("export interface SelectProps"), "Must export SelectProps");
-  assert(content.includes("const Select = React.forwardRef"), "Select must use React.forwardRef");
+  assert(content.includes('from "radix-ui"'), "Select must be built on radix-ui primitives");
+  assert(content.includes("SelectPrimitive.Trigger"), "Select must render Radix Trigger");
+  assert(content.includes("SelectPrimitive.Content"), "Select must render Radix Content");
+  assert(content.includes("SelectPrimitive.Item"), "Select must render Radix Item");
   assert(content.includes("ChevronDown"), "Select must include ChevronDown icon");
-  assert(content.includes("export { Select }"), "Must export Select");
+  for (const name of ["SelectTrigger", "SelectContent", "SelectItem", "SelectValue"]) {
+    assert(content.includes(name), `Must export ${name}`);
+  }
+  assert(!content.includes("<select"), "Must not render a native <select> element");
 });
 
 test("PB-1: @repo/ui exports Textarea component with forwardRef", () => {

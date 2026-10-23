@@ -25,6 +25,10 @@ import {
   Button,
   Input,
   Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Card,
 } from "../components/ui";
 
@@ -248,20 +252,25 @@ function BudgetPage() {
                 Kategori Pengeluaran
               </label>
               <Select
-                value={selectedCatId}
-                onChange={(e) => setSelectedCatId(e.target.value)}
+                value={selectedCatId || undefined}
+                onValueChange={setSelectedCatId}
               >
-                {availableCategories.length === 0 ? (
-                  <option value="" disabled>
-                    Semua kategori pengeluaran telah dialokasikan
-                  </option>
-                ) : (
-                  availableCategories.map((c) => (
-                    <option key={c.id} value={c.id}>
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={
+                      availableCategories.length === 0
+                        ? "Semua kategori pengeluaran telah dialokasikan"
+                        : "Pilih Kategori"
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableCategories.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
                       {c.name}
-                    </option>
-                  ))
-                )}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </div>
 

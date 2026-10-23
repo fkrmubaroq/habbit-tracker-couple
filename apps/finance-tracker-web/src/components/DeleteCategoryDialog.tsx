@@ -9,6 +9,10 @@ import {
   DialogDescription,
   Button,
   Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "./ui";
 
 interface DeleteCategoryDialogProps {
@@ -76,18 +80,22 @@ export function DeleteCategoryDialog({
               Pilih Kategori Pengganti:
             </label>
             <Select
-              value={replacementId}
-              onChange={(e) => {
-                setReplacementId(e.target.value);
+              value={replacementId || undefined}
+              onValueChange={(value) => {
+                setReplacementId(value);
                 setError(null);
               }}
             >
-              <option value="">-- Pilih Kategori Pengganti --</option>
-              {availableReplacements.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
+              <SelectTrigger>
+                <SelectValue placeholder="-- Pilih Kategori Pengganti --" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableReplacements.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
           </div>
 

@@ -5,7 +5,7 @@ import { useToastStore } from "../stores/toast.store";
 import type { Habit } from "../types/index";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Select } from "./ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea";
 
 const EMOJIS = ["🏋️‍♂️", "📖", "🧘‍♂️", "💧", "🌹", "📊", "🍱", "🩺", "🧹", "🧠", "🏃‍♂️", "🥑", "🛌"];
@@ -152,12 +152,17 @@ export function HabitForm({
         <label className="text-xs font-extrabold text-text-primary">{t("habits.frequency")}</label>
         <Select
           value={frequency}
-          onChange={(e) => setFrequency(e.target.value as any)}
+          onValueChange={(value) => setFrequency(value as any)}
           disabled={isPending}
         >
-          <option value="daily">{t("dashboard.daily")}</option>
-          <option value="weekly">{t("dashboard.weekly")}</option>
-          <option value="monthly">{t("dashboard.monthly")}</option>
+          <SelectTrigger>
+            <SelectValue placeholder={t("habits.frequency")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="daily">{t("dashboard.daily")}</SelectItem>
+            <SelectItem value="weekly">{t("dashboard.weekly")}</SelectItem>
+            <SelectItem value="monthly">{t("dashboard.monthly")}</SelectItem>
+          </SelectContent>
         </Select>
       </div>
 

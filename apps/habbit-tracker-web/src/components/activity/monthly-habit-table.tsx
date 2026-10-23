@@ -6,7 +6,7 @@ import { useMyLogs, usePartnerLogs, useToggleCompletion } from "../../hooks/use-
 import { useMyHabits, usePartnerHabits } from "../../hooks/use-habits";
 import { usePartnerProfile } from "../../hooks/use-partner";
 import type { Habit } from "../../types/index";
-import { Select } from "../ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useToastStore } from "../../stores/toast.store";
 
 interface MonthlyHabitTableProps {
@@ -215,31 +215,52 @@ export function MonthlyHabitTable({ currentUserId }: MonthlyHabitTableProps) {
         {/* Month Selector */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">{t("activity.select_month")}</label>
-          <Select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}>
-            {months.map((m, idx) => (
-              <option key={m} value={idx}>{m}</option>
-            ))}
+          <Select
+            value={String(selectedMonth)}
+            onValueChange={(value) => setSelectedMonth(Number(value))}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={t("activity.select_month")} />
+            </SelectTrigger>
+            <SelectContent>
+              {months.map((m, idx) => (
+                <SelectItem key={m} value={String(idx)}>{m}</SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </div>
 
         {/* Year Selector */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">{t("activity.select_year")}</label>
-          <Select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}>
-            {years.map((y) => (
-              <option key={y} value={y}>{y}</option>
-            ))}
+          <Select
+            value={String(selectedYear)}
+            onValueChange={(value) => setSelectedYear(Number(value))}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={t("activity.select_year")} />
+            </SelectTrigger>
+            <SelectContent>
+              {years.map((y) => (
+                <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </div>
 
         {/* Frequency Selector */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">{t("habits.frequency")}</label>
-          <Select value={frequencyFilter} onChange={(e) => setFrequencyFilter(e.target.value as any)}>
-            <option value="all">{t("activity.filter_all")}</option>
-            <option value="daily">{t("dashboard.daily")}</option>
-            <option value="weekly">{t("dashboard.weekly")}</option>
-            <option value="monthly">{t("dashboard.monthly")}</option>
+          <Select value={frequencyFilter} onValueChange={(value) => setFrequencyFilter(value as any)}>
+            <SelectTrigger>
+              <SelectValue placeholder={t("habits.frequency")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t("activity.filter_all")}</SelectItem>
+              <SelectItem value="daily">{t("dashboard.daily")}</SelectItem>
+              <SelectItem value="weekly">{t("dashboard.weekly")}</SelectItem>
+              <SelectItem value="monthly">{t("dashboard.monthly")}</SelectItem>
+            </SelectContent>
           </Select>
         </div>
       </div>

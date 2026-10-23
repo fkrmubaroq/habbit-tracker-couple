@@ -20,6 +20,10 @@ import {
   Card,
   Input,
   Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Textarea,
 } from "../components/ui";
 
@@ -208,17 +212,20 @@ function CreateTransactionPage() {
               control={control}
               render={({ field }) => (
                 <Select
-                  {...field}
+                  value={field.value || undefined}
+                  onValueChange={field.onChange}
                   disabled={isLoadingCategories}
                 >
-                  <option value="" disabled>
-                    Pilih Kategori...
-                  </option>
-                  {filteredCategories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
+                  <SelectTrigger ref={field.ref} onBlur={field.onBlur}>
+                    <SelectValue placeholder="Pilih Kategori..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filteredCategories.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               )}
             />

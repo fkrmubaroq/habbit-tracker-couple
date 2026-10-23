@@ -8,7 +8,7 @@ import { useMyLogs, usePartnerLogs } from "../../hooks/use-habit-logs";
 import { useMyHabits, usePartnerHabits } from "../../hooks/use-habits";
 import { usePartnerProfile } from "../../hooks/use-partner";
 import type { Habit } from "../../types/index";
-import { Select } from "../ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { YearlyActivityStats } from "./yearly-activity-stats";
 
 dayjs.extend(dayOfYear);
@@ -278,37 +278,55 @@ export function YearlyActivityHeatmap({ currentUserId }: YearlyActivityHeatmapPr
         {/* Year Selector */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">{t("activity.select_year")}</label>
-          <Select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}>
-            {years.map((y) => (
-              <option key={y} value={y}>{y}</option>
-            ))}
+          <Select
+            value={String(selectedYear)}
+            onValueChange={(value) => setSelectedYear(Number(value))}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={t("activity.select_year")} />
+            </SelectTrigger>
+            <SelectContent>
+              {years.map((y) => (
+                <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </div>
 
         {/* User Selector */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">{t("activity.select_user")}</label>
-          <Select value={userFilter} onChange={(e) => setUserFilter(e.target.value as any)}>
-            <option value="me">{t("activity.user_me")}</option>
-            {partner && (
-              <>
-                <option value="partner">{partner.name}</option>
-                <option value="couple">{t("activity.user_couple")}</option>
-              </>
-            )}
+          <Select value={userFilter} onValueChange={(value) => setUserFilter(value as any)}>
+            <SelectTrigger>
+              <SelectValue placeholder={t("activity.select_user")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="me">{t("activity.user_me")}</SelectItem>
+              {partner && (
+                <>
+                  <SelectItem value="partner">{partner.name}</SelectItem>
+                  <SelectItem value="couple">{t("activity.user_couple")}</SelectItem>
+                </>
+              )}
+            </SelectContent>
           </Select>
         </div>
 
         {/* Habit Selector */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">{t("activity.select_habit")}</label>
-          <Select value={habitFilter} onChange={(e) => setHabitFilter(e.target.value)}>
-            <option value="all">{t("activity.all_habits")}</option>
-            {habitsDropdownList.map((h) => (
-              <option key={h.id} value={h.id}>
-                {h.icon_emoji} {h.title}
-              </option>
-            ))}
+          <Select value={habitFilter} onValueChange={setHabitFilter}>
+            <SelectTrigger>
+              <SelectValue placeholder={t("activity.select_habit")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t("activity.all_habits")}</SelectItem>
+              {habitsDropdownList.map((h) => (
+                <SelectItem key={h.id} value={h.id}>
+                  {h.icon_emoji} {h.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </div>
       </div>
