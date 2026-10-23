@@ -11,6 +11,7 @@ import { Button } from "../components/ui/button";
 import { BottomNavigation } from "../components/navigation/bottom-navigation";
 import { useSession } from "../hooks/use-session";
 import { useAuthStore } from "../stores/auth.store";
+import { useToastStore } from "../stores/toast.store";
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -23,14 +24,19 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RootComponent() {
   const { user, logout } = useAuthStore();
   const { isAuthenticated, isLoading } = useSession();
+  const { showToast } = useToastStore();
 
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
 
   const handleLogout = async () => {
-    await logout();
-    navigate({ to: "/login" });
+    try {
+      await logout();
+      navigate({ to: "/login" });
+    } catch {
+      showToast(t("common.logout_failed", { defaultValue: "Gagal logout. Periksa koneksi lalu coba lagi." }), "error");
+    }
   };
 
   const isAuthPage = location.pathname === "/login" || location.pathname === "/register";

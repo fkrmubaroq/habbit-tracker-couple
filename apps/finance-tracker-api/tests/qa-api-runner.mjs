@@ -2,7 +2,13 @@
 // Automated verification suite for couple-finances REST API with tagged test data and explicit teardown.
 
 const BASE_URL = process.env.API_URL || "http://localhost:1907";
+const HABIT_API_URL = process.env.HABIT_API_URL || "http://localhost:5000";
+const QA_USERNAME = process.env.QA_USERNAME || "romeo";
+const QA_PASSWORD = process.env.QA_PASSWORD || "password123";
 const TAG = "qa-test-" + Date.now();
+
+const rawFetch = fetch;
+let authCookie = "";
 
 let testsPassed = 0;
 let testsFailed = 0;
@@ -12,6 +18,43 @@ function assert(condition, message) {
   if (!condition) {
     throw new Error("Assertion failed: " + message);
   }
+}
+
+/**
+ * Session is issued by habbit-tracker-api and shared via the `token` cookie.
+ * finance-tracker-api has no dev fallback anymore, so every request must carry it.
+ */
+async function login() {
+  const res = await rawFetch(`${HABIT_API_URL}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: QA_USERNAME, password: QA_PASSWORD }),
+  });
+
+  if (res.status !== 200) {
+    throw new Error(
+      `Login to ${HABIT_API_URL} failed with ${res.status}. ` +
+        `Seed the database (pnpm db:seed) or set QA_USERNAME/QA_PASSWORD.`
+    );
+  }
+
+  const raw =
+    typeof res.headers.getSetCookie === "function"
+      ? res.headers.getSetCookie().join("; ")
+      : res.headers.get("set-cookie") || "";
+  const match = raw.match(/(?:^|,\s*)token=([^;]+)/);
+
+  if (!match) {
+    throw new Error("Login succeeded but no `token` cookie was returned");
+  }
+
+  authCookie = `token=${match[1]}`;
+}
+
+async function authedFetch(url, options = {}) {
+  const headers = { ...(options.headers || {}) };
+  if (authCookie) headers.Cookie = authCookie;
+  return rawFetch(url, { ...options, headers });
 }
 
 async function runTest(id, name, fn) {
@@ -34,6 +77,16 @@ async function main() {
   console.log(`Target: ${BASE_URL} | Session Tag: ${TAG}`);
   console.log("=================================================");
 
+  try {
+    await login();
+    console.log(`Authenticated as ${QA_USERNAME} via ${HABIT_API_URL}`);
+  } catch (err) {
+    console.log("");
+    console.log("PREFLIGHT FAILED: " + err.message);
+    process.exitCode = 1;
+    return;
+  }
+
   // Tracking created entities for teardown
   const created = {
     categories: [],
@@ -47,7 +100,7 @@ async function main() {
   try {
     // TC2-1: Health check
     await runTest("TC2-1", "Health check & database connectivity", async () => {
-      const res = await fetch(`${BASE_URL}/health`);
+      const res = await authedFetch(`${BASE_URL}/health`);
       assert(res.status === 200, `Expected 200, got ${res.status}`);
       const json = await res.json();
       assert(json.status === "ok", "Expected status ok");
@@ -57,7 +110,7 @@ async function main() {
     // TC1-3: Seed categories verification
     let defaultCatId = "";
     await runTest("TC1-3", "Seed categories availability (16 categories)", async () => {
-      const res = await fetch(`${BASE_URL}/api/categories`);
+      const res = await authedFetch(`${BASE_URL}/api/categories`);
       assert(res.status === 200, `Expected 200, got ${res.status}`);
       const json = await res.json();
       assert(json.success === true, "Expected success true");
@@ -69,12 +122,12 @@ async function main() {
 
     // TC2-2: Settings get and update initial balance
     await runTest("TC2-2", "Settings initial_balance get and update", async () => {
-      const getRes = await fetch(`${BASE_URL}/api/settings`);
+      const getRes = await authedFetch(`${BASE_URL}/api/settings`);
       const getJson = await getRes.json();
       assert(getRes.status === 200, `Expected 200, got ${getRes.status}`);
       created.originalInitialBalance = getJson.data?.initial_balance || 0;
 
-      const putRes = await fetch(`${BASE_URL}/api/settings`, {
+      const putRes = await authedFetch(`${BASE_URL}/api/settings`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ initial_balance: 5000000 }),
@@ -88,7 +141,7 @@ async function main() {
     let catA_id = "";
     let catB_id = "";
     await runTest("TC2-3", "Create custom categories for couple", async () => {
-      const resA = await fetch(`${BASE_URL}/api/categories`, {
+      const resA = await authedFetch(`${BASE_URL}/api/categories`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -103,7 +156,7 @@ async function main() {
       catA_id = jsonA.data.id;
       created.categories.push(catA_id);
 
-      const resB = await fetch(`${BASE_URL}/api/categories`, {
+      const resB = await authedFetch(`${BASE_URL}/api/categories`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -124,7 +177,7 @@ async function main() {
     let txExpenseId = "";
     await runTest("TC2-6", "Record Income and Expense transactions", async () => {
       // Income 10,000,000
-      const resInc = await fetch(`${BASE_URL}/api/transactions`, {
+      const resInc = await authedFetch(`${BASE_URL}/api/transactions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -142,7 +195,7 @@ async function main() {
       created.transactions.push(txIncomeId);
 
       // Expense 2,500,000 in Cat-A
-      const resExp = await fetch(`${BASE_URL}/api/transactions`, {
+      const resExp = await authedFetch(`${BASE_URL}/api/transactions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -162,7 +215,7 @@ async function main() {
 
     // TC2-7: Transaction validation error on invalid input
     await runTest("TC2-7", "Validation error on missing description and negative amount", async () => {
-      const res = await fetch(`${BASE_URL}/api/transactions`, {
+      const res = await authedFetch(`${BASE_URL}/api/transactions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -181,7 +234,7 @@ async function main() {
 
     // TC2-8: Filter & Search transactions
     await runTest("TC2-8", "Filter and search transactions by keyword and type", async () => {
-      const res = await fetch(`${BASE_URL}/api/transactions?search=${encodeURIComponent(TAG)}&type=expense`);
+      const res = await authedFetch(`${BASE_URL}/api/transactions?search=${encodeURIComponent(TAG)}&type=expense`);
       assert(res.status === 200, `Expected 200, got ${res.status}`);
       const json = await res.json();
       assert(json.data.length >= 1, "Expected matching expense transaction");
@@ -190,7 +243,7 @@ async function main() {
 
     // TC2-10: Overview calculation & running balance
     await runTest("TC2-10", "Overview running balance = Initial + Income - Expense", async () => {
-      const res = await fetch(`${BASE_URL}/api/overview`);
+      const res = await authedFetch(`${BASE_URL}/api/overview`);
       assert(res.status === 200, `Expected 200, got ${res.status}`);
       const json = await res.json();
       // Current balance should be 5000000 (initial) + 10000000 (income) - 2500000 (expense) = 12500000
@@ -204,7 +257,7 @@ async function main() {
       const now = new Date();
       const monthYear = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
-      const res = await fetch(`${BASE_URL}/api/budgets`, {
+      const res = await authedFetch(`${BASE_URL}/api/budgets`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -218,7 +271,7 @@ async function main() {
       const json = await res.json();
       created.budgets.push(json.data.id);
 
-      const listRes = await fetch(`${BASE_URL}/api/budgets?month_year=${monthYear}`);
+      const listRes = await authedFetch(`${BASE_URL}/api/budgets?month_year=${monthYear}`);
       const listJson = await listRes.json();
       const budgetA = listJson.data.find((b) => b.category_id === catA_id);
       assert(!!budgetA, "Expected budget for catA in list");
@@ -230,7 +283,7 @@ async function main() {
     // TC5-2: Update budget threshold
     await runTest("TC5-2", "Update budget threshold amount", async () => {
       const bId = created.budgets[0];
-      const putRes = await fetch(`${BASE_URL}/api/budgets/${bId}`, {
+      const putRes = await authedFetch(`${BASE_URL}/api/budgets/${bId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: 5000000 }),
@@ -242,7 +295,7 @@ async function main() {
 
     // TC6-1: Reports aggregation
     await runTest("TC6-1", "Reports aggregated metrics and cash flow trends", async () => {
-      const res = await fetch(`${BASE_URL}/api/reports?startDate=2026-10-01&endDate=2026-10-31`);
+      const res = await authedFetch(`${BASE_URL}/api/reports?startDate=2026-10-01&endDate=2026-10-31`);
       assert(res.status === 200, `Expected 200, got ${res.status}`);
       const json = await res.json();
       assert(json.data.total_income === 10000000, `Expected total_income 10000000, got ${json.data.total_income}`);
@@ -257,7 +310,7 @@ async function main() {
     let liabId = "";
     await runTest("TC7-1", "Net Worth = Liquid Cash + Assets - Liabilities", async () => {
       // Add Asset: 20,000,000
-      const aRes = await fetch(`${BASE_URL}/api/assets`, {
+      const aRes = await authedFetch(`${BASE_URL}/api/assets`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -273,7 +326,7 @@ async function main() {
       created.assets.push(assetId);
 
       // Add Liability: 5,000,000
-      const lRes = await fetch(`${BASE_URL}/api/liabilities`, {
+      const lRes = await authedFetch(`${BASE_URL}/api/liabilities`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -289,7 +342,7 @@ async function main() {
       created.liabilities.push(liabId);
 
       // Check Net Worth: 12,500,000 (liquid cash) + 20,000,000 (assets) - 5,000,000 (liabilities) = 27,500,000
-      const nwRes = await fetch(`${BASE_URL}/api/net-worth`);
+      const nwRes = await authedFetch(`${BASE_URL}/api/net-worth`);
       assert(nwRes.status === 200, `Expected 200, got ${nwRes.status}`);
       const nwJson = await nwRes.json();
       assert(nwJson.data.liquid_cash === 12500000, `Expected liquid cash 12500000, got ${nwJson.data.liquid_cash}`);
@@ -301,7 +354,7 @@ async function main() {
 
     // TC2-4 & TC2-5: Category deletion protection and reassign
     await runTest("TC2-4", "Category deletion blocked when transactions exist without replacement", async () => {
-      const res = await fetch(`${BASE_URL}/api/categories/${catA_id}`, { method: "DELETE" });
+      const res = await authedFetch(`${BASE_URL}/api/categories/${catA_id}`, { method: "DELETE" });
       assert(res.status === 400, `Expected 400, got ${res.status}`);
       const json = await res.json();
       assert(json.hasTransactions === true, "Expected hasTransactions flag true");
@@ -309,13 +362,13 @@ async function main() {
 
     await runTest("TC2-5", "Category deletion with reassign moves transactions to replacement category", async () => {
       // Delete Cat-A with replacement Cat-B
-      const res = await fetch(`${BASE_URL}/api/categories/${catA_id}?replacementCategoryId=${catB_id}`, {
+      const res = await authedFetch(`${BASE_URL}/api/categories/${catA_id}?replacementCategoryId=${catB_id}`, {
         method: "DELETE",
       });
       assert(res.status === 200, `Expected 200, got ${res.status}`);
 
       // Verify that txExpense now belongs to Cat-B
-      const txRes = await fetch(`${BASE_URL}/api/transactions/${txExpenseId}`);
+      const txRes = await authedFetch(`${BASE_URL}/api/transactions/${txExpenseId}`);
       assert(txRes.status === 200, `Expected 200, got ${txRes.status}`);
       const txJson = await txRes.json();
       assert(txJson.data.category_id === catB_id, `Expected transaction moved to catB (${catB_id}), got ${txJson.data.category_id}`);
@@ -326,7 +379,7 @@ async function main() {
 
     // TC2-9: Update transaction details
     await runTest("TC2-9", "Update transaction details (amount & notes)", async () => {
-      const putRes = await fetch(`${BASE_URL}/api/transactions/${txExpenseId}`, {
+      const putRes = await authedFetch(`${BASE_URL}/api/transactions/${txExpenseId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -342,7 +395,7 @@ async function main() {
 
     // TC7-3: Update manual asset
     await runTest("TC7-3", "Update manual asset valuation", async () => {
-      const putRes = await fetch(`${BASE_URL}/api/assets/${assetId}`, {
+      const putRes = await authedFetch(`${BASE_URL}/api/assets/${assetId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: 25000000 }),
@@ -357,22 +410,22 @@ async function main() {
     console.log("Teardown: Cleaning up tagged test data...");
 
     for (const txId of created.transactions) {
-      await fetch(`${BASE_URL}/api/transactions/${txId}`, { method: "DELETE" });
+      await authedFetch(`${BASE_URL}/api/transactions/${txId}`, { method: "DELETE" });
     }
     for (const bId of created.budgets) {
-      await fetch(`${BASE_URL}/api/budgets/${bId}`, { method: "DELETE" });
+      await authedFetch(`${BASE_URL}/api/budgets/${bId}`, { method: "DELETE" });
     }
     for (const aId of created.assets) {
-      await fetch(`${BASE_URL}/api/assets/${aId}`, { method: "DELETE" });
+      await authedFetch(`${BASE_URL}/api/assets/${aId}`, { method: "DELETE" });
     }
     for (const lId of created.liabilities) {
-      await fetch(`${BASE_URL}/api/liabilities/${lId}`, { method: "DELETE" });
+      await authedFetch(`${BASE_URL}/api/liabilities/${lId}`, { method: "DELETE" });
     }
     for (const cId of created.categories) {
-      await fetch(`${BASE_URL}/api/categories/${cId}`, { method: "DELETE" });
+      await authedFetch(`${BASE_URL}/api/categories/${cId}`, { method: "DELETE" });
     }
     // Restore initial balance
-    await fetch(`${BASE_URL}/api/settings`, {
+    await authedFetch(`${BASE_URL}/api/settings`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ initial_balance: created.originalInitialBalance }),

@@ -48,9 +48,26 @@
 - [x] Jalankan `pnpm check-types` dan pastikan seluruh workspace lulus
 - [x] Jalankan `pnpm lint` dan pastikan tidak ada error baru
 - [x] Jalankan `pnpm build` untuk memastikan kedua web app dan kedua API ter-build
-- [ ] Manual E2E — login di habit (`http://localhost:5173/login`) lalu buka finance (`http://localhost:5175`) dan pastikan langsung masuk tanpa diminta kredensial
-- [ ] Manual E2E — buka finance tanpa session (clear cookie), pastikan redirect ke login habit dengan `returnTo`, dan setelah login kembali ke halaman finance yang tadi dibuka
-- [ ] Manual E2E — logout di habit, lalu buka finance dan pastikan diarahkan ke login (session mati di kedua app)
-- [ ] Manual E2E — pastikan finance API menolak request tanpa cookie dengan `401` walau `NODE_ENV=development`
-- [ ] Manual E2E — pastikan `localStorage` habit tidak lagi berisi key `token`
-- [ ] Manual E2E — pastikan `returnTo` ke origin yang tidak terdaftar (mis. `https://evil.example`) diabaikan dan user mendarat di `/`
+
+> **CATATAN (2026-10-23, diperbarui setelah `/qa`):** Verifikasi manual E2E di bawah ini **SUDAH DIJALANKAN** terhadap server yang benar-benar hidup (habit API :5000, finance API :1907, MySQL 8 aktif) — bukan lagi dilewati. Hasil lengkap: `docs/qa/cross-app-sso/qa-report.md` (23/23 cek API + 3/3 cek bundle lulus). Keterbatasan: tidak ada framework browser E2E di repo ini, sehingga navigasi browser nyata (klik/redirect di UI) tidak dieksekusi; yang terbukti adalah setiap mekanismenya (`401`, konstruksi URL login di bundle, validasi `returnTo`, cookie lintas port, penghapusan cookie saat logout).
+
+- [x] Manual E2E — login di habit (`http://localhost:5173/login`) lalu buka finance (`http://localhost:5175`) dan pastikan langsung masuk tanpa diminta kredensial — **(API-level)** token habit diterima `finance /api/auth/me` (200, `romeo/husband`); cookie `HttpOnly`+`SameSite=Lax`+`Path=/` host-only sehingga terkirim lintas port
+- [x] Manual E2E — buka finance tanpa session (clear cookie), pastikan redirect ke login habit dengan `returnTo`, dan setelah login kembali ke halaman finance yang tadi dibuka — **(API-level + bundle)** finance menolak tanpa/invalid cookie dengan `401`; bundle memuat `login?returnTo`; `returnTo=http://localhost:5175/transactions` diterima dan dikembalikan sebagai `redirectTo`
+- [x] Manual E2E — logout di habit, lalu buka finance dan pastikan diarahkan ke login (session mati di kedua app) — **(API-level)** logout `200` + `Set-Cookie` penghapus (`Expires=1970`, `Path=/`, `HttpOnly`, `SameSite=Lax`); tanpa cookie finance `401`
+- [x] Manual E2E — pastikan finance API menolak request tanpa cookie dengan `401` walau `NODE_ENV=development` — **terverifikasi penuh** pada `/api/auth/me`, `/api/categories`, `/api/transactions`, dan token invalid
+- [x] Manual E2E — pastikan `localStorage` habit tidak lagi berisi key `token` — **terverifikasi penuh** (grep source & bundle produksi: tidak ada penulisan `token`)
+- [x] Manual E2E — pastikan `returnTo` ke origin yang tidak terdaftar (mis. `https://evil.example`) diabaikan dan user mendarat di `/` — **terverifikasi penuh**, termasuk 3 varian bypass (`/\evil.example`, tab-prefixed, `//evil.example`) yang semuanya ditolak (`redirectTo: null`)
+
+## Fase 7: Perbaikan Temuan Review (/gate)
+
+### Blocking
+- [x] **[SECURITY] Tutup bypass open redirect di `apps/habbit-tracker-api/src/utils/redirect.util.ts`.** Guard `value.startsWith("//")` saja tidak cukup: `/\evil.example` dan `/<tab>/evil.example` tetap lolos karena browser menormalkan backslash/tab menjadi `/` untuk skema http(s), sehingga `window.location.href` berakhir ke host eksternal. Terbukti: `new URL("/\\evil.example", "http://localhost:5173/login").href === "http://evil.example/"`. Perbaiki dengan menolak nilai yang mengandung `\`, karakter kontrol (`\t`, `\n`, `\r`), dan verifikasi ulang hasil akhir tetap ber-origin sama (mis. resolve terhadap base lalu bandingkan `origin`).
+- [x] **Perbaiki `apps/finance-tracker-api/tests/qa-api-runner.mjs` agar terautentikasi.** Runner ini melakukan 29 `fetch` ke `/api/*` tanpa cookie/token; setelah fallback dev dihapus, seluruh 16 test case akan gagal `401`. Tambahkan login lewat habit API di awal suite, simpan cookie `token`, dan kirimkan pada setiap request (plus sesuaikan teardown).
+
+### Non-blocking (tetap diselesaikan sebelum promote)
+- [x] Hapus file artefak build yang tidak sengaja ter-commit `apps/finance-tracker-web/.tanstack/tmp/c2c2bdff-2c38b8029552c532a9716fa825f528c2`, dan tambahkan `.tanstack/` ke `.gitignore`.
+- [x] Tangani kegagalan jaringan pada `logout()` di `apps/habbit-tracker-web/src/stores/auth.store.ts`: saat ini `.catch(() => undefined)` membuat state lokal bersih padahal cookie server masih hidup, sehingga user terlihat logout tapi kembali login setelah refresh. Tampilkan error dan jangan bersihkan state jika request gagal.
+
+## Fase 8: Review Closing
+- [x] Review (`/gate`) lulus setelah temuan Fase 7 diselesaikan — review 2026-10-23: tanpa temuan blocking. Fase 7 (open redirect, runner auth, artefak `.tanstack`, `logout()` swallow) terverifikasi diperbaiki. Catatan non-blocking dicatat di PRD changelog.
+

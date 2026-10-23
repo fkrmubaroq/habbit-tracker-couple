@@ -1,10 +1,29 @@
 import { env } from "../config/env.js";
 
+const RELATIVE_BASE = "https://redirect.invalid";
+
+// Backslashes and control characters are normalized to "/" by browsers for
+// http(s) URLs, which is how "/\evil.example" becomes a cross-origin redirect.
+const UNSAFE_CHARS = /[\\\u0000-\u001F\u007F]/;
+
 function allowedOrigins(): string[] {
   return (env.ALLOWED_REDIRECT_ORIGINS || "")
     .split(",")
     .map((origin) => origin.trim().replace(/\/$/, ""))
     .filter(Boolean);
+}
+
+function isSafeRelativePath(value: string): boolean {
+  if (!value.startsWith("/") || value.startsWith("//")) return false;
+  if (UNSAFE_CHARS.test(value)) return false;
+
+  // Resolve the way a browser would; anything that escapes the base origin is
+  // an absolute URL in disguise.
+  try {
+    return new URL(value, RELATIVE_BASE).origin === RELATIVE_BASE;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -19,9 +38,10 @@ export function resolveRedirectTarget(returnTo?: string | null): string | null {
   if (!value) return null;
 
   if (value.startsWith("/")) {
-    if (value.startsWith("//")) return null;
-    return value;
+    return isSafeRelativePath(value) ? value : null;
   }
+
+  if (UNSAFE_CHARS.test(value)) return null;
 
   try {
     const url = new URL(value);

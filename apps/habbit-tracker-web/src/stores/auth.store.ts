@@ -41,10 +41,17 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: async () => {
-    await fetch(`${API_BASE}/auth/logout`, {
+    const response = await fetch(`${API_BASE}/auth/logout`, {
       method: "POST",
       credentials: "include",
-    }).catch(() => undefined);
+    });
+
+    // Keep the local session intact on failure: clearing it would show the user
+    // as logged out while the server-side cookie is still alive.
+    if (!response.ok) {
+      throw new Error("Logout failed");
+    }
+
     localStorage.removeItem("user");
     set({ user: null, isAuthenticated: false, isLoading: false });
   },
