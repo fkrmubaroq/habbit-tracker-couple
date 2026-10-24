@@ -44,4 +44,4 @@ Use waves for large features. See `references/views.md` for views.
 Create manually (no CLI for views):
 All Work Items (table), Engineering Workflow (board by Status),
 Delivery Roadmap (roadmap), Development Sequence
-(table, filter `-delivery-stage:Tracking`, sort Delivery Stage then Target Date).
+(table, filter `-wave:Tracking`, sort Wave then Target Date).

@@ -146,7 +146,7 @@ habbit-tracker-couple/
    - Backend database choice is governed by `DB_PROVIDER` in `apps/habbit-tracker-api/.env` (`mysql`, `supabase`, or `neondb`).
    - In local dev without active MySQL, the backend server logs a warning and still starts up cleanly so frontend development is unblocked.
 3. **Frontend API Proxying**:
-   - Vite in `apps/habbit-tracker-web` proxies `/api` requests to `http://localhost:1906`.
+   - Vite in `apps/habbit-tracker-web` proxies `/api` requests to `http://localhost:5051`.
 4. **Environment Variables**:
    - Backend requires `PORT`, `NODE_ENV`, `DB_PROVIDER`, `JWT_SECRET`, plus relevant database credentials in `apps/habbit-tracker-api/.env`.
 
@@ -163,6 +163,12 @@ Repository ini dilengkapi dengan skill dan pipeline command dari [knitto-agent-s
 - `/gate` — **REVIEW**: Code review lima-axis dan security review sebelum rilis (`code-review-and-quality` & `security-review`).
 - `/promote` — **SHIP**: Membuka / update Pull Request ke branch trunk dan sync staging (`branching`).
 - `/skill-sync` — Memeriksa dan memperbarui skill, agent, dan command terhadap katalog upstream menggunakan `.agent-skills-lock.json`.
+
+Lokasi file (level project):
+- Skill: `.agents/skills/<nama>/SKILL.md` (30 skill + 5 adapter pipeline `grill`/`dev`/`qa`/`gate`/`promote`).
+- Slash command OpenCode: `.opencode/commands/<nama>.md` — wrapper tipis yang memanggil skill terkait, dibaca OpenCode sebagai `/nama`.
+- Agent: `.agents/agents/<nama>.md`.
+- Baseline sinkronisasi: `.agent-skills-lock.json` (saat ini commit `f23a0ae`).
 
 ### Subagents
 - `reviewer` (`.agents/agents/reviewer.md`) — Independent code reviewer berbasis lima-axis quality review.

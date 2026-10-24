@@ -85,9 +85,13 @@ An issue without a Test block is NOT Ready.
 - Waves run sequentially. Parallel work inside one wave is allowed.
 - Cross-PB parallelism is allowed unless they share the same repo or database.
 - Rule: if Depends is not Done, the issue stays in Todo/Backlog and must not start.
-- Record dependencies in the issue body (`Depends:`) and in project fields (`Status`, `Delivery Stage`).
+- Record dependencies in the issue body (`Depends:`) and in project fields (`Status`, `Wave`).
 
 Use waves whenever a feature is too large for a single issue.
+
+`Wave` is the **single** sequencing field on a board — there is no separate
+`Delivery Stage` field. The reserved value `Tracking` marks umbrella/parent
+container items that must be hidden from the Development Sequence view.
 
 ## Step 5 - Standard views
 
@@ -97,7 +101,7 @@ Every board must have these four views (see `references/views.md`):
 1. All Work Items (TABLE).
 2. Engineering Workflow (BOARD grouped by Status).
 3. Delivery Roadmap (ROADMAP by Target Date).
-4. Development Sequence (TABLE, filter `-delivery-stage:Tracking`, sorted by Delivery Stage S0-S5 then Target Date).
+4. Development Sequence (TABLE, filter `-wave:Tracking`, sorted by Wave W0-Wn then Target Date).
 
 ## References
 
