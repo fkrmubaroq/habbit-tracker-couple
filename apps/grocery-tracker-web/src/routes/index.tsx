@@ -16,13 +16,13 @@ import {
   ArrowRight,
   Filter,
 } from "lucide-react";
-import { Button } from "../../components/ui/button";
-import { groceryService } from "../../services/grocery.service";
-import type { GroceryItem } from "../../types/index";
-import { useToastStore } from "../../stores/toast.store";
-import { cn } from "../../lib/utils";
+import { Button } from "../components/ui/button";
+import { groceryService } from "../services/grocery.service";
+import type { GroceryItem } from "@repo/types";
+import { useToastStore } from "../stores/toast.store";
+import { cn } from "../lib/utils";
 
-export const Route = createFileRoute("/grocery-list/")({
+export const Route = createFileRoute("/")({
   component: GroceryChecklistPage,
 });
 
@@ -40,14 +40,14 @@ const CATEGORIES = [
 function GroceryChecklistPage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { addToast } = useToastStore();
+  const { showToast } = useToastStore();
 
   const [filterTab, setFilterTab] = React.useState<"pending" | "completed" | "all">("pending");
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
   const [quickItemName, setQuickItemName] = React.useState("");
 
   // Query grocery items
-  const { data: items = [], isLoading } = useQuery({
+  const { data: items = [], isLoading, isError, error } = useQuery({
     queryKey: ["grocery-items"],
     queryFn: () => groceryService.getItems(),
   });
@@ -64,7 +64,10 @@ function GroceryChecklistPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["grocery-items"] });
       setQuickItemName("");
-      addToast("Barang ditambahkan ke daftar!", "success");
+      showToast("Barang ditambahkan ke daftar!", "success");
+    },
+    onError: (err: Error) => {
+      showToast(err.message || "Gagal menambahkan barang", "error");
     },
   });
 
@@ -81,6 +84,9 @@ function GroceryChecklistPage() {
           origin: { y: 0.8 },
         });
       }
+    },
+    onError: (err: Error) => {
+      showToast(err.message || "Gagal mengubah status barang", "error");
     },
   });
 
@@ -142,7 +148,7 @@ function GroceryChecklistPage() {
             <Button
               variant="3d-secondary"
               size="sm"
-              onClick={() => navigate({ to: "/grocery-list/manage" })}
+              onClick={() => navigate({ to: "/manage" })}
               className="font-black text-xs flex items-center gap-1.5"
             >
               <ShoppingCart className="h-3.5 w-3.5" />
@@ -240,7 +246,7 @@ function GroceryChecklistPage() {
 
           {/* Quick link to Manage page */}
           <Link
-            to="/grocery-list/manage"
+            to="/manage"
             className="text-xs font-bold text-emerald-700 hover:text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl transition-all shrink-0"
           >
             + Kelola Lengkap
@@ -278,6 +284,24 @@ function GroceryChecklistPage() {
             <CheckSquare className="h-8 w-8 text-emerald-500 animate-bounce" />
             <span className="text-xs font-bold text-text-secondary mt-2">Memuat daftar belanjaan...</span>
           </div>
+        ) : isError ? (
+          <div className="flex flex-col items-center justify-center p-10 bg-card-surface border-3 border-dashed border-rose-300 rounded-3xl text-center">
+            <div className="h-16 w-16 rounded-full bg-rose-100 flex items-center justify-center text-3xl mb-2">
+              ⚠️
+            </div>
+            <h3 className="text-base font-black text-text-primary">Gagal memuat daftar belanja</h3>
+            <p className="text-xs font-bold text-text-secondary max-w-sm mt-1">
+              {error instanceof Error ? error.message : "Periksa koneksi lalu coba lagi."}
+            </p>
+            <Button
+              variant="3d"
+              size="sm"
+              onClick={() => queryClient.invalidateQueries({ queryKey: ["grocery-items"] })}
+              className="mt-4 font-black"
+            >
+              Coba Lagi
+            </Button>
+          </div>
         ) : filteredItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-10 bg-card-surface border-3 border-dashed border-border-color rounded-3xl text-center">
             {filterTab === "pending" && completedItems > 0 ? (
@@ -312,7 +336,7 @@ function GroceryChecklistPage() {
                 <Button
                   variant="3d"
                   size="sm"
-                  onClick={() => navigate({ to: "/grocery-list/manage" })}
+                  onClick={() => navigate({ to: "/manage" })}
                   className="mt-4 font-black"
                 >
                   Buka Kelola Belanja

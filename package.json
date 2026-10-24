@@ -10,6 +10,8 @@
     "db:seed": "turbo run db:seed --filter=@repo/habbit-tracker-api",
     "db:migrate:finance": "turbo run db:migrate --filter=@repo/finance-tracker-api",
     "db:seed:finance": "turbo run db:seed --filter=@repo/finance-tracker-api",
+    "db:migrate:grocery": "turbo run db:migrate --filter=@repo/grocery-tracker-api",
+    "db:seed:grocery": "turbo run db:seed --filter=@repo/grocery-tracker-api",
     "db:migrate:all": "turbo run db:migrate",
     "db:seed:all": "turbo run db:seed",
     "migrate:all": "turbo run db:migrate",

@@ -1,17 +1,20 @@
 import {
   Calendar,
-  CheckSquare,
   ClipboardList,
   Heart,
   HeartIcon,
   Home,
   Plus,
   Settings,
-  ShoppingBag,
   ShoppingCart,
   Wallet,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+
+/** Base URL of the standalone grocery app (apps/grocery-tracker-web). */
+export const GROCERY_APP_URL = (
+  import.meta.env.VITE_GROCERY_APP_URL || "http://localhost:4042"
+).replace(/\/$/, "");
 
 export interface AppNavItem {
   label: string;
@@ -71,7 +74,11 @@ export const APPS_REGISTRY: MiniApp[] = [
     id: "grocery-list",
     name: "Grocery List",
     slug: "grocery-list",
-    route: "/grocery-list",
+    // Grocery is its own deployment now (apps/grocery-tracker-web). Every link
+    // points at that app; `/grocery-list*` in this app only exists as a
+    // redirect shim for old bookmarks.
+    route: "#",
+    externalUrl: GROCERY_APP_URL,
     icon: ShoppingCart,
     emoji: "🛒",
     description: "Daftar belanjaan & kebutuhan dapur pasutri",
@@ -79,16 +86,7 @@ export const APPS_REGISTRY: MiniApp[] = [
     status: "active",
     themeColor: "text-emerald-500",
     bgLight: "bg-emerald-100",
-    navItems: [
-      { label: "grocery.nav_checklist", to: "/grocery-list", icon: CheckSquare },
-      { label: "grocery.nav_manage", to: "/grocery-list/manage", icon: ShoppingCart },
-      { label: "grocery.nav_settings", to: "/grocery-list/settings", icon: Settings },
-    ],
-    primaryAction: {
-      label: "grocery.add_item",
-      to: "/grocery-list/manage",
-      icon: Plus,
-    },
+    navItems: [],
   },
   {
     id: "couple-finances",
@@ -123,8 +121,5 @@ export const APPS_REGISTRY: MiniApp[] = [
 ];
 
 export function getActiveApp(pathname: string): MiniApp {
-  if (pathname.startsWith("/grocery-list")) {
-    return APPS_REGISTRY.find((app) => app.id === "grocery-list") || APPS_REGISTRY[0];
-  }
   return APPS_REGISTRY[0];
 }

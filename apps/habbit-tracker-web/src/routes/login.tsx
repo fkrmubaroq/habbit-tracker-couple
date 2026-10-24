@@ -46,6 +46,21 @@ function LoginComponent() {
     }
   }, [returnTo]);
 
+  // Nama app tujuan redirect lintas-app (habit login dipakai bersama grocery & finance).
+  const returnAppName = React.useMemo(() => {
+    if (!returnTo) return null;
+    try {
+      const origin = new URL(returnTo).origin;
+      const appNames: Record<string, string> = {
+        [import.meta.env.VITE_GROCERY_APP_URL || "http://localhost:4042"]: "Grocery List",
+        [import.meta.env.VITE_FINANCE_APP_URL || "http://localhost:4040"]: "Keuangan Pasutri",
+      };
+      return appNames[origin] ?? null;
+    } catch {
+      return null;
+    }
+  }, [returnTo]);
+
   // Dynamic schema for localized error messages
   const loginSchema = React.useMemo(() => {
     return z.object({
@@ -111,7 +126,13 @@ function LoginComponent() {
       {isReturningToOtherApp && (
         <div className="flex items-center gap-2 bg-highlight border-2 border-border-color text-text-secondary rounded-xl p-3 text-xs font-bold mb-4">
           <AlertCircle className="h-4 w-4 shrink-0" />
-          <span>{t("login.redirect_notice", { defaultValue: "Setelah masuk, kamu akan diarahkan kembali ke aplikasi Keuangan Pasutri." })}</span>
+          <span>
+            {returnAppName
+              ? `Setelah masuk, kamu akan diarahkan kembali ke aplikasi ${returnAppName}.`
+              : t("login.redirect_notice", {
+                  defaultValue: "Setelah masuk, kamu akan diarahkan kembali ke aplikasi tujuan.",
+                })}
+          </span>
         </div>
       )}
 

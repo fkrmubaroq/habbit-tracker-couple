@@ -4,6 +4,42 @@ import { AuthenticatedRequest } from "../../middleware/auth.middleware.js";
 import { groceryRepo, userRepo } from "../../repositories/repository.factory.js";
 import { GroceryItem } from "../../types/index.js";
 
+/**
+ * True when `item` belongs to the requesting couple.
+ *
+ * Mirrors the predicate used by `findForCouple`/`clearCompleted`: an item is
+ * visible to a couple when either side of it (`user_id` / `partner_id`) is
+ * one of the two users. `req.partnerId` is already loaded by
+ * `authMiddleware` from the shared `users` row, so this costs no extra query.
+ *
+ * Callers must answer 404 (not 403) when this is false, so that item ids
+ * belonging to other couples are indistinguishable from ids that don't exist.
+ */
+function isOwnedByCouple(item: GroceryItem, req: AuthenticatedRequest): boolean {
+  const userId = req.userId;
+  if (!userId) return false;
+
+  const partnerId = req.partnerId ?? null;
+
+  if (item.user_id === userId || item.partner_id === userId) return true;
+
+  // Only widen to the partner when the requester actually has one: comparing
+  // `null === null` would otherwise let any partnerless user touch every
+  // other partnerless user's items.
+  if (partnerId) {
+    if (item.user_id === partnerId || item.partner_id === partnerId) return true;
+  }
+
+  return false;
+}
+
+/** Loads the item and enforces couple ownership; returns null when it must 404. */
+async function findOwnedItem(id: string, req: AuthenticatedRequest): Promise<GroceryItem | null> {
+  const existing = await groceryRepo.findById(id);
+  if (!existing) return null;
+  return isOwnedByCouple(existing, req) ? existing : null;
+}
+
 export async function getGroceryItems(
   req: AuthenticatedRequest,
   res: Response,
@@ -60,7 +96,7 @@ export async function updateGroceryItem(
 ) {
   try {
     const { id } = req.params;
-    const existing = await groceryRepo.findById(id);
+    const existing = await findOwnedItem(id, req);
     if (!existing) {
       return res.status(404).json({ error: "Item belanjaan tidak ditemukan" });
     }
@@ -94,7 +130,7 @@ export async function toggleGroceryItem(
     const { id } = req.params;
     const { is_completed } = req.body;
 
-    const existing = await groceryRepo.findById(id);
+    const existing = await findOwnedItem(id, req);
     if (!existing) {
       return res.status(404).json({ error: "Item belanjaan tidak ditemukan" });
     }
@@ -113,7 +149,7 @@ export async function deleteGroceryItem(
 ) {
   try {
     const { id } = req.params;
-    const existing = await groceryRepo.findById(id);
+    const existing = await findOwnedItem(id, req);
     if (!existing) {
       return res.status(404).json({ error: "Item belanjaan tidak ditemukan" });
     }

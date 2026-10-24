@@ -12,15 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as GroceryListRouteImport } from './routes/grocery-list'
 import { Route as HabitsRouteImport } from './routes/habits'
 import { Route as ListHabitsRouteImport } from './routes/list-habits'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SharedGoalsRouteImport } from './routes/shared-goals'
-import { Route as GroceryListIndexRouteImport } from './routes/grocery-list/index'
-import { Route as GroceryListManageRouteImport } from './routes/grocery-list/manage'
-import { Route as GroceryListSettingsRouteImport } from './routes/grocery-list/settings'
+import { Route as GroceryListSplatRouteImport } from './routes/grocery-list.$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -35,6 +34,11 @@ const ActivityRoute = ActivityRouteImport.update({
 const AnalyticsRoute = AnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GroceryListRoute = GroceryListRouteImport.update({
+  id: '/grocery-list',
+  path: '/grocery-list',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HabitsRoute = HabitsRouteImport.update({
@@ -67,64 +71,51 @@ const SharedGoalsRoute = SharedGoalsRouteImport.update({
   path: '/shared-goals',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GroceryListIndexRoute = GroceryListIndexRouteImport.update({
-  id: '/grocery-list/',
-  path: '/grocery-list/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GroceryListManageRoute = GroceryListManageRouteImport.update({
-  id: '/grocery-list/manage',
-  path: '/grocery-list/manage',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GroceryListSettingsRoute = GroceryListSettingsRouteImport.update({
-  id: '/grocery-list/settings',
-  path: '/grocery-list/settings',
-  getParentRoute: () => rootRouteImport,
+const GroceryListSplatRoute = GroceryListSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => GroceryListRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
   '/analytics': typeof AnalyticsRoute
+  '/grocery-list': typeof GroceryListRouteWithChildren
   '/habits': typeof HabitsRoute
   '/list-habits': typeof ListHabitsRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
   '/shared-goals': typeof SharedGoalsRoute
-  '/grocery-list/manage': typeof GroceryListManageRoute
-  '/grocery-list/settings': typeof GroceryListSettingsRoute
-  '/grocery-list/': typeof GroceryListIndexRoute
+  '/grocery-list/$': typeof GroceryListSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
   '/analytics': typeof AnalyticsRoute
+  '/grocery-list': typeof GroceryListRouteWithChildren
   '/habits': typeof HabitsRoute
   '/list-habits': typeof ListHabitsRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
   '/shared-goals': typeof SharedGoalsRoute
-  '/grocery-list/manage': typeof GroceryListManageRoute
-  '/grocery-list/settings': typeof GroceryListSettingsRoute
-  '/grocery-list': typeof GroceryListIndexRoute
+  '/grocery-list/$': typeof GroceryListSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/activity': typeof ActivityRoute
   '/analytics': typeof AnalyticsRoute
+  '/grocery-list': typeof GroceryListRouteWithChildren
   '/habits': typeof HabitsRoute
   '/list-habits': typeof ListHabitsRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/settings': typeof SettingsRoute
   '/shared-goals': typeof SharedGoalsRoute
-  '/grocery-list/manage': typeof GroceryListManageRoute
-  '/grocery-list/settings': typeof GroceryListSettingsRoute
-  '/grocery-list/': typeof GroceryListIndexRoute
+  '/grocery-list/$': typeof GroceryListSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -132,58 +123,53 @@ export interface FileRouteTypes {
     | '/'
     | '/activity'
     | '/analytics'
+    | '/grocery-list'
     | '/habits'
     | '/list-habits'
     | '/login'
     | '/register'
     | '/settings'
     | '/shared-goals'
-    | '/grocery-list/manage'
-    | '/grocery-list/settings'
-    | '/grocery-list/'
+    | '/grocery-list/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/activity'
     | '/analytics'
+    | '/grocery-list'
     | '/habits'
     | '/list-habits'
     | '/login'
     | '/register'
     | '/settings'
     | '/shared-goals'
-    | '/grocery-list/manage'
-    | '/grocery-list/settings'
-    | '/grocery-list'
+    | '/grocery-list/$'
   id:
     | '__root__'
     | '/'
     | '/activity'
     | '/analytics'
+    | '/grocery-list'
     | '/habits'
     | '/list-habits'
     | '/login'
     | '/register'
     | '/settings'
     | '/shared-goals'
-    | '/grocery-list/manage'
-    | '/grocery-list/settings'
-    | '/grocery-list/'
+    | '/grocery-list/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivityRoute: typeof ActivityRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  GroceryListRoute: typeof GroceryListRouteWithChildren
   HabitsRoute: typeof HabitsRoute
   ListHabitsRoute: typeof ListHabitsRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
   SettingsRoute: typeof SettingsRoute
   SharedGoalsRoute: typeof SharedGoalsRoute
-  GroceryListManageRoute: typeof GroceryListManageRoute
-  GroceryListSettingsRoute: typeof GroceryListSettingsRoute
-  GroceryListIndexRoute: typeof GroceryListIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -207,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/grocery-list': {
+      id: '/grocery-list'
+      path: '/grocery-list'
+      fullPath: '/grocery-list'
+      preLoaderRoute: typeof GroceryListRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/habits': {
@@ -251,43 +244,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SharedGoalsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/grocery-list/': {
-      id: '/grocery-list/'
-      path: '/grocery-list'
-      fullPath: '/grocery-list/'
-      preLoaderRoute: typeof GroceryListIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/grocery-list/manage': {
-      id: '/grocery-list/manage'
-      path: '/grocery-list/manage'
-      fullPath: '/grocery-list/manage'
-      preLoaderRoute: typeof GroceryListManageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/grocery-list/settings': {
-      id: '/grocery-list/settings'
-      path: '/grocery-list/settings'
-      fullPath: '/grocery-list/settings'
-      preLoaderRoute: typeof GroceryListSettingsRouteImport
-      parentRoute: typeof rootRouteImport
+    '/grocery-list/$': {
+      id: '/grocery-list/$'
+      path: '/$'
+      fullPath: '/grocery-list/$'
+      preLoaderRoute: typeof GroceryListSplatRouteImport
+      parentRoute: typeof GroceryListRoute
     }
   }
 }
+
+interface GroceryListRouteChildren {
+  GroceryListSplatRoute: typeof GroceryListSplatRoute
+}
+
+const GroceryListRouteChildren: GroceryListRouteChildren = {
+  GroceryListSplatRoute: GroceryListSplatRoute,
+}
+
+const GroceryListRouteWithChildren = GroceryListRoute._addFileChildren(
+  GroceryListRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivityRoute: ActivityRoute,
   AnalyticsRoute: AnalyticsRoute,
+  GroceryListRoute: GroceryListRouteWithChildren,
   HabitsRoute: HabitsRoute,
   ListHabitsRoute: ListHabitsRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
   SettingsRoute: SettingsRoute,
   SharedGoalsRoute: SharedGoalsRoute,
-  GroceryListManageRoute: GroceryListManageRoute,
-  GroceryListSettingsRoute: GroceryListSettingsRoute,
-  GroceryListIndexRoute: GroceryListIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

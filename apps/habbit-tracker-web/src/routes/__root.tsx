@@ -1,11 +1,10 @@
 import { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import clsx from "clsx";
-import { Calendar, CheckSquare, ClipboardList, Heart, HeartIcon, Home, LogOut, Plus, Settings, ShoppingBag, ShoppingCart } from "lucide-react";
+import { Calendar, ClipboardList, Heart, HeartIcon, Home, LogOut, Plus, Settings } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { AppSwitcher } from "../components/app-switcher";
-import { getActiveApp } from "../config/apps.config";
 import { Toaster } from "../components/Toaster";
 import { Button } from "../components/ui/button";
 import { Sidebar, type SidebarLinkComponent } from "../components/ui/sidebar";
@@ -70,8 +69,6 @@ function RootComponent() {
     );
   }
 
-  const currentApp = getActiveApp(location.pathname);
-
   const habitNavItems = [
     { label: t("nav.home"), to: "/", icon: Home },
     { label: t("nav.goals"), to: "/shared-goals", icon: HeartIcon },
@@ -80,21 +77,11 @@ function RootComponent() {
     { label: t("nav.settings"), to: "/settings", icon: Settings },
   ];
 
-  const groceryNavItems = [
-    // Every grocery route has its own menu item, so exact matching is correct
-    // here. A prefix match on `/grocery-list` would light up two items at once.
-    { label: t("grocery.nav_checklist", { defaultValue: "Daftar Belanja" }), to: "/grocery-list", icon: CheckSquare },
-    { label: t("grocery.nav_manage", { defaultValue: "Belanja" }), to: "/grocery-list/manage", icon: ShoppingCart },
-    { label: t("grocery.nav_settings", { defaultValue: "Pengaturan" }), to: "/grocery-list/settings", icon: Settings },
-  ];
-
-  const activeNavItems = currentApp.id === "grocery-list" ? groceryNavItems : habitNavItems;
-
   return (
     <div className="min-h-screen bg-shared-bg flex flex-col md:flex-row">
       {/* Desktop Sidebar */}
       <Sidebar
-        items={activeNavItems}
+        items={habitNavItems}
         activePath={location.pathname}
         linkComponent={Link as unknown as SidebarLinkComponent}
         className="p-4 shadow-[1px_0_0_0_var(--border-color)]"
@@ -131,31 +118,14 @@ function RootComponent() {
         }
         footer={
           <div>
-            {currentApp.id === "grocery-list" ? (
-              <Button
-                onClick={() => {
-                  if (location.pathname !== "/grocery-list") {
-                    navigate({ to: "/grocery-list" });
-                  }
-                  const input = document.querySelector('input[placeholder*="Tulis barang"]') as HTMLInputElement;
-                  if (input) input.focus();
-                }}
-                variant="3d"
-                className="w-full mb-4 font-extrabold flex items-center justify-center gap-2"
-              >
-                <Plus className="h-5 w-5 stroke-3" />
-                <span>{t("grocery.add_item")}</span>
-              </Button>
-            ) : (
-              <Button
-                onClick={() => navigate({ to: "/habits" })}
-                variant="3d"
-                className="w-full mb-4 font-extrabold flex items-center justify-center gap-2"
-              >
-                <Plus className="h-5 w-5 stroke-3" />
-                <span>{t("habits.create_habit")}</span>
-              </Button>
-            )}
+            <Button
+              onClick={() => navigate({ to: "/habits" })}
+              variant="3d"
+              className="w-full mb-4 font-extrabold flex items-center justify-center gap-2"
+            >
+              <Plus className="h-5 w-5 stroke-3" />
+              <span>{t("habits.create_habit")}</span>
+            </Button>
             {/* Logout Button */}
             <button
               onClick={handleLogout}
