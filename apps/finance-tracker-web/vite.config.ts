@@ -13,11 +13,11 @@ export default defineConfig(({ mode }) => {
       tailwindcss(),
     ],
     server: {
-      port: 5175,
+      port: 4040,
       host: true,
       proxy: {
         "/api": {
-          target: env.VITE_BASE_URL_API || "http://localhost:1907",
+          target: env.VITE_BASE_URL_API || "http://localhost:5050",
           changeOrigin: true,
           secure: false,
         },

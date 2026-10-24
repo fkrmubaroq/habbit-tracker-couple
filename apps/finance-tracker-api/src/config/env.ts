@@ -12,16 +12,16 @@ dotenv.config();
 
 const envSchema = z
   .object({
-    PORT: z.coerce.number().default(1907),
+    PORT: z.coerce.number().default(5050),
     NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
     DB_PROVIDER: z.enum(["mysql", "supabase", "neondb"]).default("mysql"),
     JWT_SECRET: z.string().default("finance-tracker-couple-secret-key-1907"),
 
     // MySQL
-    MYSQL_HOST: z.string().default("127.0.0.1"),
-    MYSQL_USER: z.string().default("saenahow"),
+    MYSQL_HOST: z.string().default("localhost"),
+    MYSQL_USER: z.string().default("root"),
     MYSQL_PASSWORD: z.string().default("$Saenahow1905"),
-    MYSQL_DATABASE: z.string().default("habbit_tracker_couple"),
+    MYSQL_DATABASE: z.string().default("habbit_couple"),
     MYSQL_PORT: z.coerce.number().default(3306),
 
     // Postgres URL (when DB_PROVIDER is supabase / neondb)
