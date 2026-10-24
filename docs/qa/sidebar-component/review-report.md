@@ -2,7 +2,7 @@
 
 | Field | Nilai |
 |---|---|
-| Plan | `docs/prd/todo/sidebar-component/` (`PRD.md`, `ISSUES.md`) |
+| Plan | `docs/prd/done/sidebar-component/` (`PRD.md`, `ISSUES.md`) |
 | Verifikasi acuan | `docs/qa/sidebar-component/qa-report.md` (31/31 Passed) |
 | Tanggal review | 2026-10-24 |
 | Tahap pipeline | REVIEW (`/gate`) — setelah `/qa`, sebelum `/promote` |

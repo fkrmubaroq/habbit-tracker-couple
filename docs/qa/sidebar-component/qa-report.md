@@ -2,7 +2,7 @@
 
 | Field | Nilai |
 |---|---|
-| Plan | `docs/prd/todo/sidebar-component/` (`PRD.md`, `ISSUES.md`) |
+| Plan | `docs/prd/done/sidebar-component/` (`PRD.md`, `ISSUES.md`) |
 | Test matrix | `docs/qa/sidebar-component/test-matrix.md` |
 | Tanggal eksekusi | 2026-10-24 |
 | Tahap pipeline | VERIFY (`/qa`) — setelah `/dev`, sebelum `/gate` |

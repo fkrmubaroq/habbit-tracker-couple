@@ -6,7 +6,7 @@
 | IP DEV | http://localhost:4041, http://localhost:4040, http://localhost:5050 | TASK DEV | sidebar-component | | |
 | IP PROD | - | | | | |
 
-**Sumber requirement:** docs/prd/todo/sidebar-component/PRD.md, docs/prd/todo/sidebar-component/ISSUES.md
+**Sumber requirement:** docs/prd/done/sidebar-component/PRD.md, docs/prd/done/sidebar-component/ISSUES.md
 **Scope:** Komponen Sidebar & AppSwitcher bersama di @repo/ui, penerapannya di habbit-tracker-web dan finance-tracker-web, penyelarasan isi sidebar finance, endpoint logout finance, serta perbaikan regresi Tailwind dan active-state
 **Out of scope:** BottomNav bersama di @repo/ui, desain ulang visual, mobile top header kedua app, menu berbasis role, menu dari API, perubahan skema database/JWT
 
