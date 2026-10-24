@@ -5,7 +5,7 @@ import { z } from "zod";
 dotenv.config();
 
 const envSchema = z.object({
-  PORT: z.coerce.number().default(5000),
+  PORT: z.coerce.number().default(5051),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   DB_PROVIDER: z.enum(["mysql", "supabase", "neondb"]),
   JWT_SECRET: z.string().default("habitpasutri-default-secret-key-12345"),

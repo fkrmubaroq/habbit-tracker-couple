@@ -206,6 +206,204 @@ test("PB-5: __root.tsx and ThemeSwitcher.tsx adopt Button and Card", () => {
   assert(switcherContent.includes("<Button"), "ThemeSwitcher must render Button");
 });
 
+test("PB-Sidebar: shared Sidebar component exists in @repo/ui and is exported", () => {
+  const sidebarPath = path.join(repoUiDir, "components/sidebar.tsx");
+  assert(fs.existsSync(sidebarPath), "packages/ui/src/components/sidebar.tsx must exist");
+  const sidebarContent = fs.readFileSync(sidebarPath, "utf-8");
+  assert(sidebarContent.includes("export function Sidebar"), "sidebar.tsx must export Sidebar");
+  assert(sidebarContent.includes("export interface SidebarItem"), "sidebar.tsx must export SidebarItem");
+  assert(sidebarContent.includes("export function isSidebarItemActive"), "sidebar.tsx must export isSidebarItemActive");
+  const indexContent = fs.readFileSync(path.join(repoUiDir, "index.ts"), "utf-8");
+  assert(indexContent.includes('"./components/sidebar"'), "@repo/ui index must re-export sidebar");
+});
+
+test("PB-Sidebar: Sidebar stays router-agnostic (no TanStack Router import)", () => {
+  const sidebarContent = fs.readFileSync(path.join(repoUiDir, "components/sidebar.tsx"), "utf-8");
+  assert(!sidebarContent.includes("@tanstack/react-router"), "sidebar.tsx must not import @tanstack/react-router");
+  assert(sidebarContent.includes("linkComponent"), "sidebar.tsx must accept an injected linkComponent");
+});
+
+test("PB-Sidebar: both apps re-export Sidebar from components/ui", () => {
+  for (const [label, dir] of [["habbit", habbitWebDir], ["finance", financeWebDir]]) {
+    const wrapperPath = path.join(dir, "components/ui/sidebar.tsx");
+    assert(fs.existsSync(wrapperPath), `${label} app must have components/ui/sidebar.tsx`);
+    const wrapperContent = fs.readFileSync(wrapperPath, "utf-8");
+    assert(wrapperContent.includes("Sidebar"), `${label} wrapper must export Sidebar`);
+    assert(wrapperContent.includes("@repo/ui"), `${label} wrapper must re-export from @repo/ui`);
+  }
+});
+
+test("PB-Sidebar: neither __root.tsx keeps an inline <aside> sidebar", () => {
+  for (const [label, dir] of [["habbit", habbitWebDir], ["finance", financeWebDir]]) {
+    const content = fs.readFileSync(path.join(dir, "routes/__root.tsx"), "utf-8");
+    assert(!content.includes("<aside"), `${label} __root.tsx must not render an inline <aside>`);
+    assert(content.includes("<Sidebar"), `${label} __root.tsx must render <Sidebar>`);
+    assert(
+      content.includes('from "../components/ui/sidebar"'),
+      `${label} __root.tsx must import Sidebar from components/ui`
+    );
+  }
+});
+
+test("PB-Sidebar: finance bottom nav is extracted to its own component", () => {
+  const bottomNavPath = path.join(financeWebDir, "components/navigation/bottom-nav.tsx");
+  assert(fs.existsSync(bottomNavPath), "finance bottom-nav.tsx must exist");
+  const bottomNavContent = fs.readFileSync(bottomNavPath, "utf-8");
+  assert(bottomNavContent.includes("export function BottomNav"), "bottom-nav.tsx must export BottomNav");
+  assert(bottomNavContent.includes("items"), "BottomNav must accept items");
+  assert(bottomNavContent.includes("activePath"), "BottomNav must accept activePath");
+  const rootContent = fs.readFileSync(path.join(financeWebDir, "routes/__root.tsx"), "utf-8");
+  assert(rootContent.includes("<BottomNav"), "finance __root.tsx must render <BottomNav>");
+  assert(!rootContent.includes("md:hidden fixed bottom-0"), "finance __root.tsx must not keep inline bottom nav markup");
+});
+
+test("PB-Sidebar: nested routes keep their parent menu item active", () => {
+  const financeRoot = fs.readFileSync(path.join(financeWebDir, "routes/__root.tsx"), "utf-8");
+  assert(
+    /to:\s*"\/transactions"[^}]*match:\s*"prefix"/.test(financeRoot),
+    'finance /transactions item must use match: "prefix" (only it covers /transactions/create)'
+  );
+
+  const habbitRoot = fs.readFileSync(path.join(habbitWebDir, "routes/__root.tsx"), "utf-8");
+  assert(
+    !/to:\s*"\/grocery-list"[^}]*match:\s*"prefix"/.test(habbitRoot),
+    'habbit /grocery-list must stay exact: /manage and /settings have their own items, a prefix match would highlight two at once'
+  );
+});
+
+test("PB-Sidebar: Tailwind scans packages/ui so @repo/ui-only classes are generated", () => {
+  const stylesPath = path.join(repoRoot, "packages/tailwind-config/styles.css");
+  const stylesContent = fs.readFileSync(stylesPath, "utf-8");
+  assert(
+    /@source\s+"\.\.\/ui\/src"/.test(stylesContent),
+    "packages/tailwind-config/styles.css must register packages/ui via @source"
+  );
+
+  const cssDir = path.join(repoRoot, "apps/habbit-tracker-web/dist/assets");
+  if (fs.existsSync(cssDir)) {
+    const cssFile = fs
+      .readdirSync(cssDir)
+      .filter((f) => f.endsWith(".css"))
+      .map((f) => path.join(cssDir, f))
+      .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs)[0];
+    if (cssFile) {
+      const css = fs.readFileSync(cssFile, "utf-8");
+      assert(/\.md\\:flex\{display:flex\}/.test(css), "built CSS must contain the md:flex utility used by Sidebar");
+      assert(/\.w-64\{/.test(css), "built CSS must contain the w-64 utility used by Sidebar");
+    }
+  }
+});
+
+// 6. Sidebar Parity: shared AppSwitcher + finance logout
+function financeSidebarBlock() {
+  const rootContent = fs.readFileSync(path.join(financeWebDir, "routes/__root.tsx"), "utf-8");
+  const start = rootContent.indexOf("<Sidebar");
+  const end = rootContent.indexOf("\n      />", start);
+  assert(start !== -1 && end !== -1, "finance __root.tsx must contain a self-closing <Sidebar ... /> block");
+  return rootContent.slice(start, end);
+}
+
+test("PB-SidebarParity: shared AppSwitcher lives in @repo/ui and is exported", () => {
+  const switcherPath = path.join(repoUiDir, "components/app-switcher.tsx");
+  assert(fs.existsSync(switcherPath), "packages/ui/src/components/app-switcher.tsx must exist");
+  const content = fs.readFileSync(switcherPath, "utf-8");
+  assert(content.includes("export function AppSwitcher"), "app-switcher.tsx must export AppSwitcher");
+  assert(content.includes("export interface AppSwitcherApp"), "app-switcher.tsx must export AppSwitcherApp");
+  const indexContent = fs.readFileSync(path.join(repoUiDir, "index.ts"), "utf-8");
+  assert(indexContent.includes('"./components/app-switcher"'), "@repo/ui index must re-export app-switcher");
+});
+
+test("PB-SidebarParity: AppSwitcher stays router-agnostic (no TanStack Router import)", () => {
+  const content = fs.readFileSync(path.join(repoUiDir, "components/app-switcher.tsx"), "utf-8");
+  assert(!content.includes("@tanstack/react-router"), "app-switcher.tsx must not import @tanstack/react-router");
+  assert(content.includes("onSelect"), "app-switcher.tsx must delegate navigation through onSelect");
+  assert(content.includes("activeAppId"), "app-switcher.tsx must accept activeAppId");
+});
+
+test("PB-SidebarParity: both apps re-export AppSwitcher from components/ui", () => {
+  for (const [label, dir] of [["habbit", habbitWebDir], ["finance", financeWebDir]]) {
+    const wrapperPath = path.join(dir, "components/ui/app-switcher.tsx");
+    assert(fs.existsSync(wrapperPath), `${label} app must have components/ui/app-switcher.tsx`);
+    const wrapperContent = fs.readFileSync(wrapperPath, "utf-8");
+    assert(wrapperContent.includes("AppSwitcher"), `${label} wrapper must export AppSwitcher`);
+    assert(wrapperContent.includes("@repo/ui"), `${label} wrapper must re-export from @repo/ui`);
+  }
+});
+
+test("PB-SidebarParity: habit AppSwitcher is a thin wrapper over the shared component", () => {
+  const content = fs.readFileSync(path.join(habbitWebDir, "components/app-switcher.tsx"), "utf-8");
+  assert(content.includes('from "../components/ui/app-switcher"'), "habit must import the shared AppSwitcher");
+  assert(content.includes("APPS_REGISTRY"), "habit wrapper must keep using APPS_REGISTRY");
+  assert(!content.includes("ChevronsUpDown"), "habit must no longer own the switcher markup");
+});
+
+test("PB-SidebarParity: finance AppSwitcher navigates sibling apps by URL", () => {
+  const content = fs.readFileSync(path.join(financeWebDir, "components/app-switcher.tsx"), "utf-8");
+  assert(content.includes('from "../components/ui/app-switcher"'), "finance must import the shared AppSwitcher");
+  assert(content.includes("CURRENT_APP_ID"), "finance must pin its own active app id");
+  assert(content.includes("window.location.href"), "finance must navigate sibling apps by URL");
+
+  const configPath = path.join(financeWebDir, "config/apps.config.ts");
+  assert(fs.existsSync(configPath), "finance must define config/apps.config.ts");
+  const config = fs.readFileSync(configPath, "utf-8");
+  assert(config.includes('CURRENT_APP_ID = "couple-finances"'), "finance active app must be couple-finances");
+  for (const id of ["habit-pasutri", "grocery-list", "couple-finances", "couple-calendar"]) {
+    assert(config.includes(`id: "${id}"`), `finance switcher list must include ${id}`);
+  }
+});
+
+test("PB-SidebarParity: finance sidebar header uses AppSwitcher + profile card", () => {
+  const block = financeSidebarBlock();
+  assert(block.includes("<AppSwitcher"), "finance sidebar must render <AppSwitcher>");
+  assert(block.includes("header={"), "finance sidebar must keep a header slot");
+  assert(block.includes("user.avatar_emoji"), "finance sidebar header must render the user profile");
+});
+
+test("PB-SidebarParity: finance sidebar drops brand header, habit link, and theme toggle", () => {
+  const block = financeSidebarBlock();
+  assert(!block.includes("Keuangan Pasutri"), "finance sidebar must no longer render its own brand header");
+  assert(!block.includes("HABIT_APP_URL"), "finance sidebar must no longer link to the habit app");
+  assert(!block.includes("Buka Habit Tracker"), "finance sidebar must no longer show a manual app link");
+  assert(!block.includes("QuickThemeToggle"), "finance sidebar must no longer embed the theme toggle");
+});
+
+test("PB-SidebarParity: finance sidebar footer keeps the primary action and adds logout", () => {
+  const block = financeSidebarBlock();
+  assert(block.includes("footer={"), "finance sidebar must keep a footer slot");
+  assert(block.includes("+ Transaksi"), "finance sidebar footer must keep the primary action");
+  assert(block.includes("handleLogout"), "finance sidebar footer must wire a logout handler");
+  assert(block.includes("LogOut"), "finance sidebar footer must render the LogOut icon");
+});
+
+test("PB-SidebarParity: finance API exposes POST /api/auth/logout", () => {
+  const routes = fs.readFileSync(
+    path.join(repoRoot, "apps/finance-tracker-api/src/modules/auth/auth.routes.ts"),
+    "utf-8"
+  );
+  assert(/router\.post\(\s*"\/logout"/.test(routes), "finance auth routes must register POST /logout");
+
+  const controller = fs.readFileSync(
+    path.join(repoRoot, "apps/finance-tracker-api/src/modules/auth/auth.controller.ts"),
+    "utf-8"
+  );
+  assert(controller.includes("export async function logout"), "finance controller must export logout");
+  assert(controller.includes('clearCookie("token"'), "finance logout must clear the shared token cookie");
+});
+
+test("PB-SidebarParity: finance web can log out and hand back to the habit app", () => {
+  const service = fs.readFileSync(path.join(financeWebDir, "services/auth.service.ts"), "utf-8");
+  assert(service.includes("export async function logout"), "auth.service must export logout");
+  assert(service.includes('api.post("/auth/logout")'), "auth.service must call the finance logout endpoint");
+  assert(service.includes("export function redirectAfterLogout"), "auth.service must export redirectAfterLogout");
+  assert(service.includes("/login"), "redirectAfterLogout must target the habit login screen");
+});
+
+test("PB-SidebarParity: habit app registry no longer carries a corrupted emoji", () => {
+  const config = fs.readFileSync(path.join(habbitWebDir, "config/apps.config.ts"), "utf-8");
+  assert(!config.includes("\uFFFD"), "apps.config.ts must not contain the U+FFFD replacement character");
+  assert(config.includes('emoji: "💰"'), "couple-finances must use the money-bag emoji");
+});
+
 console.log("------------------------------------------------------------------");
 console.log(`Results: ${passed} passed, ${failed} failed`);
 console.log("------------------------------------------------------------------");

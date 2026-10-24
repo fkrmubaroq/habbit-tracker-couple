@@ -44,11 +44,11 @@ export default defineConfig(({ mode }) => {
       })
     ],
     server: {
-      port: 5173,
+      port: 4041,
       host: true,
       proxy: {
         '/api': {
-          target: env.VITE_BASE_URL_API || 'http://localhost:5000',
+          target: env.VITE_BASE_URL_API || 'http://localhost:5051',
           changeOrigin: true,
           secure: false,
         },

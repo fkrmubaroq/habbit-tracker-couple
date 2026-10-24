@@ -17,9 +17,9 @@ Plotted by `Target Date`. Used for wave planning.
 
 ## 4. Development Sequence (TABLE)
 
-- Filter: `-delivery-stage:Tracking` (hides umbrella and parent containers).
-- Sort: `Delivery Stage` S0-S5, then `Target Date`.
-- Visible columns: Title, Status, Application, Delivery Stage,
+- Filter: `-wave:Tracking` (hides umbrella and parent containers).
+- Sort: `Wave` W0-Wn, then `Target Date`.
+- Visible columns: Title, Status, Application, Wave,
   Estimate, Target Date, Owner, Repository.
 
 This is the execution order for developers and agents.

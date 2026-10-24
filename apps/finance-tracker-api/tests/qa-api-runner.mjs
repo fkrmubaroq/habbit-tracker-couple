@@ -1,8 +1,8 @@
 // apps/finance-tracker-api/tests/qa-api-runner.mjs
 // Automated verification suite for couple-finances REST API with tagged test data and explicit teardown.
 
-const BASE_URL = process.env.API_URL || "http://localhost:1907";
-const HABIT_API_URL = process.env.HABIT_API_URL || "http://localhost:5000";
+const BASE_URL = process.env.API_URL || "http://localhost:5050";
+const HABIT_API_URL = process.env.HABIT_API_URL || "http://localhost:5051";
 const QA_USERNAME = process.env.QA_USERNAME || "romeo";
 const QA_PASSWORD = process.env.QA_PASSWORD || "password123";
 const TAG = "qa-test-" + Date.now();
