@@ -17,15 +17,14 @@ import {
   DollarSign,
   PieChart,
 } from "lucide-react";
-import { Button } from "../../components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../components/ui/dialog";
-import { groceryService } from "../../services/grocery.service";
-import type { GroceryItem } from "../../types/index";
-import { useAuthStore } from "../../stores/auth.store";
-import { useToastStore } from "../../stores/toast.store";
-import { cn } from "../../lib/utils";
+import { Button } from "../components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../components/ui/dialog";
+import { groceryService } from "../services/grocery.service";
+import type { GroceryItem } from "@repo/types";
+import { useToastStore } from "../stores/toast.store";
+import { cn } from "../lib/utils";
 
-export const Route = createFileRoute("/grocery-list/manage")({
+export const Route = createFileRoute("/manage")({
   component: GroceryManagePage,
 });
 
@@ -45,8 +44,7 @@ const COMMON_UNITS = ["pcs", "kg", "gram", "ikat", "bungkus", "botol", "kotak", 
 function GroceryManagePage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { user } = useAuthStore();
-  const { addToast } = useToastStore();
+  const { showToast } = useToastStore();
 
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
 
@@ -68,7 +66,7 @@ function GroceryManagePage() {
   const [editUrgent, setEditUrgent] = React.useState(false);
 
   // Query grocery items
-  const { data: items = [], isLoading } = useQuery({
+  const { data: items = [], isLoading, isError, error } = useQuery({
     queryKey: ["grocery-items"],
     queryFn: () => groceryService.getItems(),
   });
@@ -82,10 +80,10 @@ function GroceryManagePage() {
       setQuantity("1");
       setEstimatedPrice("");
       setIsUrgent(false);
-      addToast("Barang belanjaan berhasil ditambahkan!", "success");
+      showToast("Barang belanjaan berhasil ditambahkan!", "success");
     },
-    onError: () => {
-      addToast("Gagal menambahkan barang belanjaan", "error");
+    onError: (err: Error) => {
+      showToast(err.message || "Gagal menambahkan barang belanjaan", "error");
     },
   });
 
@@ -96,7 +94,10 @@ function GroceryManagePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["grocery-items"] });
       setEditingItem(null);
-      addToast("Barang belanjaan berhasil diperbarui!", "success");
+      showToast("Barang belanjaan berhasil diperbarui!", "success");
+    },
+    onError: (err: Error) => {
+      showToast(err.message || "Gagal memperbarui barang belanjaan", "error");
     },
   });
 
@@ -105,7 +106,10 @@ function GroceryManagePage() {
     mutationFn: groceryService.deleteItem,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["grocery-items"] });
-      addToast("Barang belanjaan dihapus", "success");
+      showToast("Barang belanjaan dihapus", "success");
+    },
+    onError: (err: Error) => {
+      showToast(err.message || "Gagal menghapus barang belanjaan", "error");
     },
   });
 
@@ -114,7 +118,10 @@ function GroceryManagePage() {
     mutationFn: groceryService.clearCompleted,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["grocery-items"] });
-      addToast("Belanjaan yang sudah selesai berhasil dibersihkan", "success");
+      showToast("Belanjaan yang sudah selesai berhasil dibersihkan", "success");
+    },
+    onError: (err: Error) => {
+      showToast(err.message || "Gagal membersihkan belanjaan selesai", "error");
     },
   });
 
@@ -129,7 +136,10 @@ function GroceryManagePage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["grocery-items"] });
-      addToast("Semua centang belanjaan berhasil direset", "success");
+      showToast("Semua centang belanjaan berhasil direset", "success");
+    },
+    onError: (err: Error) => {
+      showToast(err.message || "Gagal mereset centang belanjaan", "error");
     },
   });
 
@@ -412,6 +422,12 @@ function GroceryManagePage() {
         {isLoading ? (
           <div className="p-8 text-center bg-card-surface border-2 border-border-color rounded-2xl">
             <span className="text-xs font-bold text-text-secondary">Memuat barang...</span>
+          </div>
+        ) : isError ? (
+          <div className="p-8 text-center bg-card-surface border-2 border-dashed border-rose-300 rounded-2xl">
+            <span className="text-xs font-bold text-rose-600">
+              {error instanceof Error ? error.message : "Gagal memuat barang. Periksa koneksi lalu coba lagi."}
+            </span>
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="p-8 text-center bg-card-surface border-2 border-dashed border-border-color rounded-2xl">

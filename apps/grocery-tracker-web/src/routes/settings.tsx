@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Settings,
@@ -15,21 +15,22 @@ import {
   ArrowRight,
   Sparkles,
 } from "lucide-react";
-import { Button } from "../../components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../components/ui/dialog";
-import { groceryService } from "../../services/grocery.service";
-import { useAuthStore } from "../../stores/auth.store";
-import { useToastStore } from "../../stores/toast.store";
+import { Button } from "../components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../components/ui/dialog";
+import { groceryService } from "../services/grocery.service";
+import { useSession } from "../hooks/use-session";
+import { ThemeSwitcherSection } from "../components/ThemeSwitcher";
+import { HABIT_APP_URL, FINANCE_APP_URL } from "../services/session-url";
+import { useToastStore } from "../stores/toast.store";
 
-export const Route = createFileRoute("/grocery-list/settings")({
+export const Route = createFileRoute("/settings")({
   component: GrocerySettingsPage,
 });
 
 function GrocerySettingsPage() {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const { user } = useAuthStore();
-  const { addToast } = useToastStore();
+  const { data: user } = useSession();
+  const { showToast } = useToastStore();
 
   const [copied, setCopied] = React.useState(false);
   const [showClearConfirm, setShowClearConfirm] = React.useState(false);
@@ -51,7 +52,10 @@ function GrocerySettingsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["grocery-items"] });
-      addToast("Semua centang belanjaan berhasil direset", "success");
+      showToast("Semua centang belanjaan berhasil direset", "success");
+    },
+    onError: (err: Error) => {
+      showToast(err.message || "Gagal mereset centang belanjaan", "error");
     },
   });
 
@@ -66,7 +70,10 @@ function GrocerySettingsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["grocery-items"] });
       setShowClearConfirm(false);
-      addToast("Semua barang belanjaan telah dihapus", "success");
+      showToast("Semua barang belanjaan telah dihapus", "success");
+    },
+    onError: (err: Error) => {
+      showToast(err.message || "Gagal menghapus barang belanjaan", "error");
     },
   });
 
@@ -100,7 +107,7 @@ function GrocerySettingsPage() {
     const text = generateShareText();
     navigator.clipboard.writeText(text);
     setCopied(true);
-    addToast("Daftar belanjaan berhasil disalin!", "success");
+    showToast("Daftar belanjaan berhasil disalin!", "success");
     setTimeout(() => setCopied(false), 2500);
   };
 
@@ -224,7 +231,10 @@ function GrocerySettingsPage() {
         </div>
       </div>
 
-      {/* Section 4: Navigasi Cepat */}
+      {/* Section 4: Tema */}
+      <ThemeSwitcherSection />
+
+      {/* Section 5: Navigasi Cepat */}
       <div className="bg-card-surface border-3 border-border-color rounded-3xl p-5 sm:p-6 shadow-[0_4px_0_0_var(--border-color)]">
         <div className="flex items-center gap-2 mb-3">
           <Sparkles className="h-5 w-5 text-primary" />
@@ -234,7 +244,9 @@ function GrocerySettingsPage() {
         <div className="flex flex-col gap-2">
           <button
             type="button"
-            onClick={() => navigate({ to: "/" })}
+            onClick={() => {
+              window.location.href = HABIT_APP_URL;
+            }}
             className="flex items-center justify-between p-3.5 rounded-2xl bg-highlight border-2 border-border-color hover:border-primary transition-all text-left cursor-pointer"
           >
             <div className="flex items-center gap-3">
@@ -242,7 +254,7 @@ function GrocerySettingsPage() {
               <div className="flex flex-col">
                 <span className="text-sm font-extrabold text-text-primary">Habit Pasutri</span>
                 <span className="text-xs font-medium text-text-secondary">
-                  Kembali ke pelacak kebiasaan & streak utama
+                  Buka pelacak kebiasaan & streak utama
                 </span>
               </div>
             </div>
@@ -251,15 +263,36 @@ function GrocerySettingsPage() {
 
           <button
             type="button"
-            onClick={() => navigate({ to: "/settings" })}
+            onClick={() => {
+              window.location.href = FINANCE_APP_URL;
+            }}
+            className="flex items-center justify-between p-3.5 rounded-2xl bg-highlight border-2 border-border-color hover:border-primary transition-all text-left cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-xl">💰</span>
+              <div className="flex flex-col">
+                <span className="text-sm font-extrabold text-text-primary">Keuangan Pasutri</span>
+                <span className="text-xs font-medium text-text-secondary">
+                  Catat pengeluaran & tabungan bersama
+                </span>
+              </div>
+            </div>
+            <ArrowRight className="h-4 w-4 text-text-secondary" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = `${HABIT_APP_URL}/settings`;
+            }}
             className="flex items-center justify-between p-3.5 rounded-2xl bg-highlight border-2 border-border-color hover:border-primary transition-all text-left cursor-pointer"
           >
             <div className="flex items-center gap-3">
               <span className="text-xl">🎨</span>
               <div className="flex flex-col">
-                <span className="text-sm font-extrabold text-text-primary">Pengaturan Profil & Tema</span>
+                <span className="text-sm font-extrabold text-text-primary">Profil & Akun Pasutri</span>
                 <span className="text-xs font-medium text-text-secondary">
-                  Ubah tema Sakura/Duo, password, dan foto profil
+                  Ubah nama, foto profil, dan password di app Habit
                 </span>
               </div>
             </div>
