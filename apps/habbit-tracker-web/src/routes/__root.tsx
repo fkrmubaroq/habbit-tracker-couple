@@ -8,6 +8,7 @@ import { AppSwitcher } from "../components/app-switcher";
 import { getActiveApp } from "../config/apps.config";
 import { Toaster } from "../components/Toaster";
 import { Button } from "../components/ui/button";
+import { Sidebar, type SidebarLinkComponent } from "../components/ui/sidebar";
 import { BottomNavigation } from "../components/navigation/bottom-navigation";
 import { useSession } from "../hooks/use-session";
 import { useAuthStore } from "../stores/auth.store";
@@ -80,6 +81,8 @@ function RootComponent() {
   ];
 
   const groceryNavItems = [
+    // Every grocery route has its own menu item, so exact matching is correct
+    // here. A prefix match on `/grocery-list` would light up two items at once.
     { label: t("grocery.nav_checklist", { defaultValue: "Daftar Belanja" }), to: "/grocery-list", icon: CheckSquare },
     { label: t("grocery.nav_manage", { defaultValue: "Belanja" }), to: "/grocery-list/manage", icon: ShoppingCart },
     { label: t("grocery.nav_settings", { defaultValue: "Pengaturan" }), to: "/grocery-list/settings", icon: Settings },
@@ -90,87 +93,80 @@ function RootComponent() {
   return (
     <div className="min-h-screen bg-shared-bg flex flex-col md:flex-row">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 bg-card-surface border-r-2 border-border-color h-screen fixed top-0 left-0 p-4 justify-between z-40 shadow-[1px_0_0_0_var(--border-color)]">
-        <div className="flex flex-col gap-5">
-          {/* App Switcher Header */}
-          <div className="px-1 pt-1">
-            <AppSwitcher />
-          </div>
-
-          {/* User Profile Summary */}
-          {user && (
-            <div className="flex items-center gap-3 bg-highlight p-3 rounded-xl border-2 border-border-color shadow-[0_2px_0_0_var(--border-color)]">
-              {user.avatar_image ? (
-                <img src={user.avatar_image} alt={user.name} className="h-8 w-8 rounded-xl object-cover border-2 border-border-color shrink-0" />
-              ) : (
-                <span className="text-2xl shrink-0">{user.avatar_emoji}</span>
-              )}
-              <div className="flex flex-col overflow-hidden">
-                <span className="font-bold text-sm text-text-primary truncate">{user.name}</span>
-                <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
-                  {user.role}
-                </span>
-              </div>
+      <Sidebar
+        items={activeNavItems}
+        activePath={location.pathname}
+        linkComponent={Link as unknown as SidebarLinkComponent}
+        className="p-4 shadow-[1px_0_0_0_var(--border-color)]"
+        classNames={{
+          body: "flex flex-col gap-5",
+          nav: "flex flex-col gap-2",
+          itemActive: "nav-active-duo",
+          icon: "h-5 w-5",
+        }}
+        header={
+          <>
+            {/* App Switcher Header */}
+            <div className="px-1 pt-1">
+              <AppSwitcher />
             </div>
-          )}
 
-          {/* Navigation Links */}
-          <nav className="flex flex-col gap-2">
-            {activeNavItems.map((item) => {
-              const active = location.pathname === item.to;
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold border-2 transition-all cursor-pointer ${active
-                    ? "nav-active-duo"
-                    : "border-transparent text-text-secondary hover:bg-highlight hover:text-text-primary"
-                    }`}
-                >
-                  <item.icon className="h-5 w-5" />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-
-        <div>
-          {currentApp.id === "grocery-list" ? (
-            <Button
-              onClick={() => {
-                if (location.pathname !== "/grocery-list") {
-                  navigate({ to: "/grocery-list" });
-                }
-                const input = document.querySelector('input[placeholder*="Tulis barang"]') as HTMLInputElement;
-                if (input) input.focus();
-              }}
-              variant="3d"
-              className="w-full mb-4 font-extrabold flex items-center justify-center gap-2"
+            {/* User Profile Summary */}
+            {user && (
+              <div className="flex items-center gap-3 bg-highlight p-3 rounded-xl border-2 border-border-color shadow-[0_2px_0_0_var(--border-color)]">
+                {user.avatar_image ? (
+                  <img src={user.avatar_image} alt={user.name} className="h-8 w-8 rounded-xl object-cover border-2 border-border-color shrink-0" />
+                ) : (
+                  <span className="text-2xl shrink-0">{user.avatar_emoji}</span>
+                )}
+                <div className="flex flex-col overflow-hidden">
+                  <span className="font-bold text-sm text-text-primary truncate">{user.name}</span>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                    {user.role}
+                  </span>
+                </div>
+              </div>
+            )}
+          </>
+        }
+        footer={
+          <div>
+            {currentApp.id === "grocery-list" ? (
+              <Button
+                onClick={() => {
+                  if (location.pathname !== "/grocery-list") {
+                    navigate({ to: "/grocery-list" });
+                  }
+                  const input = document.querySelector('input[placeholder*="Tulis barang"]') as HTMLInputElement;
+                  if (input) input.focus();
+                }}
+                variant="3d"
+                className="w-full mb-4 font-extrabold flex items-center justify-center gap-2"
+              >
+                <Plus className="h-5 w-5 stroke-3" />
+                <span>{t("grocery.add_item")}</span>
+              </Button>
+            ) : (
+              <Button
+                onClick={() => navigate({ to: "/habits" })}
+                variant="3d"
+                className="w-full mb-4 font-extrabold flex items-center justify-center gap-2"
+              >
+                <Plus className="h-5 w-5 stroke-3" />
+                <span>{t("habits.create_habit")}</span>
+              </Button>
+            )}
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-red-500 hover:bg-red-50 hover:text-red-600 transition-all border-2 border-transparent cursor-pointer"
             >
-              <Plus className="h-5 w-5 stroke-3" />
-              <span>{t("grocery.add_item")}</span>
-            </Button>
-          ) : (
-            <Button
-              onClick={() => navigate({ to: "/habits" })}
-              variant="3d"
-              className="w-full mb-4 font-extrabold flex items-center justify-center gap-2"
-            >
-              <Plus className="h-5 w-5 stroke-3" />
-              <span>{t("habits.create_habit")}</span>
-            </Button>
-          )}
-          {/* Logout Button */}
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-red-500 hover:bg-red-50 hover:text-red-600 transition-all border-2 border-transparent cursor-pointer"
-          >
-            <LogOut className="h-5 w-5" />
-            <span>{t("common.logout")}</span>
-          </button>
-        </div>
-      </aside>
+              <LogOut className="h-5 w-5" />
+              <span>{t("common.logout")}</span>
+            </button>
+          </div>
+        }
+      />
 
       {/* Main Content Area */}
       <div className="flex-1 md:pl-64 flex flex-col min-h-screen">

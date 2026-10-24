@@ -2,3 +2,11 @@
 @import "tailwindcss";
 @import "./theme.css";
 @import "./utilities.css";
+
+/*
+ * Tailwind's automatic source detection skips `node_modules`, and workspace
+ * packages are reached through a `node_modules/@repo/*` symlink — so classes
+ * that only appear inside `packages/ui` were never generated. Register the
+ * shared UI package explicitly. Path is relative to this stylesheet.
+ */
+@source "../ui/src";
