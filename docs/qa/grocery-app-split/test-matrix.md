@@ -3,10 +3,10 @@
 | PROGRAM VERSION RELEASE | 1.0.0 | TESTER | OpenCode QA Agent | TEST CASE CREATED AT | 2026-10-24 |
 |---|---|---|---|---|---|
 | FOLDER TEST APP | apps/grocery-tracker-api, apps/grocery-tracker-web | PROGRAMMER | OpenCode Dev Agent | TEST CASE UPDATED AT | 2026-10-24 |
-| IP DEV | http://localhost:4042 (web) · http://localhost:5052 (api) | TASK DEV | docs/prd/todo/grocery-app-split/ISSUES.md | | |
+| IP DEV | http://localhost:4042 (web) · http://localhost:5052 (api) | TASK DEV | docs/prd/done/grocery-app-split/ISSUES.md | | |
 | IP PROD | /grocery (lihat scripts/nginx.conf) | | | | |
 
-**Sumber requirement:** docs/prd/todo/grocery-app-split/PRD.md, docs/prd/todo/grocery-app-split/ISSUES.md
+**Sumber requirement:** docs/prd/done/grocery-app-split/PRD.md, docs/prd/done/grocery-app-split/ISSUES.md
 **Scope:** Pemisahan domain grocery menjadi `apps/grocery-tracker-api` (port 5052) dan `apps/grocery-tracker-web` (port 4042), shell layout baru berbasis `@repo/ui`, pembersihan grocery dari habit app beserta shim redirect, serta penyesuaian infra (script root, deploy, nginx, dokumentasi)
 **Out of scope:** Fitur grocery baru, perubahan skema database, i18n di app grocery, test runner otomatis baru di luar runner QA, perubahan fitur habit/finance, offline sync, perubahan registry switcher di finance app
 

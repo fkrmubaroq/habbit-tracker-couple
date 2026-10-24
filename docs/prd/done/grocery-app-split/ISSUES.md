@@ -1,6 +1,6 @@
 # Issues — Pisahkan Grocery Menjadi App Sendiri (FE + BE) & Sesuaikan Layout
 
-> Rujukan: `docs/prd/todo/grocery-app-split/PRD.md`
+> Rujukan: `docs/prd/done/grocery-app-split/PRD.md`
 > Pola acuan implementasi: `apps/finance-tracker-api` + `apps/finance-tracker-web` (pemisahan app + shared session cookie).
 
 ## Fase 1: Scaffold `apps/grocery-tracker-api`

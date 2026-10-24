@@ -140,7 +140,7 @@ Keduanya diverifikasi **negatif** — dengan kode lama, test yang sama gagal —
 
 ## 5. Kesimpulan
 
-Implementasi pemisahan grocery menjadi `apps/grocery-tracker-api` + `apps/grocery-tracker-web` **memenuhi seluruh requirement** pada `docs/prd/todo/grocery-app-split/PRD.md` dan checklist `ISSUES.md` (kecuali item review `/gate` yang memang menjadi tahap berikutnya).
+Implementasi pemisahan grocery menjadi `apps/grocery-tracker-api` + `apps/grocery-tracker-web` **memenuhi seluruh requirement** pada `docs/prd/done/grocery-app-split/PRD.md` dan checklist `ISSUES.md` (kecuali item review `/gate` yang memang menjadi tahap berikutnya).
 
 Empat defect ditemukan dan diperbaiki selama siklus ini: dua pada putaran QA pertama (satu di antaranya memutus alur redirect-balik-ke-grocery setelah login), dua lagi dari `/gate` (routing subpath produksi dan IDOR lintas couple). Keempatnya kini tertutup oleh test regresi yang sudah dibuktikan gagal pada kode lama. Gate kualitas monorepo (type-check, lint, build) lulus penuh.
 
