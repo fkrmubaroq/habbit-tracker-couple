@@ -4,7 +4,7 @@
 - **Tanggal Review:** 2026-10-25 (pass 1–3), 2026-10-26 (pass 4)
 - **Reviewer:** opencode REVIEW stage (`/gate`)
 - **Metodologi:** `code-review-and-quality` (lima axis) + `security-review`
-- **Sumber requirement:** `docs/prd/todo/pomodoro-app/PRD.md`, `docs/prd/todo/pomodoro-app/ISSUES.md`
+- **Sumber requirement:** `docs/prd/done/pomodoro-app/PRD.md`, `docs/prd/done/pomodoro-app/ISSUES.md`
 - **Prasyarat verifikasi:** `docs/qa/pomodoro-app/qa-report.md` — status **PASSED** (98/98; butir verifikasi `/qa` di `ISSUES.md` sudah tercentang)
 - **Pass:** 4 (pass 1 → B1–B3 → pass 2 → B4–B5 → pass 3 → B6–B7 → `/qa` 98/98 → pass 4 ini)
 - **Status Akhir:** ✅ **Approve with comments** — seluruh temuan blocking B1–B7 terverifikasi beres; 0 blocking baru; 6 catatan non-blocking (2 di antaranya layak dikerjakan segera)

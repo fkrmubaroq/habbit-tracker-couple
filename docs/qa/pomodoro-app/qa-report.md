@@ -11,7 +11,7 @@
 
 ## 1. Ringkasan Eksekutif
 
-Pengujian menyeluruh dilaksanakan terhadap dua app baru hasil `docs/prd/todo/pomodoro-app/`: backend pomodoro (settings, sessions, stats, isolasi data per user) dan frontend timer PWA (engine berbasis timestamp, siklus mode, antrean offline, halaman statistik, integrasi AppSwitcher, serta wiring infra).
+Pengujian menyeluruh dilaksanakan terhadap dua app baru hasil `docs/prd/done/pomodoro-app/`: backend pomodoro (settings, sessions, stats, isolasi data per user) dan frontend timer PWA (engine berbasis timestamp, siklus mode, antrean offline, halaman statistik, integrasi AppSwitcher, serta wiring infra).
 
 Dari **98 test case** pada [Test Matrix](./test-matrix.md), **seluruh 98 berstatus Passed** dan **0 Failed**.
 

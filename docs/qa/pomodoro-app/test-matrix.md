@@ -3,10 +3,10 @@
 | PROGRAM VERSION RELEASE | 1.0.0 | TESTER | OpenCode QA Agent | TEST CASE CREATED AT | 2026-10-25 |
 |---|---|---|---|---|---|
 | FOLDER TEST APP | apps/pomodoro-tracker-api, apps/pomodoro-tracker-web | PROGRAMMER | OpenCode Dev Agent | TEST CASE UPDATED AT | 2026-10-25 |
-| IP DEV | http://localhost:4043 (web) · http://localhost:5053 (api) | TASK DEV | docs/prd/todo/pomodoro-app/ISSUES.md | | |
+| IP DEV | http://localhost:4043 (web) · http://localhost:5053 (api) | TASK DEV | docs/prd/done/pomodoro-app/ISSUES.md | | |
 | IP PROD | /pomodoro (lihat scripts/nginx.conf) | | | | |
 
-**Sumber requirement:** docs/prd/todo/pomodoro-app/PRD.md, docs/prd/todo/pomodoro-app/ISSUES.md
+**Sumber requirement:** docs/prd/done/pomodoro-app/PRD.md, docs/prd/done/pomodoro-app/ISSUES.md
 **Scope:** Backend pomodoro (settings/sessions/stats, isolasi user), engine timer berbasis timestamp, halaman timer & pengaturan, halaman statistik, antrean offline + PWA, kepemilikan state perangkat (antrean/timer/cache settings) & perilaku 401, integrasi AppSwitcher lintas app, infra (script root/deploy/nginx)
 **Out of scope:** Fitur pasangan (progress/riwayat/status real-time/timer bersama), task list, target harian, edit/hapus riwayat, ekspor data, keyboard shortcut, resume lintas device, getar, toggle bahasa, integrasi habit tracker, Web Push untuk browser tertutup, unit test framework baru
 
