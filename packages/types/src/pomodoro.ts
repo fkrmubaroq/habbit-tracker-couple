@@ -3,7 +3,7 @@
  *
  * Sessions are strictly personal: every field here is scoped to one `user_id`.
  * There is intentionally no "partner" shape — the app never reads another
- * user's sessions (see docs/prd/todo/pomodoro-app/PRD.md).
+ * user's sessions (see docs/prd/done/pomodoro-app/PRD.md).
  */
 
 export interface PomodoroSession {
