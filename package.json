@@ -12,6 +12,8 @@
     "db:seed:finance": "turbo run db:seed --filter=@repo/finance-tracker-api",
     "db:migrate:grocery": "turbo run db:migrate --filter=@repo/grocery-tracker-api",
     "db:seed:grocery": "turbo run db:seed --filter=@repo/grocery-tracker-api",
+    "db:migrate:pomodoro": "turbo run db:migrate --filter=@repo/pomodoro-tracker-api",
+    "db:seed:pomodoro": "turbo run db:seed --filter=@repo/pomodoro-tracker-api",
     "db:migrate:all": "turbo run db:migrate",
     "db:seed:all": "turbo run db:seed",
     "migrate:all": "turbo run db:migrate",

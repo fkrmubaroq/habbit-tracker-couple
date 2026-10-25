@@ -14,6 +14,8 @@ The repository is organized as a **Turborepo** monorepo using **pnpm workspaces*
 - `apps/grocery-tracker-api`: TypeScript Express REST API for the grocery domain (`@repo/grocery-tracker-api`, port 5052)
 - `apps/grocery-tracker-web`: React 18 + Vite SPA for the grocery list (`@repo/grocery-tracker-web`, port 4042)
 - `apps/finance-tracker-api` / `apps/finance-tracker-web`: finance app (ports 5050 / 4040)
+- `apps/pomodoro-tracker-api`: TypeScript Express REST API for the personal pomodoro timer (`@repo/pomodoro-tracker-api`, port 5053)
+- `apps/pomodoro-tracker-web`: React 18 + Vite SPA for the pomodoro timer (`@repo/pomodoro-tracker-web`, port 4043)
 - `packages/types`: Shared TypeScript interfaces and DTOs (`@repo/types`)
 - `packages/ui`: Shared UI component primitives (`@repo/ui`)
 - `packages/typescript-config`: Shared base `tsconfig.json` configurations (`@repo/typescript-config`)
@@ -77,16 +79,19 @@ pnpm db:migrate:all
 pnpm db:migrate           # Habit Tracker API
 pnpm db:migrate:finance   # Finance Tracker API
 pnpm db:migrate:grocery   # Grocery Tracker API
+pnpm db:migrate:pomodoro  # Pomodoro Tracker API
 # Or via filter:
 pnpm --filter=@repo/habbit-tracker-api db:migrate
 pnpm --filter=@repo/finance-tracker-api db:migrate
 pnpm --filter=@repo/grocery-tracker-api db:migrate
+pnpm --filter=@repo/pomodoro-tracker-api db:migrate
 
 # Seed sample/initial database data
 pnpm db:seed:all          # All services
 pnpm db:seed              # Habit Tracker API
 pnpm db:seed:finance      # Finance Tracker API
 pnpm db:seed:grocery      # Grocery Tracker API (dev only, needs users from habit seed)
+pnpm db:seed:pomodoro     # Pomodoro Tracker API (dev only, needs users from habit seed)
 ```
 
 ### Linting & Type Checking
@@ -144,6 +149,20 @@ habbit-tracker-couple/
 │           ├── routes/               # / (checklist), /manage, /settings
 │           ├── services/             # api, auth, grocery, session-url
 │           └── stores/               # theme & toast
+│   ├── pomodoro-tracker-api/         # Express REST API pomodoro (@repo/pomodoro-tracker-api, :5053)
+│   │   └── src/
+│   │       ├── config/               # Pool DB multi-provider + env (APP_TIMEZONE)
+│   │       ├── middleware/           # Auth shared-cookie, validate, error
+│   │       ├── migrations/           # mysql/ + supabase/ (pemilik pomodoro_sessions & pomodoro_settings)
+│   │       ├── modules/              # pomodoro (settings, sessions, stats) & auth read-only (/me, /logout)
+│   │       └── repositories/         # settings/session repo + users read-only
+│   └── pomodoro-tracker-web/         # React SPA pomodoro (@repo/pomodoro-tracker-web, :4043)
+│       └── src/
+│           ├── components/           # Shell, AppSwitcher, BottomNav, timer/*, stats/*
+│           ├── hooks/                # use-pomodoro-timer, use-timer-alerts, use-offline-queue, use-session
+│           ├── routes/               # / (timer), /stats, /settings
+│           ├── services/             # api, auth, pomodoro, timer-storage, session-url
+│           └── stores/               # theme, toast, preferences
 ├── packages/
 │   ├── types/                        # @repo/types (User, Habit, Log, DTOs)
 │   ├── ui/                           # @repo/ui (Button, Card, Dialog primitives)
@@ -170,13 +189,17 @@ habbit-tracker-couple/
    - `apps/habbit-tracker-web` proxies `/api` to `http://localhost:5051`.
    - `apps/finance-tracker-web` proxies `/api` to `http://localhost:5050`.
    - `apps/grocery-tracker-web` proxies `/api` to `http://localhost:5052`.
+   - `apps/pomodoro-tracker-web` proxies `/api` to `http://localhost:5053`.
 4. **Environment Variables**:
    - Backend requires `PORT`, `NODE_ENV`, `DB_PROVIDER`, `JWT_SECRET`, plus relevant database credentials in each app's `.env`.
-   - `JWT_SECRET` **must be identical** in `habbit-tracker-api`, `finance-tracker-api`, and `grocery-tracker-api` — the shared `token` cookie is issued only by the habit API.
+   - `JWT_SECRET` **must be identical** in `habbit-tracker-api`, `finance-tracker-api`, `grocery-tracker-api`, and `pomodoro-tracker-api` — the shared `token` cookie is issued only by the habit API.
+   - `APP_TIMEZONE` (default `Asia/Jakarta`) fixes the day/week boundary used by pomodoro stats, so streaks don't shift with the server's clock.
 5. **Cross-app navigation**:
    - Habit and finance link to grocery via `VITE_GROCERY_APP_URL` (default `http://localhost:4042`).
    - `/grocery-list` and `/grocery-list/*` in the habit app are **redirect shims** to the grocery app (`src/lib/grocery-redirect.ts`); they are not real pages anymore.
    - Production serves grocery under `/grocery/` (see `base` in `apps/grocery-tracker-web/vite.config.ts` and `scripts/nginx.conf`), so set `VITE_GROCERY_APP_URL` accordingly.
+   - Pomodoro is reachable from the AppSwitcher in habit, finance, and grocery via `VITE_POMODORO_APP_URL` (default `http://localhost:4043`); production serves it under `/pomodoro/` with its API at `/api/pomodoro`.
+   - Pomodoro data is **personal per user** — no partner read path exists, unlike the couple-shared domains.
 
 ---
 

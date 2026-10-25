@@ -66,7 +66,7 @@ echo ""
 echo "=========================================="
 echo "📁 3. Menyiapkan Folder di VPS..."
 echo "=========================================="
-ssh "${SSH_OPTS[@]}" "${VPS_USER}@${VPS_HOST}" "mkdir -p ${REMOTE_PATH}/frontend ${REMOTE_PATH}/backend ${REMOTE_PATH}/grocery-frontend ${REMOTE_PATH}/grocery-backend"
+ssh "${SSH_OPTS[@]}" "${VPS_USER}@${VPS_HOST}" "mkdir -p ${REMOTE_PATH}/frontend ${REMOTE_PATH}/backend ${REMOTE_PATH}/grocery-frontend ${REMOTE_PATH}/grocery-backend ${REMOTE_PATH}/pomodoro-frontend ${REMOTE_PATH}/pomodoro-backend"
 
 echo ""
 echo "=========================================="
@@ -110,6 +110,25 @@ echo "→ Mengirim grocery frontend (apps/grocery-tracker-web)..."
 scp "${SCP_OPTS[@]}" -r "${ROOT_DIR}/apps/grocery-tracker-web/dist" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/grocery-frontend/"
 scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/grocery-tracker-web/package.json" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/grocery-frontend/"
 [ -f "${ROOT_DIR}/pnpm-lock.yaml" ] && scp "${SCP_OPTS[@]}" "${ROOT_DIR}/pnpm-lock.yaml" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/grocery-frontend/"
+
+echo "→ Mengirim pomodoro backend (apps/pomodoro-tracker-api)..."
+scp "${SCP_OPTS[@]}" -r "${ROOT_DIR}/apps/pomodoro-tracker-api/dist" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/pomodoro-backend/"
+scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/pomodoro-tracker-api/package.json" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/pomodoro-backend/"
+[ -f "${ROOT_DIR}/pnpm-lock.yaml" ] && scp "${SCP_OPTS[@]}" "${ROOT_DIR}/pnpm-lock.yaml" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/pomodoro-backend/"
+
+# Mengirim file .env pomodoro backend
+if [ -f "${ROOT_DIR}/apps/pomodoro-tracker-api/.env.production" ]; then
+    echo "→ Mengirim apps/pomodoro-tracker-api/.env.production sebagai .env..."
+    scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/pomodoro-tracker-api/.env.production" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/pomodoro-backend/.env"
+elif [ -f "${ROOT_DIR}/apps/pomodoro-tracker-api/.env" ]; then
+    echo "→ Mengirim apps/pomodoro-tracker-api/.env..."
+    scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/pomodoro-tracker-api/.env" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/pomodoro-backend/.env"
+fi
+
+echo "→ Mengirim pomodoro frontend (apps/pomodoro-tracker-web)..."
+scp "${SCP_OPTS[@]}" -r "${ROOT_DIR}/apps/pomodoro-tracker-web/dist" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/pomodoro-frontend/"
+scp "${SCP_OPTS[@]}" "${ROOT_DIR}/apps/pomodoro-tracker-web/package.json" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/pomodoro-frontend/"
+[ -f "${ROOT_DIR}/pnpm-lock.yaml" ] && scp "${SCP_OPTS[@]}" "${ROOT_DIR}/pnpm-lock.yaml" "${VPS_USER}@${VPS_HOST}:${REMOTE_PATH}/pomodoro-frontend/"
 
 echo ""
 echo "=========================================="
@@ -161,6 +180,32 @@ ssh "${SSH_OPTS[@]}" "${VPS_USER}@${VPS_HOST}" bash << EOF
         echo "⚠️ PM2 belum terpasang di VPS (dapat diinstall via: npm install -g pm2)."
         echo "ℹ️ Menjalankan sementara di background dengan nohup..."
         nohup node dist/index.js > grocery-backend.log 2>&1 &
+    fi
+EOF
+
+echo ""
+echo "=========================================="
+echo "🍅 5c. Menginstall Dependencies & Menjalankan Pomodoro Backend (PM2)..."
+echo "=========================================="
+ssh "${SSH_OPTS[@]}" "${VPS_USER}@${VPS_HOST}" bash << EOF
+    cd "${REMOTE_PATH}/pomodoro-backend"
+
+    echo "→ Menginstall dependencies pomodoro backend..."
+    if command -v pnpm >/dev/null 2>&1; then
+        pnpm install --prod
+    else
+        npm install --omit=dev
+    fi
+
+    echo "→ Menjalankan / merestart PM2 (pomodoro)..."
+    if command -v pm2 >/dev/null 2>&1; then
+        pm2 describe pomodoro-backend >/dev/null 2>&1 && pm2 restart pomodoro-backend || pm2 start dist/index.js --name pomodoro-backend
+        pm2 save 2>/dev/null || true
+        echo "✓ PM2 pomodoro backend (pomodoro-backend) berhasil berjalan/direstart."
+    else
+        echo "⚠️ PM2 belum terpasang di VPS (dapat diinstall via: npm install -g pm2)."
+        echo "ℹ️ Menjalankan sementara di background dengan nohup..."
+        nohup node dist/index.js > pomodoro-backend.log 2>&1 &
     fi
 EOF
 

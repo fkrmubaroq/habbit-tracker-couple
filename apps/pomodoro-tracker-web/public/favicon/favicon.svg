@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Pomodoro">
+  <rect width="64" height="64" rx="15" fill="#FFF1F5"/>
+  <circle cx="32" cy="37" r="20" fill="#F43F5E"/>
+  <path d="M32 37a20 20 0 0 1 20 20H12a20 20 0 0 1 20-20Z" fill="#E11D48" opacity="0.35"/>
+  <circle cx="25.5" cy="30" r="4.8" fill="#FFFFFF"/>
+  <rect x="30.4" y="13" width="3.2" height="7.5" rx="1.6" fill="#22C55E"/>
+  <ellipse cx="32" cy="17.3" rx="9.6" ry="2.9" fill="#34D399" transform="rotate(-20 32 17.3)"/>
+  <ellipse cx="32" cy="17.3" rx="9.6" ry="2.9" fill="#34D399" transform="rotate(20 32 17.3)"/>
+</svg>

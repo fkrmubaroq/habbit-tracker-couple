@@ -1,5 +1,5 @@
 import type { AppSwitcherApp } from "../components/ui/app-switcher";
-import { FINANCE_APP_URL, HABIT_APP_URL } from "../services/session-url";
+import { FINANCE_APP_URL, HABIT_APP_URL, POMODORO_APP_URL } from "../services/session-url";
 
 export interface GrocerySwitcherApp extends AppSwitcherApp {
   /** Absolute URL of the app. Absent for the currently running app. */
@@ -45,6 +45,17 @@ export const SWITCHER_APPS: GrocerySwitcherApp[] = [
     bgLight: "bg-amber-100",
     external: true,
     href: FINANCE_APP_URL,
+  },
+  {
+    id: "pomodoro",
+    name: "Pomodoro",
+    emoji: "🍅",
+    description: "Timer fokus pribadi dengan riwayat & statistik",
+    badge: "Mini App",
+    status: "active",
+    bgLight: "bg-red-100",
+    external: true,
+    href: POMODORO_APP_URL,
   },
   {
     id: "couple-calendar",

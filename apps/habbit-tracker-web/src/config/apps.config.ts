@@ -7,6 +7,7 @@ import {
   Plus,
   Settings,
   ShoppingCart,
+  Timer,
   Wallet,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -14,6 +15,11 @@ import type { LucideIcon } from "lucide-react";
 /** Base URL of the standalone grocery app (apps/grocery-tracker-web). */
 export const GROCERY_APP_URL = (
   import.meta.env.VITE_GROCERY_APP_URL || "http://localhost:4042"
+).replace(/\/$/, "");
+
+/** Base URL of the standalone pomodoro app (apps/pomodoro-tracker-web). */
+export const POMODORO_APP_URL = (
+  import.meta.env.VITE_POMODORO_APP_URL || "http://localhost:4043"
 ).replace(/\/$/, "");
 
 export interface AppNavItem {
@@ -101,6 +107,23 @@ export const APPS_REGISTRY: MiniApp[] = [
     status: "active",
     themeColor: "text-amber-500",
     bgLight: "bg-amber-100",
+    navItems: [],
+  },
+
+  {
+    id: "pomodoro",
+    name: "Pomodoro",
+    slug: "pomodoro",
+    // Pomodoro is its own deployment (apps/pomodoro-tracker-web).
+    route: "#",
+    externalUrl: POMODORO_APP_URL,
+    icon: Timer,
+    emoji: "🍅",
+    description: "Timer fokus pribadi dengan riwayat & statistik",
+    badge: "Mini App",
+    status: "active",
+    themeColor: "text-rose-500",
+    bgLight: "bg-red-100",
     navItems: [],
   },
 
