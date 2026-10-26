@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="id" data-theme="Sakura">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="./favicon/favicon.svg" />
+  <link rel="apple-touch-icon" href="./favicon/apple-touch-icon.png" />
+  <title>Pomodoro — Timer Fokus</title>
+  <meta name="description" content="Timer fokus Pomodoro pribadi: dial melingkar, riwayat sesi, heatmap tahunan, dan jam paling produktif." />
+  <meta name="theme-color" content="#FF8FB1" />
+  <script>
+    (function() {
+      try {
+        const stored = localStorage.getItem('theme');
+        if (stored && ['Sakura', 'Duo', 'Light', 'Dark'].includes(stored)) {
+          document.documentElement.setAttribute('data-theme', stored);
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body class="bg-shared-bg text-text-primary antialiased min-h-screen">
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

@@ -2,6 +2,10 @@ export const HABIT_APP_URL = (
   import.meta.env.VITE_HABIT_APP_URL || "http://localhost:4041"
 ).replace(/\/$/, "");
 
+export const POMODORO_APP_URL = (
+  import.meta.env.VITE_POMODORO_APP_URL || "http://localhost:4043"
+).replace(/\/$/, "");
+
 let isRedirecting = false;
 
 export function getLoginUrl(returnTo?: string): string {

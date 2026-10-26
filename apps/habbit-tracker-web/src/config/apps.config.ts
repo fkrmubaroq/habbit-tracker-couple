@@ -1,17 +1,26 @@
 import {
   Calendar,
-  CheckSquare,
   ClipboardList,
   Heart,
   HeartIcon,
   Home,
   Plus,
   Settings,
-  ShoppingBag,
   ShoppingCart,
+  Timer,
   Wallet,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+
+/** Base URL of the standalone grocery app (apps/grocery-tracker-web). */
+export const GROCERY_APP_URL = (
+  import.meta.env.VITE_GROCERY_APP_URL || "http://localhost:4042"
+).replace(/\/$/, "");
+
+/** Base URL of the standalone pomodoro app (apps/pomodoro-tracker-web). */
+export const POMODORO_APP_URL = (
+  import.meta.env.VITE_POMODORO_APP_URL || "http://localhost:4043"
+).replace(/\/$/, "");
 
 export interface AppNavItem {
   label: string;
@@ -71,7 +80,11 @@ export const APPS_REGISTRY: MiniApp[] = [
     id: "grocery-list",
     name: "Grocery List",
     slug: "grocery-list",
-    route: "/grocery-list",
+    // Grocery is its own deployment now (apps/grocery-tracker-web). Every link
+    // points at that app; `/grocery-list*` in this app only exists as a
+    // redirect shim for old bookmarks.
+    route: "#",
+    externalUrl: GROCERY_APP_URL,
     icon: ShoppingCart,
     emoji: "🛒",
     description: "Daftar belanjaan & kebutuhan dapur pasutri",
@@ -79,16 +92,7 @@ export const APPS_REGISTRY: MiniApp[] = [
     status: "active",
     themeColor: "text-emerald-500",
     bgLight: "bg-emerald-100",
-    navItems: [
-      { label: "grocery.nav_checklist", to: "/grocery-list", icon: CheckSquare },
-      { label: "grocery.nav_manage", to: "/grocery-list/manage", icon: ShoppingCart },
-      { label: "grocery.nav_settings", to: "/grocery-list/settings", icon: Settings },
-    ],
-    primaryAction: {
-      label: "grocery.add_item",
-      to: "/grocery-list/manage",
-      icon: Plus,
-    },
+    navItems: [],
   },
   {
     id: "couple-finances",
@@ -103,6 +107,23 @@ export const APPS_REGISTRY: MiniApp[] = [
     status: "active",
     themeColor: "text-amber-500",
     bgLight: "bg-amber-100",
+    navItems: [],
+  },
+
+  {
+    id: "pomodoro",
+    name: "Pomodoro",
+    slug: "pomodoro",
+    // Pomodoro is its own deployment (apps/pomodoro-tracker-web).
+    route: "#",
+    externalUrl: POMODORO_APP_URL,
+    icon: Timer,
+    emoji: "🍅",
+    description: "Timer fokus pribadi dengan riwayat & statistik",
+    badge: "Mini App",
+    status: "active",
+    themeColor: "text-rose-500",
+    bgLight: "bg-red-100",
     navItems: [],
   },
 
@@ -123,8 +144,5 @@ export const APPS_REGISTRY: MiniApp[] = [
 ];
 
 export function getActiveApp(pathname: string): MiniApp {
-  if (pathname.startsWith("/grocery-list")) {
-    return APPS_REGISTRY.find((app) => app.id === "grocery-list") || APPS_REGISTRY[0];
-  }
   return APPS_REGISTRY[0];
 }
