@@ -1,7 +1,7 @@
 import React from "react";
-import { Palette, Check, Sparkles } from "lucide-react";
+import { Palette, Check } from "lucide-react";
 import { useThemeStore, THEME_OPTIONS } from "../stores/theme.store";
-import { Card, Button } from "./ui";
+import { Card } from "./ui";
 
 export function ThemeSwitcherSection() {
   const { theme, setTheme } = useThemeStore();
@@ -59,25 +59,3 @@ export function ThemeSwitcherSection() {
   );
 }
 
-export function QuickThemeToggle() {
-  const { theme, toggleNextTheme } = useThemeStore();
-  const currentOption = THEME_OPTIONS.find((t) => t.name === theme) || THEME_OPTIONS[0];
-
-  return (
-    <Button
-      type="button"
-      variant="outline"
-      size="sm"
-      onClick={toggleNextTheme}
-      title={`Tema saat ini: ${currentOption.label}. Klik untuk ganti tema.`}
-      className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold"
-    >
-      <span
-        className="w-3.5 h-3.5 rounded-full border border-text-primary/40 shrink-0"
-        style={{ backgroundColor: currentOption.bg }}
-      />
-      <span className="hidden sm:inline">{currentOption.label}</span>
-      <Sparkles className="h-3.5 w-3.5 text-primary stroke-[2.5]" />
-    </Button>
-  );
-}

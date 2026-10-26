@@ -9,18 +9,15 @@ import {
   Settings,
   Plus,
   Coins,
-  ExternalLink,
   Loader2,
   LogOut,
 } from "lucide-react";
 import { AppSwitcher } from "../components/app-switcher";
-import { QuickThemeToggle } from "../components/ThemeSwitcher";
 import { Button } from "../components/ui";
 import { Sidebar, type SidebarLinkComponent } from "../components/ui/sidebar";
 import { BottomNav } from "../components/navigation/bottom-nav";
 import { useSession } from "../hooks/use-session";
 import { logout, redirectAfterLogout } from "../services/auth.service";
-import { HABIT_APP_URL } from "../services/session-url";
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -145,8 +142,21 @@ function RootComponent() {
       {/* Main Content Area */}
       <div className="flex-1 md:ml-64 flex flex-col min-h-screen pb-20 md:pb-6">
         {/* Top Header Mobile */}
-        <header className="md:hidden flex items-center justify-between px-4 py-3 bg-card-surface border-b-2 border-border-color sticky top-0 z-30 shadow-xs">
-          <div className="flex items-center gap-2.5 min-w-0">
+        <header className="flex md:hidden items-center justify-between gap-2 px-3 py-2 bg-card-surface border-b-2 border-border-color sticky top-0 z-40 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+          <AppSwitcher isMobileHeader className="min-w-0" />
+
+          <div className="flex items-center gap-2 shrink-0">
+            <Link to="/transactions/create">
+              <Button
+                type="button"
+                variant="3d"
+                size="sm"
+                className="btn-3d px-3! py-1.5! text-xs flex items-center gap-1"
+              >
+                <Plus className="h-4 w-4 stroke-[3]" />
+                <span>Catat</span>
+              </Button>
+            </Link>
             {user.avatar_image ? (
               <img
                 src={user.avatar_image}
@@ -158,35 +168,6 @@ function RootComponent() {
                 {user.avatar_emoji}
               </div>
             )}
-            <div className="flex flex-col leading-tight min-w-0">
-              <span className="font-extrabold text-sm text-text-primary truncate">Keuangan Pasutri</span>
-              <span className="text-[10px] font-semibold text-text-secondary truncate max-w-[110px]">
-                {user.name}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <a
-              href={HABIT_APP_URL}
-              aria-label="Buka Habit Tracker"
-              title="Buka Habit Tracker"
-              className="h-8 w-8 flex items-center justify-center rounded-lg border-2 border-border-color bg-card-surface text-text-secondary hover:text-primary"
-            >
-              <ExternalLink className="h-4 w-4" />
-            </a>
-            <QuickThemeToggle />
-            <Link to="/transactions/create">
-              <Button
-                type="button"
-                variant="3d"
-                size="sm"
-                className="btn-3d py-1.5 px-3 text-xs flex items-center gap-1"
-              >
-                <Plus className="h-4 w-4 stroke-[3]" />
-                <span>Catat</span>
-              </Button>
-            </Link>
           </div>
         </header>
 

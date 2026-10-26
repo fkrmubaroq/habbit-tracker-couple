@@ -45,6 +45,13 @@ function formatRupiah(amount: number): string {
   }).format(amount);
 }
 
+/**
+ * Must stay one of the `SelectItem` values in the liability dialog. Radix only
+ * renders the placeholder for `""`/`undefined`, so an initial value with no
+ * matching item shows an empty trigger instead of "Pilih Kategori".
+ */
+const DEFAULT_LIABILITY_CATEGORY = "Pinjaman Bank";
+
 function NetWorthPage() {
   const { data: netWorthData, isLoading } = useFinanceNetWorth();
 
@@ -62,7 +69,7 @@ function NetWorthPage() {
   // Add Liability Modal state
   const [isLiabilityModalOpen, setIsLiabilityModalOpen] = useState(false);
   const [liabilityName, setLiabilityName] = useState("");
-  const [liabilityCategory, setLiabilityCategory] = useState("Pinjaman");
+  const [liabilityCategory, setLiabilityCategory] = useState(DEFAULT_LIABILITY_CATEGORY);
   const [liabilityAmount, setLiabilityAmount] = useState<number | "">("");
 
   const handleSaveAsset = async (e: React.FormEvent) => {
@@ -91,6 +98,7 @@ function NetWorthPage() {
     });
 
     setLiabilityName("");
+    setLiabilityCategory(DEFAULT_LIABILITY_CATEGORY);
     setLiabilityAmount("");
     setIsLiabilityModalOpen(false);
   };

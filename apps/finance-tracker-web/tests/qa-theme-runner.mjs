@@ -50,11 +50,11 @@ test("index.html contains FOUC prevention script and default Sakura theme", () =
   assert(indexHtml.includes("localStorage.getItem('theme')"), "Must have head script to read stored theme");
 });
 
-// 3. Theme switcher components exist
-test("ThemeSwitcher components exported", () => {
+// 3. Theme switching lives only on the Settings page
+test("ThemeSwitcherSection exported, QuickThemeToggle removed", () => {
   const switcherContent = fs.readFileSync(path.join(srcDir, "components/ThemeSwitcher.tsx"), "utf-8");
   assert(switcherContent.includes("export function ThemeSwitcherSection"), "Must export ThemeSwitcherSection");
-  assert(switcherContent.includes("export function QuickThemeToggle"), "Must export QuickThemeToggle");
+  assert(!switcherContent.includes("QuickThemeToggle"), "QuickThemeToggle must be removed; theme is settings-only");
 });
 
 // 4. Zero hardcoded teal/rose/emerald classes in UI source
@@ -84,7 +84,7 @@ test("Zero hardcoded legacy color utilities across src", () => {
 // 5. Semantic couple tokens and 3D buttons in key routes
 test("Key views utilize couple design tokens and 3D buttons", () => {
   const rootContent = fs.readFileSync(path.join(srcDir, "routes/__root.tsx"), "utf-8");
-  assert(rootContent.includes("QuickThemeToggle"), "__root.tsx must include QuickThemeToggle");
+  assert(!rootContent.includes("QuickThemeToggle"), "__root.tsx must not include QuickThemeToggle (theme is settings-only)");
   assert(rootContent.includes("btn-3d"), "__root.tsx must include btn-3d");
   assert(rootContent.includes("border-border-color"), "__root.tsx must use border-border-color");
 

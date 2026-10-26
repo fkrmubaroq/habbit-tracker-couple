@@ -203,7 +203,7 @@ test("PB-5: __root.tsx and ThemeSwitcher.tsx adopt Button and Card", () => {
   const switcherContent = fs.readFileSync(path.join(financeWebDir, "components/ThemeSwitcher.tsx"), "utf-8");
   assert(rootContent.includes("<Button"), "__root must render Button");
   assert(switcherContent.includes("<Card"), "ThemeSwitcher must render Card");
-  assert(switcherContent.includes("<Button"), "ThemeSwitcher must render Button");
+  assert(!switcherContent.includes("QuickThemeToggle"), "ThemeSwitcher must not export QuickThemeToggle");
 });
 
 test("PB-Sidebar: shared Sidebar component exists in @repo/ui and is exported", () => {

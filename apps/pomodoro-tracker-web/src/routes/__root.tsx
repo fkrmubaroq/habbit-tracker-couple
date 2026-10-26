@@ -4,7 +4,6 @@ import { BarChart3, Loader2, LogOut, Settings, Timer } from "lucide-react";
 import * as React from "react";
 import { AppSwitcher } from "../components/app-switcher";
 import { BottomNav } from "../components/navigation/bottom-nav";
-import { QuickThemeToggle } from "../components/ThemeSwitcher";
 import { Toaster } from "../components/Toaster";
 import { Sidebar, type SidebarItem, type SidebarLinkComponent } from "../components/ui/sidebar";
 import { useSession } from "../hooks/use-session";
@@ -150,7 +149,6 @@ function RootComponent() {
         <header className="flex md:hidden items-center justify-between px-3 py-2 bg-card-surface border-b-2 border-border-color sticky top-0 z-40 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
           <AppSwitcher isMobileHeader />
           <div className="flex items-center gap-2 shrink-0">
-            <QuickThemeToggle />
             {user.avatar_image ? (
               <img src={user.avatar_image} alt={user.name} className="h-8 w-8 rounded-full object-cover shrink-0" />
             ) : (
